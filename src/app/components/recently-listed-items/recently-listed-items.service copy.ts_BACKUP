@@ -1,0 +1,373 @@
+import { Injectable } from '@angular/core';
+import { Web3Service } from '../../shared/web3.service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RecentlyListedItemsService {
+  isLoading: boolean = true;
+  filterToData = new Map<string, FilterItemsAndIndex>();
+  step = 5;
+  totalContracts: number = 0;
+  initialized: boolean = false;
+  filteredItems: any[] | undefined = undefined;
+  selectedPriceFilter = 'ANY';
+  selectedWeaponTypeFilter = 'ANY';
+  hasMoreItemsToLoad = false;
+
+  constructor(private web3: Web3Service) {}
+
+  async initialize() {
+    if (!this.initialized) {
+      this.initialized = true;
+      const [pendings, totalContracts] = await this.web3.getPendingTradeIndexes(
+        0,
+        0
+      );
+      this.totalContracts = totalContracts;
+      console.log('GOTYOPENDINGs', pendings);
+
+      if (this.totalContracts > 0) {
+        this.filterToData.set('ANY', {
+          indexes: pendings,
+          items: [],
+        });
+
+        const LessThanTenfilteredIndexes = pendings.filter((item: any) => {
+          const price = item.priceInUSD;
+          return price < 10;
+        });
+
+        this.filterToData.set('LESS_THAN_10', {
+          indexes: LessThanTenfilteredIndexes,
+          items: [],
+        });
+
+        const filterPrices = [
+          '10_TO_25',
+          '25_TO_50',
+          '50_TO_100',
+          '100_TO_250',
+          '250_TO_1000',
+        ];
+        const minPrices = [10, 25, 50, 100, 250];
+        const maxPrices = [25, 50, 100, 250, 1000];
+
+        for (let i = 0; i < minPrices.length; i++) {
+          const filteredIndexes = pendings.filter((item: any) => {
+            const price = item.priceInUSD;
+            return price >= minPrices[i] && price <= maxPrices[i];
+          });
+          this.filterToData.set(filterPrices[i], {
+            indexes: filteredIndexes,
+            items: [],
+          });
+        }
+
+        const MoreThanOneKfilteredIndexes = pendings.filter((item: any) => {
+          const price = item.priceInUSD;
+          return price > 1000;
+        });
+        this.filterToData.set('MORE_THAN_1000', {
+          indexes: MoreThanOneKfilteredIndexes,
+          items: [],
+        });
+      }
+    }
+
+    this.filteredItems = await this._loadFirstStep('ANY');
+
+    this.isLoading = false;
+  }
+
+  noPriceFilter: boolean = false;
+  async onPriceFilterChange_(event: any) {
+    this.isLoading = true;
+    const selectedFilter = event.value;
+    this.selectedPriceFilter = selectedFilter;
+    let _filteredItems = [];
+    this.filteredItems = [];
+
+    if (selectedFilter !== undefined) {
+      if (this.noPriceFilter) {
+        this.noPriceFilter = false;
+      }
+      _filteredItems = await this._loadFirstStep(selectedFilter);
+      this.filteredItems = _filteredItems;
+    } else {
+      this.noPriceFilter = true;
+    }
+    this.isLoading = false;
+  }
+
+  async _loadFirstStep(selectedFilter: string): Promise<any[]> {
+    let hasKey = this.filterToData.has(selectedFilter);
+    let _filteredItems = [];
+    if (hasKey) {
+      const filteredObject = this.filterToData.get(selectedFilter);
+      if (
+        filteredObject &&
+        filteredObject?.items &&
+        filteredObject?.items.length !== 0
+      ) {
+        if (!Array.isArray(filteredObject.items)) {
+          _filteredItems = [filteredObject.items];
+        } else {
+          _filteredItems = filteredObject.items;
+        }
+      } else if (filteredObject && filteredObject?.indexes) {
+        for (const item of filteredObject.indexes) {
+          if (_filteredItems.length >= this.step) {
+            break;
+          }
+          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          details = { ...details, indexInfo: item };
+          _filteredItems.push(details);
+        }
+        this.filterToData.set(selectedFilter, {
+          items: _filteredItems,
+          indexes: filteredObject.indexes,
+        });
+      }
+      if (filteredObject)
+        this.hasMoreItemsToLoad =
+          _filteredItems.length < filteredObject.indexes.length;
+    }
+    return _filteredItems;
+  }
+
+  async loadNextStep() {
+    this.isLoading = true;
+    let _filteredItems = [];
+    const selectedFilter = this.selectedPriceFilter;
+
+    if (selectedFilter !== undefined) {
+      const filteredObject = this.filterToData.get(selectedFilter);
+      const filteredIndexes = filteredObject?.indexes;
+      const filteredItems = filteredObject?.items;
+
+      if (
+        filteredIndexes &&
+        filteredItems &&
+        filteredIndexes.length > filteredItems.length
+      ) {
+        const startIndex = filteredItems.length;
+        const endIndex = Math.min(
+          filteredIndexes.length,
+          startIndex + this.step
+        );
+
+        for (let i = startIndex; i < endIndex; i++) {
+          const item = filteredIndexes[i];
+          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          details = { ...details, indexInfo: item };
+          _filteredItems.push(details);
+        }
+
+        this.filterToData.set(selectedFilter, {
+          items: [...filteredItems, ..._filteredItems],
+          indexes: filteredIndexes,
+        });
+
+        this.filteredItems = [...filteredItems, ..._filteredItems];
+        this.hasMoreItemsToLoad = endIndex < filteredObject.indexes.length;
+      }
+    }
+    console.log(this.filteredItems);
+
+    this.isLoading = false;
+  }
+
+
+
+  async onPriceFilterChange(event: any) {
+    this.isLoading = true;
+    const selectedFilter = event.value;
+    this.selectedPriceFilter = selectedFilter;
+    let _filteredItems = [];
+
+    if (selectedFilter !== undefined) {
+      _filteredItems = await this._loadFirstStep(selectedFilter);
+    }
+
+    // Update filtered items based on selected weapon type
+    if (this.selectedWeaponTypeFilter) {
+      //_filteredItems = this.filterItemsByWeaponType(_filteredItems, this.selectedWeaponTypeFilter);
+      await this.onTypeFilterChange({ value: this.selectedWeaponTypeFilter });
+    } else {
+      this.filteredItems = _filteredItems;
+      this.hasMoreItemsToLoad =
+        this.hasMoreItemsToLoad &&
+        this.filteredItems.length < this.totalContracts;
+    }
+
+    this.isLoading = false;
+  }
+
+  async onTypeFilterChange(event: any) {
+    console.log('???', event);
+
+    this.isLoading = true;
+    const selectedFilter = event.value;
+    this.selectedWeaponTypeFilter = selectedFilter;
+
+    // Update filtered items based on selected weapon type
+    let _filteredItems = [];
+    if (selectedFilter) {
+      console.log(
+        'selectedFilter',
+        selectedFilter,
+        this.filterToData.get(this.selectedPriceFilter)?.indexes
+      );
+
+      let hasKey = this.filterToData.has(
+        this.selectedPriceFilter + selectedFilter
+      );
+      if (!hasKey) {
+        //WW
+        const _filteredIndexItems = this.filterItemsByWeaponType(
+          this.filterToData.get(this.selectedPriceFilter)?.indexes ?? [],
+          selectedFilter
+        );
+
+        for (const item of _filteredIndexItems) {
+          if (_filteredItems.length >= this.step) {
+            break;
+          }
+          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          details = { ...details, indexInfo: item };
+          _filteredItems.push(details);
+        }
+        this.filterToData.set(this.selectedPriceFilter + selectedFilter, {
+          indexes: _filteredIndexItems,
+          items: _filteredItems,
+        });
+        //WW
+      } else if (hasKey) {
+        _filteredItems = await this._loadFirstStep(
+          this.selectedPriceFilter + selectedFilter
+        );
+      }
+    } else {
+      _filteredItems =
+        this.filterToData.get(this.selectedPriceFilter)?.items ?? [];
+    }
+
+    console.log('!', _filteredItems);
+
+    this.filteredItems = _filteredItems;
+    this.hasMoreItemsToLoad =
+      this.hasMoreItemsToLoad &&
+      this.filteredItems.length < this.totalContracts;
+
+    this.isLoading = false;
+  }
+
+  filterItemsByWeaponType(items: any[], weaponType: string) {
+    console.log('AJT', items);
+    // const filteredGloves = pendings.filter((item: any) =>
+    //       this.gloves.includes(item.weapon_type)
+    //     );
+    switch (weaponType) {
+      case 'GLOVES':
+        return items.filter((item: any) =>
+          this.gloves.includes(item.weapon_type)
+        );
+      case 'GUNS':
+        return items.filter((item: any) =>
+          this.guns.includes(item.weapon_type)
+        );
+
+      case 'KNIVES':
+        return items.filter((item: any) =>
+          this.knives.includes(item.weapon_type)
+        );
+    }
+
+    return items;
+  }
+
+  isGunsSelected: boolean = false;
+  isGlovesSelected: boolean = false;
+  isKnivesSelected: boolean = false;
+
+  guns = [
+    'CZ75-Auto',
+    'Desert Eagle',
+    'Dual Berettas',
+    'Five-SeveN',
+    'Glock-18',
+    'P2000',
+    'P250',
+    'R8 Revolver',
+    'Tec-9',
+    'USP-S',
+    'MAG-7',
+    'Nova',
+    'Sawed-Off',
+    'XM1014',
+    'M249',
+    'Negev',
+    'MAC-10',
+    'MP5-SD',
+    'MP7',
+    'MP9',
+    'P90',
+    'PP-Bizon',
+    'UMP-45',
+    'AK-47',
+    'AUG',
+    'FAMAS',
+    'Galil AR',
+    'M4A1-S',
+    'M4A4',
+    'SG 553',
+    'AWP',
+    'G3SG1',
+    'SCAR-20',
+    'SSG 08',
+  ];
+
+  knives = [
+    'Bayonet',
+    'Bowie Knife',
+    'Butterfly Knife',
+    'Classic Knife',
+    'Falchion Knife',
+    'Flip Knife',
+    'Gut Knife',
+    'Huntsman Knife',
+    'Karambit',
+    'M9 Bayonet',
+    'Navaja Knife',
+    'Nomad Knife',
+    'Paracord Knife',
+    'Shadow Daggers',
+    'Skeleton Knife',
+    'Stiletto Knife',
+    'Survival Knife',
+    'Talon Knife',
+    'Ursus Knife',
+  ];
+
+  gloves = [
+    'Hand Wraps',
+    'Moto Gloves',
+    'Specialist Gloves',
+    'Bloodhound Gloves',
+    'Hydra Gloves',
+    'Broken Fang Gloves',
+    'Driver Gloves',
+  ];
+
+  async onGunTypeFilterChange(event: any) {
+    if (event.value) {
+    }
+  }
+}
+const filteredItemsAndIndex = {
+  items: [] as any[],
+  indexes: [] as any[],
+};
+
+type FilterItemsAndIndex = typeof filteredItemsAndIndex;

@@ -1,0 +1,23 @@
+
+<!-- <h1 mat-dialog-title>Buy Item</h1> -->
+
+
+<mat-dialog-content >
+  <div style="text-align: center;">
+    <img style="margin: 10%; max-width: 50%;" mat-card-image [src]="imageLink">
+
+
+  <h3>{{name}}</h3>
+  <div style="max-width: 525px;">
+    <app-float-bar [min]="floats.min" [max]="floats.max" [value]="floats.float" ></app-float-bar>
+  </div>
+  <p>Price: {{price}} ETH</p>
+  <p>Seller: {{sellerAddy}}</p>
+  <p matTooltip="Average delivery time from seller">Avg delivery: {{avgDeliveryTime}} <span *ngIf="isInMinutes">minutes</span> <span *ngIf="!isInMinutes">hours</span></p>
+ </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button color="primary" mat-dialog-close>Cancel</button>
+  <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Buy Now</button>
+</mat-dialog-actions>
+

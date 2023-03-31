@@ -1,0 +1,69 @@
+
+<div style="max-width: 490px;">
+  <h1 mat-dialog-title>SSG 08 | Mainframe 001 (Well-Worn) has been purchased for 0.0000025 ETH!</h1>
+
+
+  <mat-dialog-content>
+    <!-- <h4>SSG 08 | Mainframe 001 (Well-Worn)</h4> -->
+    <app-float-bar></app-float-bar>
+    <h4 style="color: #f14d42;">1&rpar; It's time to accept the trade-offer the buyer has sent you.</h4>
+    <h4 style="color: #f14d42;">2&rpar; Make sure the SSG 08 | Mainframe 001 (Well-Worn) is arriving to the <a href="https://google.com" target="_blank">correct inventory</a> or the funds won't be released to you, here is the <a href="https://google.com" target="_blank">buyer's steam profile</a>.</h4>
+
+
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Got No Offer?
+          </mat-panel-title>
+          <mat-panel-description>
+            Buyer has not sent an offer regarding the sold item.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div style="margin: 3%;">
+          <p>If the buyer has not sent an offer to you on Steam regarding the correct item, you may send one to <a href="https://google.com" target="_blank">them</a>.</p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <br>
+
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Sent Incorrect?
+          </mat-panel-title>
+          <mat-panel-description>
+            Sent Item to wrong inventory.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div style="margin: 3%;">
+          <p>If you sent the item to the incorrect inventory, then you're out of luck!</p>
+          <p>You can cancel the trade and the funds will be sent back to the buyer.</p>
+          <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> If you don't deliver the item and <u>not</u> cancelling the trade below, the Keeper Oracle will punish on non-delivered committed trades.</p>
+          <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Cancel Trade</button>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <p><i>The delivery timer has been started, and are awaiting to measure until the item has arrived to the buyer.</i></p>
+
+    <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+      Once the item has arrived at buyer's inventory, the funds will be automatically released to you by the Keeper-Oracle.
+      <span><mat-progress-spinner
+        class="example-margin"
+        color="primary"
+        mode="indeterminate"
+        [diameter]="25">
+      </mat-progress-spinner></span>
+    </p>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Open Dispute</button>
+    <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Close</button>
+  </mat-dialog-actions>
+
+
+</div>

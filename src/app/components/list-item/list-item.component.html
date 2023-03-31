@@ -1,0 +1,278 @@
+<mat-stepper class="background" linear="true" #stepper>
+  <mat-step [stepControl]="selectItem" (stepSelectionChange)="onStepChange($event)">
+    <!-- <form [formGroup]="selectItem">
+      <ng-template matStepLabel>Listing Details</ng-template>
+
+      <div style="display: flex; flex-wrap: wrap;">
+        <mat-form-field style="flex: 1 1 100%;">
+          <mat-label>Item Name</mat-label>
+          <input matInput formControlName="itemNameControl" [matAutocomplete]="auto">
+          <mat-error *ngIf="selectItem.get('itemNameControl').hasError('required')">
+            Item name is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('itemNameControl').hasError('pattern')">
+            Item name not recognized!
+          </mat-error>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredItemNameSuggestions | async" [value]="option.name">
+              {{ option.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field style="flex: 1 1 100%;">
+          <mat-label>Price in Ether (ETH)</mat-label>
+          <input matInput formControlName="priceControl" type="number" step="0.025">
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('required')">
+            Price is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('positiveNumber')">
+            Price must be a <strong>positive number</strong>
+        </mat-error>
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('validNumber')">
+            Please enter a <strong>valid number</strong>
+        </mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field style="flex: 1 1 100%;">
+          <mat-label>Trade Link</mat-label>
+          <input type="text" formControlName="tradeLinkControl" matInput>
+          <mat-error *ngIf="selectItem.get('tradeLinkControl').hasError('required')">
+            Trade link is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('tradeLinkControl').hasError('pattern')">
+            Trade link must look like <strong>"https://steamcommunity.com/tradeoffer/new/?partner=XXXX&token=XXXX"</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Inspect Link</mat-label>
+          <input type="text" formControlName="inspectLinkControl" matInput>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('required')">
+            Inspect link is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('pattern')">
+            Inspect link must start with <strong>"steam://rungame/730/"</strong>
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+
+      <div>
+        <button mat-button (click)="kappa()" matStepperNext>Next</button>
+      </div>
+
+    </form> -->
+
+    <form [formGroup]="selectItem">
+      <ng-template matStepLabel class="listing-details">Details</ng-template>
+
+
+      <div style="display: flex; flex-wrap: wrap;">
+
+        <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
+          <mat-label>Item Inspect Link</mat-label>
+          <input type="text" formControlName="inspectLinkControl" matInput>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('required')">
+            Inspect link is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('pattern')">
+            Inspect link must start with <strong>"steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20..."</strong>
+          </mat-error>
+
+        </mat-form-field>
+
+        <!-- <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
+          <mat-label>Item Name</mat-label>
+          <input matInput formControlName="itemNameControl" [matAutocomplete]="auto">
+          <mat-error *ngIf="selectItem.get('itemNameControl').hasError('required')">
+            Item name is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('itemNameControl').hasError('pattern')">
+            Item name not recognized!
+          </mat-error>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredItemNameSuggestions | async" [value]="option.name">
+              {{ option.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+          <mat-label>Price in Ether (ETH)</mat-label>
+          <input matInput formControlName="priceControl" type="number" step="0.025">
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('required')">
+            Price is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('positiveNumber')">
+            Price must be a <strong>positive number</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('priceControl').hasError('validNumber')">
+            Please enter a <strong>valid number</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
+          <mat-label>Trade Link</mat-label>
+          <input type="text" formControlName="tradeLinkControl" matInput>
+          <mat-error *ngIf="selectItem.get('tradeLinkControl').hasError('required')">
+            Trade link is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('tradeLinkControl').hasError('pattern')">
+            <strong>"https://steamcommunity.com/tradeoffer/new/?partner=XXXX&token=XXXX"</strong>
+          </mat-error>
+         </mat-form-field> -->
+
+
+        </div>
+        <div>
+          <button mat-button (click)="confirmDetails()" matStepperNext>Next</button>
+        </div>
+      </form>
+
+  </mat-step>
+
+  <mat-step [stepControl]="selectStepTwo">
+    <form [formGroup]="selectStepTwo">
+      <!-- <mat-form-field appearance="fill">
+        <mat-label>Price in</mat-label>
+        <input type="number" matInput formControlName="secondCtrl"
+               required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div> -->
+
+      <ng-template matStepLabel>Confirm</ng-template>
+
+      <div style="display: flex; flex-wrap: wrap;">
+
+        <!-- <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
+          <mat-label>Item Inspect Link</mat-label>
+          <input type="text" formControlName="inspectLinkControl" matInput>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('required')">
+            Inspect link is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('pattern')">
+            Inspect link must start with <strong>"steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20..."</strong>
+          </mat-error>
+
+        </mat-form-field> -->
+
+        <!-- <img *ngIf="cmmImage" style="margin: 10%;" mat-card-image [src]="cmmImage.link" alt="{{cmmImage.name}}"> -->
+
+
+        <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+          <mat-card class="item-card background" style="align-items: center; text-align: center;" >
+            <mat-card-header>
+              <div mat-card-avatar class="item-header-image">
+                <svg [data-jdenticon-value]="this.web3.webUser.shortAddy"></svg>
+              </div>
+              <mat-card-title><p>{{this.web3.webUser.shortAddy}}</p></mat-card-title>
+            </mat-card-header>
+            <img style="margin: 10%;" width="250px" mat-card-image [src]="exactImage" alt="">
+            <mat-card-content>
+
+              <span *ngIf="itemData?.stickers && !isStickerAsItem">
+                <span *ngFor="let sticker of itemData?.stickers">
+                  <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{sticker.name}}">
+                </span>
+              </span>
+
+              <p>
+                {{itemData?.full_item_name}}
+              </p>
+              <!-- *ngIf="!isStickerAsItem" -->
+              <div>
+                <app-float-bar [min]="minFloat" [max]="maxFloat" [value]="float_val"></app-float-bar>
+              </div>
+              <p style="font-size: 66%; color: #6a71ed;">Float Min: {{minFloat}}, Max: {{maxFloat}}, Value: {{float_val}}</p>
+
+            </mat-card-content>
+            <!-- <mat-card-actions>
+              <button mat-button>LIKE</button>
+              <button mat-button>SHARE</button>
+            </mat-card-actions> -->
+          </mat-card>
+        </div>
+
+        <!-- <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
+          <mat-label>Item Name</mat-label>
+          <input matInput formControlName="itemNameControl" [matAutocomplete]="auto">
+          <mat-error *ngIf="selectStepTwo.get('itemNameControl').hasError('required')">
+            Item name is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="selectStepTwo.get('itemNameControl').hasError('pattern')">
+            Item name not recognized!
+          </mat-error>
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredItemNameSuggestions | async" [value]="option.name">
+              {{ option.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field> -->
+
+
+        <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+
+          <div class="form-row">
+            <mat-form-field style="width: -webkit-fill-available;">
+              <mat-label>Price in {{selected}}</mat-label>
+              <input matInput formControlName="priceControl" type="number" step="0.025">
+              <mat-error *ngIf="selectStepTwo.get('priceControl').hasError('required')">
+                Price is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="selectStepTwo.get('priceControl').hasError('positiveNumber')">
+                Price must be a <strong>positive number</strong>
+              </mat-error>
+              <mat-error *ngIf="selectStepTwo.get('priceControl').hasError('validNumber')">
+                Please enter a <strong>valid number</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field  style="width: -webkit-fill-available;" appearance="fill">
+              <!-- <mat-label>Currency</mat-label> -->
+              <mat-select [(value)]="selected">
+                <mat-option value="ETH">Ether (ETH)</mat-option>
+                <mat-option value="USDC">USD Coin (USDC)</mat-option>
+                <mat-option value="USDT">Tether (USDT)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+
+          <mat-form-field>
+            <mat-label>Trade Link</mat-label>
+            <input type="text" formControlName="tradeLinkControl"  matInput>
+            <mat-error *ngIf="selectStepTwo.get('tradeLinkControl').hasError('required')">
+              Trade link is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="selectStepTwo.get('tradeLinkControl').hasError('pattern')">
+              <strong>"https://steamcommunity.com/tradeoffer/new/?partner=XXXX&token=XXXX"</strong>
+            </mat-error>
+            <!-- <mat-error *ngIf="selectStepTwo.hasError('matchingFields')">Trade link and Item Inspect link must belong to the same Steam account.</mat-error> -->
+            <!-- <mat-error *ngIf="selectStepTwo.hasError('matchingFields')">Trade link does not match inspect link</mat-error>  -->
+          </mat-form-field>
+            <mat-error *ngIf="selectStepTwo.errors?.matchingFields && !selectStepTwo.tradeLinkControl?.errors?.pattern && selectStepTwo.get('tradeLinkControl').value">
+              You may only list items that belongs to you.
+            </mat-error><br>
+           <button mat-button (click)="confirmApprove()" matStepperNext>Next</button>
+        </div>
+
+      </div>
+
+    </form>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel>Success</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+
+</mat-stepper>

@@ -1,0 +1,228 @@
+<mat-card  class="margins background" >
+  <mat-card-content>
+      <!-- <mat-chip-option value="ANY" selected>Any Price</mat-chip-option> -->
+    <h3 style="margin-top: 0px;">Recently listed items</h3>
+
+    <mat-chip-listbox [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" aria-label="Price selection" (change)="this.recentlyListed.onPriceFilterChange($event)">
+      <mat-chip-option value="LESS_THAN_10">&lt; &dollar;10</mat-chip-option>
+      <mat-chip-option value="10_TO_25">&dollar;10 to &dollar;25</mat-chip-option>
+      <mat-chip-option value="25_TO_50">&dollar;25 to &dollar;50</mat-chip-option>
+      <mat-chip-option value="50_TO_100">&dollar;50 to &dollar;100</mat-chip-option>
+      <mat-chip-option value="100_TO_250">&dollar;100 to &dollar;250</mat-chip-option>
+      <mat-chip-option value="250_TO_1000">&dollar;250 to &dollar;1000</mat-chip-option>
+      <mat-chip-option value="MORE_THAN_1000">&gt; &dollar;1000</mat-chip-option>
+    </mat-chip-listbox>
+<br>
+    <mat-chip-listbox [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" aria-label="Type selection" (change)="this.recentlyListed.onTypeFilterChange($event);"> <!--onTypeFilterChange-->
+      <mat-chip-option value="GUNS" color="accent">Guns</mat-chip-option>
+      <mat-chip-option value="KNIVES" color="accent">Knives</mat-chip-option>
+      <mat-chip-option value="GLOVES" color="accent">Gloves</mat-chip-option>
+    </mat-chip-listbox>
+<br>
+  <mat-chip-listbox [@cardAnimation]="state" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" *ngIf="this.recentlyListed.isGunsSelected" aria-label="Gun type selection" (change)="this.recentlyListed.onGunTypeFilterChange($event)">
+    <mat-chip-option value="PISTOLS" color="warn">Pistols</mat-chip-option>
+    <mat-chip-option value="HEAVY" color="warn">Heavy</mat-chip-option>
+    <mat-chip-option value="SMGS" color="warn">SMGs</mat-chip-option>
+    <mat-chip-option value="RIFLES" color="warn">Rifles</mat-chip-option>
+  </mat-chip-listbox>
+<br *ngIf="this.recentlyListed.isGunsSelected">
+  <mat-chip-listbox [@cardAnimation]="state" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" *ngIf="this.recentlyListed.isRiflesSelected" aria-label="Rifle type selection" (change)="this.recentlyListed.onGunSpecificFilterChange($event)">
+    <span *ngFor="let rifle of this.recentlyListed.rifles">
+      <mat-chip-option value="{{rifle}}" color="primary">{{rifle}}s</mat-chip-option>
+    </span>
+  </mat-chip-listbox>
+
+  <mat-chip-listbox [@cardAnimation]="state" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" *ngIf="this.recentlyListed.isSmgsSelected" aria-label="Rifle type selection" (change)="this.recentlyListed.onGunSpecificFilterChange($event)">
+    <span *ngFor="let smgs of this.recentlyListed.smgs">
+      <mat-chip-option value="{{smgs}}" color="primary">{{smgs}}s</mat-chip-option>
+    </span>
+  </mat-chip-listbox>
+
+  <mat-chip-listbox [@cardAnimation]="state" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" *ngIf="this.recentlyListed.isHeavySelected" aria-label="Rifle type selection" (change)="this.recentlyListed.onGunSpecificFilterChange($event)">
+    <span *ngFor="let heavy of this.recentlyListed.heavy">
+      <mat-chip-option value="{{heavy}}" color="primary">{{heavy}}s</mat-chip-option>
+    </span>
+  </mat-chip-listbox>
+
+  <mat-chip-listbox [@cardAnimation]="state" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" *ngIf="this.recentlyListed.isPistolsSelected" aria-label="Rifle type selection" (change)="this.recentlyListed.onGunSpecificFilterChange($event)">
+    <span *ngFor="let pistol of this.recentlyListed.pistols">
+      <mat-chip-option value="{{pistol}}" color="primary">{{pistol}}s</mat-chip-option>
+    </span>
+  </mat-chip-listbox>
+
+  <br *ngIf="this.recentlyListed.isPistolsSelected || this.recentlyListed.isHeavySelected || this.recentlyListed.isSmgsSelected || this.recentlyListed.isRiflesSelected">
+
+  <mat-form-field style="background-color: #12131f;">
+    <mat-label>Search</mat-label>
+    <input matInput [matAutocomplete]="auto" [(ngModel)]="this.recentlyListed.selectedName" (input)="this.recentlyListed.filterNames($event)" [disabled]="this.recentlyListed.isLoading">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="this.recentlyListed.onOptionSelected($event)">
+      <mat-option *ngFor="let item of this.recentlyListed.filteredNames" [value]="item.itemMarketName">
+        {{ item.itemMarketName }}
+      </mat-option>
+    </mat-autocomplete>
+    <button mat-button matPrefix *ngIf="this.recentlyListed.selectedName" (click)="this.recentlyListed.clearInput()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-button-toggle-group appearance="legacy" [(ngModel)]="this.recentlyListed.sortBy" name="fontStyle" aria-label="Font Style">
+    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="index">Listing</mat-button-toggle>
+    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="weiPrice">Price</mat-button-toggle>
+  </mat-button-toggle-group>
+  <br>
+  <button [disabled]="this.recentlyListed.isLoading" mat-button (click)="this.recentlyListed.toggleSortDirection()" color="primary">
+    Sort by <span *ngIf="this.recentlyListed.sortBy == 'index'">Newest vs Oldest</span> <span *ngIf="this.recentlyListed.sortBy == 'weiPrice'">Price</span>
+    <mat-icon>{{ this.recentlyListed.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+  </button>
+
+    <mat-grid-list *ngIf="this.recentlyListed.filteredItems && this.recentlyListed.filteredItems.length > 0 && !this.recentlyListed.isLoadingChip" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
+    <mat-grid-tile style="overflow: visible;" *ngFor="let item of this.recentlyListed.filteredItems">
+      <!-- [@cardAnimation]="state" -->
+      <mat-card  class="item-card background">
+        <mat-card-header>
+          <div mat-card-avatar class="item-header-image">
+            <svg  [data-jdenticon-value]="item.contractAddress"></svg>
+          </div>
+
+          <mat-card-title matTooltip="The address shown is the address of the smart contract that handles the trade logic of this item on the marketplace. You can use this address to verify the authenticity and state of the trade on-chain."><p>{{item.trimmedAddress}}</p></mat-card-title>
+        </mat-card-header>
+
+        <img style="margin: 10%;" mat-card-image [src]="item.itemImageUrl" alt="{{item.itemMarketName}}">
+          <span *ngIf="item.stickers">
+            <span *ngFor="let sticker of item.stickers">
+              <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="1000" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{item.itemMarketName}}">
+            </span>
+          </span>
+          <div *ngIf="item.stickers.length === 0" style="margin-left: 2%; min-height: 41.5px;"></div>
+          <mat-card-content>
+          <p>
+            {{item.itemMarketName}}
+          </p>
+          <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar>
+          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: {{item.etherPrice}} ETH</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button (click)="openDialog(item.itemMarketName, item.etherPrice, item.trimmedAddress, item.averageSellerDeliveryTime, {min: item.float.min, max: item.float.max, float: item.float.value}, item.itemImageUrl)" mat-button color="primary">BUY</button>
+          <button (click)="this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)" mat-button color="primary">DETAILS</button>
+          <a matTooltip="Inspect In-Game" style="text-decoration: none;" [href]="sanitizer.bypassSecurityTrustUrl(item.inspectLink)">
+            <button style="width: 10px;" mat-button color="primary">
+              <mat-icon>search</mat-icon>
+            </button>
+          </a>
+        </mat-card-actions>
+
+      </mat-card>
+
+    </mat-grid-tile>
+    </mat-grid-list>
+
+    <!---->
+    <mat-grid-list *ngIf="this.recentlyListed.isLoading" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
+      <mat-grid-tile style="overflow: visible;" *ngFor="let amount of [0,1,2,3,4]" >
+
+          <mat-card [@cardAnimation]="state"  class="item-card background" style="max-height: 462.5px; min-width: 225px;">
+            <mat-card-header>
+              <div mat-card-avatar class="item-header-image">
+                <svg data-jdenticon-value="loading"></svg>
+              </div>
+
+              <div>
+                <ngx-skeleton-loader
+                count="1"
+                appearance="line"
+                animation="progress"
+                [theme]="{
+                  'background-color': 'rgb(20 21 37)',
+                  height: '38px',
+                  'border-radius': 5
+                }" style="display: block; width: 128px;"
+            >
+            </ngx-skeleton-loader>
+              </div>
+            </mat-card-header>
+
+            <ngx-skeleton-loader
+                count="1"
+                appearance="line"
+                animation="progress"
+                [theme]="{
+                  'background-color': 'rgb(20 21 37)',
+                  height: '135px',
+                  'border-radius': 0
+                }"
+            >
+            </ngx-skeleton-loader>
+
+            <img style="margin: 10%;" mat-card-image alt="">
+
+              <div style="margin-left: 2%; min-height: 41.5px;"></div>
+              <mat-card-content style="margin-top: -60px;">
+                <ngx-skeleton-loader
+                count="4"
+                appearance="line"
+                animation="progress"
+                [theme]="{
+                  'background-color': 'rgb(20 21 37)',
+                  height: '40px',
+                  'border-radius': 0
+                }"
+            >
+            </ngx-skeleton-loader>
+              <!-- <app-float-bar [min]="0" [max]="1" [value]="0.5"></app-float-bar>
+              <p>Price: 0 ETH</p> -->
+            </mat-card-content>
+            <!-- <mat-card-actions>
+              <button disabled="true" mat-button color="primary">BUY</button>
+              <button disabled="true" mat-button color="primary">DETAILS</button>
+
+
+                <button style="width: 10px;" mat-button color="primary">
+                  <mat-icon>search</mat-icon>
+                </button>
+
+            </mat-card-actions> -->
+
+          </mat-card>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+    <!---->
+
+
+    <br>
+
+    <mat-card  class="margins background" >
+
+      <div *ngIf="this.recentlyListed.isLoading" class="centered-loading-spinner" >
+        <mat-progress-spinner
+        class="example-margin"
+        color="primary"
+        mode="indeterminate"
+        [diameter]="25">
+      </mat-progress-spinner>
+      </div>
+
+      <button *ngIf="!this.recentlyListed.isLoading && this.recentlyListed.hasMoreItemsToLoad && this.recentlyListed.selectedPriceFilter" (click)="this.recentlyListed.loadNextStep(); this.recentlyListed.autoScroll = true;" mat-button>Load more</button>
+
+      <mat-card-content *ngIf="this.recentlyListed.totalContracts==0 && !this.recentlyListed.isLoading">
+        <div>
+          <p>There is no items listed right now!</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-content *ngIf="this.recentlyListed.filteredItems && this.recentlyListed.filteredItems.length === 0 && this.recentlyListed.selectedPriceFilter !== undefined && !this.recentlyListed.isLoading">
+        <div>
+          <p>There is no items meeting your current criteria, try ease up the filtering!</p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-content *ngIf="this.recentlyListed.selectedPriceFilter === undefined && !this.recentlyListed.isLoading">
+        <div>
+          <p>Choose at least one price filter!</p>
+        </div>
+      </mat-card-content>
+
+    </mat-card>
+
+  </mat-card-content>
+</mat-card>

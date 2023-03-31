@@ -1,0 +1,130 @@
+<p>Role</p>
+<mat-chip-listbox aria-label="Role selection" (change)="this.myTradesService.onRoleFilterChange($event);">
+  <mat-chip-option color="accent" value="SELLER">As Seller</mat-chip-option>
+  <mat-chip-option color="accent" value="BUYER">As Buyer</mat-chip-option>
+</mat-chip-listbox>
+<p>Status</p>
+<mat-chip-listbox aria-label="High Level Status selection">
+  <mat-chip-option value="groupOnGoing">on-going</mat-chip-option>
+  <mat-chip-option value="groupCompleted">completed</mat-chip-option>
+  <mat-chip-option value="groupCancelled">cancelled</mat-chip-option>
+</mat-chip-listbox>
+<mat-chip-listbox aria-label="Status selection">
+  <mat-chip-option value="PENDING">Pending</mat-chip-option>
+  <mat-chip-option value="SELLER_CANCELLED">Cancelled</mat-chip-option>
+  <mat-chip-option value="COMMITTED">Committed</mat-chip-option>
+  <mat-chip-option value="ACCEPTED">Accepted</mat-chip-option>
+  <mat-chip-option value="COMPLETED">Completed</mat-chip-option>
+  <mat-chip-option value="DISPUTED">Disputed</mat-chip-option>
+</mat-chip-listbox>
+<p>Dispute Resolution</p>
+<mat-chip-listbox aria-label="Dispute Resolutions">
+  <mat-chip-option color="warn" value="RESOLVED">Disputed</mat-chip-option>
+  <mat-chip-option color="warn" value="RESOLVED">Resolved</mat-chip-option>
+  <mat-chip-option color="warn" value="CLAWBACKED">Clawbacked</mat-chip-option>
+</mat-chip-listbox>
+<p>Trades</p>
+<!-- *ngIf="!this.myTradesService.isLoading" -->
+<table matSort (matSortChange)="sortData($event)" style="inline-size: -webkit-fill-available;" >
+
+  <tr>
+    <!-- <th mat-sort-header="contractAddress">Trade Address</th> -->
+    <th mat-sort-header="itemMarketName">Item</th>
+    <th mat-sort-header="tradeRole" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">Role</th>
+    <th mat-sort-header="tradeStatus">Status</th>
+    <th mat-sort-header="etherPrice">Price</th>
+    <th mat-header="tradeAction">Action</th>
+  </tr>
+
+    <tr *ngIf="this.myTradesService.isLoading">
+      <td class="tdColor">
+        <ngx-skeleton-loader
+          count="5"
+          appearance="line"
+          animation="progress"
+          [theme]="{
+            'background-color': 'rgb(20 21 37)',
+            height: '19px',
+            'border-radius': 5
+          }" style="display: block; width: 80%;">
+        </ngx-skeleton-loader>
+      </td>
+      <td *ngIf="myTradesService.selectedRoleFilter == 'ANY'" class="tdColor">
+        <ngx-skeleton-loader
+          count="5"
+          appearance="line"
+          animation="progress"
+          [theme]="{
+            'background-color': 'rgb(20 21 37)',
+            height: '19px',
+            'border-radius': 5
+          }" style="display: block; width: 80%;">
+        </ngx-skeleton-loader>
+      </td>
+      <td class="tdColor">
+        <ngx-skeleton-loader
+          count="5"
+          appearance="line"
+          animation="progress"
+          [theme]="{
+            'background-color': 'rgb(20 21 37)',
+            height: '19px',
+            'border-radius': 5
+          }" style="display: block; width: 80%;">
+        </ngx-skeleton-loader>
+      </td>
+      <td class="tdColor">
+        <ngx-skeleton-loader
+          count="5"
+          appearance="line"
+          animation="progress"
+          [theme]="{
+            'background-color': 'rgb(20 21 37)',
+            height: '19px',
+            'border-radius': 5
+          }" style="display: block; width: 80%;">
+        </ngx-skeleton-loader>
+      </td>
+      <td class="tdColor">
+        <ngx-skeleton-loader
+          count="5"
+          appearance="line"
+          animation="progress"
+          [theme]="{
+            'background-color': 'rgb(20 21 37)',
+            height: '19px',
+            'border-radius': 5
+          }" style="display: block; width: 80%;">
+        </ngx-skeleton-loader>
+      </td>
+    </tr>
+
+    <tr *ngFor="let userInteraction of myTradesService.userItems.slice()" style="height: 38px;">
+      <!-- <td><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg>{{userInteraction.trimmedAddress}}</td> -->
+      <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg> {{userInteraction.itemMarketName}}</td>
+      <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
+      <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
+      <td class="tdColor">{{userInteraction.etherPrice}} ETH</td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Pending'">
+        <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
+      </td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Committed'">
+        <button (click)="openDialog()" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
+      </td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Committed'">
+        <button mat-button color="warn" style="color: rgb(244 67 54 / 38%) !important;">Open Dispute</button>
+      </td>
+    </tr>
+
+</table>
+
+<button style="inline-size: -webkit-fill-available; width: 100%;" *ngIf="!this.myTradesService.isLoading && this.myTradesService.hasMoreItemsToLoad" (click)="this.myTradesService.loadNextStep(); this.myTradesService.autoScroll = true;" mat-button>Load more</button>
+
+<div *ngIf="this.myTradesService.isLoading" class="centered-loading-spinner" >
+  <mat-progress-spinner
+  class="example-margin"
+  color="primary"
+  mode="indeterminate"
+  [diameter]="25">
+</mat-progress-spinner>
+</div>

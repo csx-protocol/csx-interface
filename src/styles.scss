@@ -1,0 +1,234 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$interface-primary: mat.define-palette(mat.$indigo-palette);
+$interface-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$interface-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$interface-theme: mat.define-light-theme((
+  color: (
+    primary: $interface-primary,
+    accent: $interface-accent,
+    warn: $interface-warn,
+  )
+));
+
+//--
+$interface-background-color: #628cc9;
+$background: map-get($interface-theme, background);
+$background: map_merge($background, (background: $interface-background-color));
+$theme: map_merge($interface-theme, (background: $background));
+//--
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($interface-theme);
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// p {
+//   // letter-spacing: .15em; /* Adjust as needed */
+// }
+//--
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  scrollbar-width: thin;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0e0f1b;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #2a2c52;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #f1f1f12f;
+}
+
+.blue-snackbar {
+  background: #0c0c0c34;
+  transform: translateY(-50px) !important;;
+}
+
+::ng-deep .backgroundColor {
+  background-color: #17182c;
+}
+
+a {
+  color: rgb(104 109 209);
+}
+
+// .custom-modalbox > mat-dialog-container {
+//   background-color: #17182c !important;
+//   color: #afb2d6 !important;
+// }
+
+.mat-mdc-snack-bar-container {
+  --mat-mdc-snack-bar-button-color: #afb2d6;
+  --mdc-snackbar-container-color: #1b1c36f0;
+  --mdc-snackbar-supporting-text-color: #f44336;
+}
+
+
+.mdc-tooltip__surface {
+  background-color: rgba(0, 0, 0, 0.712) !important;
+  color: #afb2d6 !important;
+  font-size: small !important;
+}
+
+mat-dialog-container {
+  background-color: rgba(0, 0, 0, 0.54) !important;
+  --mdc-dialog-container-color: rgb(16 16 30 / 81%) !important;
+  color: #afb2d6 !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__content {
+  color: #afb2d6 !important;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__title {
+  color: rgb(66 151 41) !important;
+}
+
+.mat-mdc-tab:not(.mat-mdc-tab-disabled) .mdc-tab__text-label, .mat-mdc-tab-link:not(.mat-mdc-tab-disabled) .mdc-tab__text-label {
+  color: rgb(83 87 163);
+}
+
+.mat-expansion-panel {
+  background: #141525;
+  // background: #12131f;
+  color: rgb(63 81 181);
+}
+
+.mat-expansion-panel-header-title {
+  color: rgb(175 178 214);
+}
+
+.mat-expansion-panel-header-description {
+  flex-grow: 2;
+  color: #5357a3;
+}
+
+.mat-expansion-panel:not(.mat-expanded):not([aria-disabled=true]) .mat-expansion-panel-header:hover {
+    background: #141525;
+}
+
+.mat-mdc-tab-header-pagination-chevron {
+  border-color: #afb2d6;
+}
+
+.mat-mdc-select-value {
+  color: rgb(124 130 235);
+}
+
+.cdk-overlay-pane:not(.mat-mdc-select-panel-above) .mdc-menu-surface.mat-mdc-select-panel {
+  background-color: #17182c !important;
+}
+
+.mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+  color: #c4c7ef !important;
+}
+
+.mat-mdc-standard-chip {
+  --mdc-chip-elevated-container-color: #232542;
+}
+
+.centered-loading-spinner{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mat-mdc-standard-chip.mat-accent.mat-mdc-chip-selected, .mat-mdc-standard-chip.mat-accent.mat-mdc-chip-highlighted {
+  --mdc-chip-elevated-container-color: #44818f;
+}
+
+.mdc-text-field--disabled.mdc-text-field--filled {
+  background-color: #2a2c52 !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #12131f;
+}
+
+
+.mat-step-header .mat-step-label.mat-step-label-active {
+  color: rgb(175 178 214) !important;
+}
+
+.mat-mdc-button:not(:disabled) {
+  color: #333ccb !important;
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: rgb(175 175 203) !important;
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
+  color: rgb(124 130 235) !important;
+}
+
+.mat-step-header .mat-step-label, .mat-step-header .mat-step-optional {
+  color: rgb(63 65 112) !important;
+}
+
+.cdk-overlay-pane:not(.mat-mdc-autocomplete-panel-above) .mdc-menu-surface.mat-mdc-autocomplete-panel {
+  background-color: #141525ed !important;
+  color: rgb(175 175 203) !important;
+}
+
+ .mdc-menu-surface.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
+  background-color: #141525 !important;
+  color: rgb(175 175 203) !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: rgb(175 175 203) !important;
+}
+
+.mat-button-toggle-standalone:not([class*=mat-elevation-z]), .mat-button-toggle-group:not([class*=mat-elevation-z]) {
+  box-shadow: 0px 3px 1px -2px rgb(63 81 181), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%) !important;
+}
+
+.mat-button-toggle {
+  color: rgb(44 54 112 / 77%) !important;
+  background-color: #17182c !important;
+}
+
+.mat-button-toggle-checked {
+  //background-color: #12131f !important;
+  background-color: #17182c !important;
+  color: rgb(51 60 203) !important;
+}
+
+.mat-expansion-panel-body {
+  padding: 0 0px 0px !important;
+}
+
+

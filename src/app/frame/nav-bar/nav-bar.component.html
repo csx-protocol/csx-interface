@@ -1,0 +1,109 @@
+<mat-toolbar class="mat-elevation-z6 toolbarBg toolbarTextColor">
+  <!-- <button mat-icon-button> -->
+   <!-- <mat-icon mat-button [matMenuTriggerFor]="navMenu">menu</mat-icon> -->
+
+   <!-- <mat-menu #navMenu="matMenu" class="backgroundColor">
+    <button class="toolbarTextColor" mat-menu-item>Home</button>
+    <button class="toolbarTextColor" mat-menu-item>My Contract</button>
+  </mat-menu> -->
+ <!-- </button> -->
+ <button routerLink="/" mat-stroked-button >
+  <span class="mat-button-wrapper" style="display: flex; align-items: center;">
+  <img  height="55" src="../../../assets/csx-logo.png" class="skins-market-logo">
+  <!-- <span style="font-size: 13px; padding: .5rem;"><h1><b>CSX.gg</b></h1></span> -->
+</span></button>
+<span>
+ <button style="margin: 1%;" mat-stroked-button [matMenuTriggerFor]="menu">About</button>
+</span>
+
+
+ <span class="example-spacer"></span>
+
+ <!-- -->
+ <!-- -->
+ <!-- -->
+
+ <!-- x -->
+ <button mat-icon-button (click)="onNotiBellClick()" [matMenuTriggerFor]="notisMenu"  aria-label="Example icon-button with a menu">
+  <mat-icon matBadge="{{unreadNotifications}}" [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">notifications</mat-icon>
+
+</button>
+
+<mat-menu #menu="matMenu" class="backgroundColor">
+  <a style="text-decoration: none;" href="https://github.com/skinsmarket" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Protocol</p></button></a>
+  <a style="text-decoration: none;" href="https://docs.skinsmarket.gg" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Docs</p></button></a>
+  <a style="text-decoration: none;" href="https://gov.skinsmarket.gg" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Governance</p></button></a>
+</mat-menu>
+<mat-menu #notisMenu="matMenu" class="backgroundColor">
+  <mat-list>
+    <p style="font-size: 16px; margin: initial; margin-bottom: 10px;" class="toolbarTextColor">    Notifications</p>
+      <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
+    <span *ngFor="let notice of this.notificationsService.notifications">
+
+      <br>
+      <mat-list-item>
+       <p style="font-size: 12px;" class="toolbarTextColor">{{notice.message}}</p>
+       <div *ngIf="notice.link"><a href="{{notice.link}}" target="_blank"><p style="font-size: 14px;">({{notice.linkText}}).</p></a></div>
+      </mat-list-item>
+      <br>
+      <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
+    </span>
+    <span *ngIf="this.notificationsService.notifications.length == 0">
+      <mat-list-item> <p  class="toolbarTextColor">nothing 👀 here</p> </mat-list-item>
+    </span>
+
+  </mat-list>
+</mat-menu>
+ <!-- x -->
+
+<!-- -->
+
+
+ <button *ngIf="!this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnect" aria-label="Example icon-button with a menu">
+  <mat-icon mat-button matBadge="X" matBadgeColor="warn">wallet</mat-icon>
+</button>
+
+<button *ngIf="this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
+  <mat-icon mat-button matBadge="&#x2713;" matBadgeColor="primary">wallet</mat-icon>
+</button>
+
+<button (click)="onIncorrectNetworkClick()" *ngIf="this._web3.webUser.isWrongChain && this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9);">Incorrect Network</button>
+
+<a href="https://metamask.io/" target="_blank" *ngIf="!this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9); font-size: 12px;">No Wallet Found</a>
+
+<mat-menu #walletMenuConnect="matMenu" class="backgroundColor" style="margin: 5%;">
+  <button (click)="connectWallet()" mat-menu-item><p class="toolbarTextColor">Connect Wallet</p></button>
+</mat-menu>
+<mat-menu #walletMenuConnected="matMenu" class="backgroundColor" style="margin: 5%;">
+  <p style="font-size: 16px; margin: initial; margin-bottom: 10px;" class="toolbarTextColor">    Wallet</p>
+      <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
+
+  <p class="toolbarTextColor " style="font-size: 14px; padding-left: 10px;" >{{this._web3.webUser.shortAddy}}  </p>
+  <p class="toolbarTextColor " style="font-size: 12px; padding-left: 10px;">ETH: {{this._web3.webUser.balanceEth}}</p>
+  <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
+
+  <p class="toolbarTextColor " style="font-size: 12px; padding-left: 10px;">Listing(s): 0</p>
+</mat-menu>
+<!-- -->
+
+</mat-toolbar>
+
+
+
+<!-- <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+  <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>dialpad</mat-icon>
+    <span>Redial</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>voicemail</mat-icon>
+    <span>Check voice mail</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Disable alerts</span>
+  </button>
+</mat-menu> -->
