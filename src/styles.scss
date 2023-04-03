@@ -232,3 +232,11 @@ mat-dialog-container {
 }
 
 
+.mat-badge-medium.mat-badge-above .mat-badge-content {
+  top: 1px !important;
+}
+
+.mat-badge-medium.mat-badge-overlap.mat-badge-after .mat-badge-content {
+  right: 0px !important;
+  font-size: 14px !important;
+}

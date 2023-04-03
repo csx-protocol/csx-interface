@@ -24,10 +24,9 @@
  <!-- -->
 
  <!-- x -->
- <button mat-icon-button (click)="onNotiBellClick()" [matMenuTriggerFor]="notisMenu"  aria-label="Example icon-button with a menu">
-  <mat-icon matBadge="{{unreadNotifications}}" [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">notifications</mat-icon>
-
-</button>
+ <button mat-icon-button (click)="onNotiBellClick()" [matMenuTriggerFor]="notisMenu" matBadge="{{unreadNotifications}}" [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">
+  <mat-icon>notifications</mat-icon>
+ </button>
 
 <mat-menu #menu="matMenu" class="backgroundColor">
   <a style="text-decoration: none;" href="https://github.com/csx-protocol" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Protocol</p></button></a>
@@ -59,12 +58,12 @@
 <!-- -->
 
 
- <button *ngIf="!this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnect" aria-label="Example icon-button with a menu">
-  <mat-icon mat-button matBadge="X" matBadgeColor="warn">wallet</mat-icon>
+ <button matBadge="X" matBadgeColor="warn" *ngIf="!this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnect" aria-label="Example icon-button with a menu">
+  <mat-icon mat-button >wallet</mat-icon>
 </button>
 
-<button *ngIf="this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
-  <mat-icon mat-button matBadge="&#x2713;" matBadgeColor="primary">wallet</mat-icon>
+<button matBadge="&#x2713;" matBadgeColor="primary" *ngIf="this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
+  <mat-icon mat-button >wallet</mat-icon>
 </button>
 
 <button (click)="onIncorrectNetworkClick()" *ngIf="this._web3.webUser.isWrongChain && this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9);">Incorrect Network</button>
