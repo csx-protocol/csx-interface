@@ -23,10 +23,10 @@ import { BuyDialog, FloatValues } from './utils/buy.dialog';
       state('in', style({ opacity: 1, transform: 'scale(1)' })),
       transition('void => *', [
         style({ opacity: 0, transform: 'scale(0.5)' }),
-        animate(500),
+        animate(150),
       ]),
       transition('* => void', [
-        animate(500, style({ opacity: 0, transform: 'scale(0.5)' })),
+        animate(150, style({ opacity: 0, transform: 'scale(0.5)' })),
       ]),
     ]),
   ],
