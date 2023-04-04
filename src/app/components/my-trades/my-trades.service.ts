@@ -30,6 +30,7 @@ export class MyTradesService {
   //^pendings: any;
 
   selectedRoleFilter: TradeRole = TradeRole.ANY;
+  selectedStatusFilter: any = 'ANY';
   constructor(public web3: Web3Service) {
     this.init();
   }
@@ -60,11 +61,11 @@ export class MyTradesService {
           items: [],
         });
 
-        const pendings = this.userUIs.filter(
-          (ui) => ui.status == TradeStatus.Pending
+        const forSale = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.ForSale
         );
-        this.filterToData.set('PENDING', {
-          UIs: pendings,
+        this.filterToData.set('FOR_SALE', {
+          UIs: forSale,
           items: [],
         });
 
@@ -76,19 +77,35 @@ export class MyTradesService {
           items: [],
         });
 
-        const committeds = this.userUIs.filter(
-          (ui) => ui.status == TradeStatus.Committed
+        const buyerCommitted = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.BuyerCommitted
         );
-        this.filterToData.set('COMMITTED', {
-          UIs: committeds,
+        this.filterToData.set('BUYER_COMMITTED', {
+          UIs: buyerCommitted,
           items: [],
         });
 
-        const accepted = this.userUIs.filter(
-          (ui) => ui.status == TradeStatus.Accepted
+        const buyerCancelled = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.BuyerCancelled
         );
-        this.filterToData.set('ACCEPTED', {
-          UIs: accepted,
+        this.filterToData.set('BUYER_CANCELLED', {
+          UIs: buyerCancelled,
+          items: [],
+        });
+
+        const sellerCommitted = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.SellerCommitted
+        );
+        this.filterToData.set('SELLER_COMMITTED', {
+          UIs: sellerCommitted,
+          items: [],
+        });
+
+        const sellerCancelledAfterBuyerCommitted = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.SellerCancelledAfterBuyerCommitted
+        );
+        this.filterToData.set('SELLER_CANCELLED_AFTER_BUYER_COMMITTED', {
+          UIs: sellerCancelledAfterBuyerCommitted,
           items: [],
         });
 
@@ -123,6 +140,25 @@ export class MyTradesService {
           UIs: clawbacked,
           items: [],
         });
+
+        // All Statues that are 'on-going'.
+        const groupOnGoing = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.ForSale || ui.status == TradeStatus.BuyerCommitted || ui.status == TradeStatus.SellerCommitted || ui.status == TradeStatus.Disputed
+        );
+        this.filterToData.set('groupOnGoing', {
+          UIs: groupOnGoing,
+          items: [],
+        });
+
+        // All Statues that has 'ended'.
+        const groupEnded = this.userUIs.filter(
+          (ui) => ui.status == TradeStatus.SellerCancelled || ui.status == TradeStatus.BuyerCancelled  || ui.status == TradeStatus.SellerCancelledAfterBuyerCommitted  || ui.status == TradeStatus.Completed || ui.status == TradeStatus.Resolved || ui.status == TradeStatus.Clawbacked
+        );
+        this.filterToData.set('groupEnded', {
+          UIs: groupEnded,
+          items: [],
+        });
+
       }
       console.log('userUIs', this.userUIs);
       this.userItems = await this._loadFirstStep('ANY');
@@ -153,6 +189,70 @@ export class MyTradesService {
     this.isLoading = false;
   }
 
+  isOnGoingSelected: boolean = false;
+  isEndedSelected: boolean = false;
+  async onStatusFilterChange(event: any) {
+    this.isLoading = true;
+    //this.isLoadingChip = true;
+    const selectedFilter = event.value;
+    this.selectedStatusFilter = selectedFilter;
+    if(this.selectedStatusFilter == 'groupOnGoing'){
+      this.isOnGoingSelected = true;
+    } else {
+      this.isOnGoingSelected = false;
+    }
+    if(this.selectedStatusFilter == 'groupEnded'){
+      this.isEndedSelected = true;
+    } else {
+      this.isEndedSelected = false;
+    }
+
+    // Update filtered items based on selected filter
+    let _filteredItems = [];
+    let _filteredLength: number = 0;
+    if (selectedFilter !== undefined) {
+      console.log(
+        'selectedRoleFilter',
+        this.selectedRoleFilter,
+        'selectedStatusFilter',
+        selectedFilter,
+        this.filterToData.get(this.selectedStatusFilter)?.UIs
+      );
+    }
+    if (selectedFilter !== undefined) {
+      _filteredItems = await this._loadFirstStep(selectedFilter);
+      _filteredLength = _filteredItems.length;
+    } else {
+      _filteredItems = await this._loadFirstStep(TradeRole.ANY);
+      _filteredLength = _filteredItems.length;
+    }
+
+    //IsMoreToLoad based on the total number of items available for the current filter vs what have been shown (not using this.totalUserTrades)
+    this.hasMoreItemsToLoad =
+      this.hasMoreItemsToLoad &&  _filteredLength < this.totalUserTrades;
+
+      this.userItems = _filteredItems;
+  }
+
+  async onStatusFilterChange2(event: any) {
+    this.isLoading = true;
+    console.log('MY-TRADES: onStatusFilterChange', event);
+    const _selectedStatusFilter = event.value;
+    let _filteredItems = [];
+    console.log('MY-TRADES: _selecteSdtatusFilter', _selectedStatusFilter);
+    if (_selectedStatusFilter !== undefined) {
+      _filteredItems = await this._loadFirstStep(_selectedStatusFilter);
+      console.log('MY-TRADES: _filteredItems', _filteredItems);
+    } else {
+      _filteredItems = await this._loadFirstStep(TradeRole.ANY);
+    }
+    this.userItems = _filteredItems;
+    // Set hasMoreItemsToLoad based on the total number of items available for the current filter
+    this.hasMoreItemsToLoad =
+      this.hasMoreItemsToLoad && this.userItems.length < this.totalUserTrades;
+  }
+
+
   async _loadFirstStep(selectedFilter: TradeRole | TradeStatus | string) {
     this.isLoading = true;
     let _filteredItems = [];
@@ -166,7 +266,7 @@ export class MyTradesService {
       if (hasKey) {
         //this.userUIs = this.filterToData.get(selectedFilter.filter as string)!.UIs;
         const filteredObject = this.filterToData.get(selectedFilter as string);
-        console.log('filteredObject', filteredObject);
+        //console.log('filteredObject', filteredObject);
 
         if (
           filteredObject &&
@@ -180,8 +280,8 @@ export class MyTradesService {
           }
         } else
         if (filteredObject && filteredObject?.UIs) {
-          console.log('MY-TRADES: Dont have items in map');
-          console.log('this.filterToData', this.filterToData);
+          //console.log('MY-TRADES: Dont have items in map');
+          //console.log('this.filterToData', this.filterToData);
 
           for (const item of filteredObject.UIs) {
             if (_filteredItems.length >= this.step) {
@@ -210,14 +310,10 @@ export class MyTradesService {
         if (filteredObject)
           this.hasMoreItemsToLoad =
             _filteredItems.length < filteredObject.UIs.length;
+      } else {
+        console.log('MY-TRADES: selectedFilter is not a key in the map');
       }
-
-      //
-    } // else if (isTradeRole(selectedFilter)) {
-    //   console.log('isTradeRole selectedFilter', selectedFilter);
-    // } else if (isTradeStatus(selectedFilter)) {
-    //   console.log('isTradeStatus selectedFilter', selectedFilter);
-    // }
+    } 
     this.isLoading = false;
     return _filteredItems;
   }
@@ -370,21 +466,25 @@ export class MyTradesService {
 
   private __getStatusString(status: TradeStatus | string): string {
     switch (status) {
-      case '0' || TradeStatus.Pending:
-        return 'Pending';
+      case '0' || TradeStatus.ForSale:
+        return 'For Sale';
       case '1' || TradeStatus.SellerCancelled:
         return 'Seller Cancelled';
-      case '2' || TradeStatus.Committed:
-        return 'Committed';
-      case '3' || TradeStatus.Accepted:
-        return 'Accepted';
-      case '4' || TradeStatus.Completed:
+      case '2' || TradeStatus.BuyerCommitted:
+        return 'Buyer Committed';
+      case '3' || TradeStatus.BuyerCancelled:
+        return 'Buyer Cancelled';
+      case '4' || TradeStatus.SellerCommitted:
+        return 'Seller Committed';
+      case '5' || TradeStatus.SellerCancelledAfterBuyerCommitted:
+        return 'Seller Cancelled After Buyer Committed';        
+      case '6' || TradeStatus.Completed:
         return 'Completed';
-      case '5' || TradeStatus.Disputed:
+      case '7' || TradeStatus.Disputed:
         return 'Disputed';
-      case '6' || TradeStatus.Resolved:
+      case '8' || TradeStatus.Resolved:
         return 'Resolved';
-      case '7' || TradeStatus.Clawbacked:
+      case '9' || TradeStatus.Clawbacked:
         return 'Clawbacked';
       default:
         return 'ERROR';

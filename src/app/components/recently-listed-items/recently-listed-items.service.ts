@@ -257,7 +257,7 @@ export class RecentlyListedItemsService {
     if (!this.initialized) {
       this.initialized = true;
       const [pendings, totalContracts] = await this.web3.getTradeIndexesByStatus(
-        TradeStatus.Pending,
+        TradeStatus.ForSale,
         0,
         0
       );

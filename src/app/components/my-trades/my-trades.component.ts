@@ -11,12 +11,13 @@ export enum TradeRole {
   ANY = 'ANY'
 }
 
-// Trade Status
 export enum TradeStatus {
-  Pending,
+  ForSale,
   SellerCancelled,
-  Committed,
-  Accepted,
+  BuyerCommitted,
+  BuyerCancelled,
+  SellerCommitted,
+  SellerCancelledAfterBuyerCommitted,
   Completed,
   Disputed,
   Resolved,
