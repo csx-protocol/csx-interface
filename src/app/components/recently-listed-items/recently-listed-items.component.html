@@ -118,7 +118,7 @@
 
     <!---->
     <mat-grid-list *ngIf="this.recentlyListed.isLoading" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
-      <mat-grid-tile style="overflow: visible;" *ngFor="let amount of [0,1,2,3,4]" >
+      <mat-grid-tile style="overflow: visible;" *ngFor="let amount of createRangeForSkeletonLoader(this.recentlyListed.step)" >
 
           <mat-card [@cardAnimation]="state"  class="item-card background" style="max-height: 462.5px; min-width: 225px;">
             <mat-card-header>
