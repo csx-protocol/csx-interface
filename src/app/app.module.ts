@@ -58,8 +58,10 @@ import { RecentlyListedItemsComponent } from './components/recently-listed-items
 import { FloatBarComponent } from './components/float-bar/float-bar.component';
 import { BuyDialog } from './components/recently-listed-items/utils/buy.dialog';
 import { MyTradesComponent } from './components/my-trades/my-trades.component';
-import { CommittedDialog } from './components/my-trades/dialogs/Committed/committed.dialog';
+import { SellerCommittedDialog } from './components/my-trades/dialogs/seller-committed/seller-committed.dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { DialogComponent } from './components/my-trades/dialogs/dialog/dialog.component';
+import { ForSaleDialog } from './components/my-trades/dialogs/for-sale/for-sale.dialog';
 
 
 @NgModule({
@@ -73,8 +75,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FloatBarComponent,
     //Make own modules later
     BuyDialog,
-    CommittedDialog,
-    MyTradesComponent // recently listed item comp
+    SellerCommittedDialog,
+    ForSaleDialog,
+    MyTradesComponent,
+    DialogComponent // recently listed item comp
   ],
   imports: [
     BrowserModule,
