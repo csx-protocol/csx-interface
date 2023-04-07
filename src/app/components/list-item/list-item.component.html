@@ -77,12 +77,18 @@
           <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('required')">
             Inspect link is <strong>required</strong>
           </mat-error>
+          
           <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('pattern')">
             Inspect link must start with <strong>"steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20..."</strong>
           </mat-error>
+          <!--- Show hint always -->
+        
 
         </mat-form-field>
-
+        <div style="padding-left: 15px;">
+          <a href="https://steamcommunity.com/groups/CSXgg" target="_blank">How to get inspect link?</a>
+          <br><br>
+        </div>
         <!-- <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
           <mat-label>Item Name</mat-label>
           <input matInput formControlName="itemNameControl" [matAutocomplete]="auto">
