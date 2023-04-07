@@ -21,7 +21,7 @@ export class BuyDialog {
   isInMinutes: boolean = false;
 
 
-  item: Item
+  item: Item;
 
 
   firstFormGroup: FormBuilder | any;
