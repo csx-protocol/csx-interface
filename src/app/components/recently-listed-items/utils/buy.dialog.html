@@ -9,16 +9,18 @@
   <div style="text-align: center;">
     <h3>{{item.itemMarketName}}</h3>
     <mat-card>
-      <mat-card-content>
+      <mat-card-content style="display: flex; flex-direction: column; align-items: center;">
         <img style="margin: 10%; max-width: 50%;" mat-card-image [src]="item.itemImageUrl">
-        <div style="position: absolute; bottom: 5%; left: 0;" *ngIf="item.stickers">
-          <span *ngFor="let sticker of item.stickers">
-            <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="500" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="25%" alt="{{item.itemMarketName}}">
-          </span>
+        <div style="position: relative; bottom: 5%; white-space: nowrap; z-index: 999; display: flex; justify-content: center;" *ngIf="item.stickers">
+            <span *ngFor="let sticker of item.stickers">
+                <img style="margin-left: 2%; max-width: 50px;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="500" class="thumbnail" mat-card-image [src]="sticker.imageLink" alt="{{item.itemMarketName}}">
+            </span>
         </div>
-      </mat-card-content>
+    </mat-card-content>
+    
+      
      
-        <app-float-bar [min]="item.float[1]" [max]="item.float[2]" [value]="item.float[0]" ></app-float-bar>
+      <app-float-bar [min]="item.float[1]" [max]="item.float[2]" [value]="item.float[0]" ></app-float-bar>
      
     </mat-card>
 
