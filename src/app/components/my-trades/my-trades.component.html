@@ -43,15 +43,19 @@
       <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
       <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
       <td class="tdColor">{{userInteraction.etherPrice}} ETH</td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Pending'">
+      <!-- <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
         <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
+      </td> -->
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
+        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(244 67 54 / 38%) !important;">Cancel Order</button>
       </td>
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Committed'">
-        <button (click)="openDialog()" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
+        <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
       </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Committed'">
-        <button mat-button color="warn" style="color: rgb(244 67 54 / 38%) !important;">Open Dispute</button>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Committed'">
+        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(244 67 54 / 38%) !important;">Cancel Order</button>
       </td>
+     
     </tr>
 
      <tr *ngIf="this.myTradesService.isLoading">

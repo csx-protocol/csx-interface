@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
-import { CommittedDialog } from './dialogs/Committed/committed.dialog';
 import { MyTradesService } from './my-trades.service';
+import { DialogComponent } from './dialogs/dialog/dialog.component';
+import { MyTradeItem } from './dialogs/my-trade-item.interface';
 
 // Role of the trade
 export enum TradeRole {
@@ -69,8 +70,10 @@ export class MyTradesComponent {
     });
   }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(CommittedDialog, {});
+  openDialog(myTradeItem: MyTradeItem): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: myTradeItem
+    });
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
