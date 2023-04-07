@@ -120,6 +120,10 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
       : 5;
   }
 
+  createRangeForSkeletonLoader(n: number): number[] {
+    return Array.from({ length: n }, (_, i) => i);
+  }
+
   // openDialog1(name: string, price: string, sellerAddy: string, avgDeliveryTime: string, floats: FloatValues, imageLink: string): void {
   //   // Open dialog with name:
   //   const dialogRef = this.dialog.open(BuyDialog, {
