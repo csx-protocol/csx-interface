@@ -15,6 +15,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { BuyDialog } from './utils/buy.dialog';
 import { Item } from '../../shared/item.interface';
 
+enum ListedItemsPixelBreakPoints {
+  one = 499,
+  two = 736,
+  three = 970,
+  four = 1200,
+}
+
 @Component({
   selector: 'app-recently-listed-items',
   templateUrl: './recently-listed-items.component.html',
@@ -74,56 +81,34 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
   }
 
   initBreakpoint() {
-    this.breakpoint =
-      window.innerWidth <= 499
-        ? 1
-        : window.innerWidth <= 736
-        ? 2
-        : window.innerWidth <= 970
-        ? 3
-        : window.innerWidth <= 1200
-        ? 4
-        : 5;
-    this.recentlyListed.step =
-      window.innerWidth <= 499
-        ? 1
-        : window.innerWidth <= 736
-        ? 2
-        : window.innerWidth <= 970
-        ? 3
-        : window.innerWidth <= 1200
-        ? 4
-        : 5;
+    this.breakpoint = this._getBreakpoint(window.innerWidth);
+    this.recentlyListed.step = this._getBreakpoint(window.innerWidth);
   }
 
   onResize(event: EventTarget | null | any) {
     if (event)
-      this.breakpoint =
-        event.target.innerWidth <= 499
+      this.breakpoint = this._getBreakpoint(event.target.innerWidth);
+      this.recentlyListed.step = this._getBreakpoint(event.target.innerWidth);
+  }
+
+  private _getBreakpoint(innerWidth: number): number {
+    const breakpoint =    
+        innerWidth <= ListedItemsPixelBreakPoints.one
           ? 1
-          : event.target.innerWidth <= 736
+          : innerWidth <= ListedItemsPixelBreakPoints.two
           ? 2
-          : event.target.innerWidth <= 970
+          : innerWidth <= ListedItemsPixelBreakPoints.three
           ? 3
-          : event.target.innerWidth <= 1200
+          : innerWidth <= ListedItemsPixelBreakPoints.four
           ? 4
           : 5;
-
-      this.recentlyListed.step = event.target.innerWidth <= 499
-      ? 1
-      : event.target.innerWidth <= 736
-      ? 2
-      : event.target.innerWidth <= 970
-      ? 3
-      : event.target.innerWidth <= 1200
-      ? 4
-      : 5;
+    return breakpoint;
   }
 
   createRangeForSkeletonLoader(n: number): number[] {
     return Array.from({ length: n }, (_, i) => i);
   }
-  
+
   openDialog(_item: Item): void {   
     const dialogRef = this.dialog.open(BuyDialog, {
       data: _item,
