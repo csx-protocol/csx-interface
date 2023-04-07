@@ -1,11 +1,14 @@
 import { Component, Inject, Input } from "@angular/core";
+import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Item } from "../../../shared/item.interface";
+import { Web3Service } from "src/app/shared/web3.service";
 
-export interface FloatValues {
-  min: number;
-  max: number;
-  float: number;
-}
+// export interface FloatValues {
+//   min: number;
+//   max: number;
+//   float: number;
+// }
 
 @Component({
   selector: 'buy-dialog',
@@ -13,27 +16,35 @@ export interface FloatValues {
   styleUrls: ['./buy.dialog.scss'],
 })
 export class BuyDialog {
-  name: string;
-  price: string;
-  sellerAddy: string;
+
   avgDeliveryTime: string;
   isInMinutes: boolean = false;
-  floats: FloatValues = {
-    min: 0,
-    max: 0,
-    float: 0,
-  };
-  imageLink: string;
+
+
+  item: Item
+
+
+  firstFormGroup: FormBuilder | any;
+
+  secondFormGroup = this._formBuilder.group({
+    secondCtrl: ['', /*Validators.required*/],
+  });
+  isLinear = true;
+
   constructor(
     public dialogRef: MatDialogRef<BuyDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any, private _formBuilder: FormBuilder, private web3: Web3Service
   ) {
-    this.name = this.data.name;
-    this.price = this.data.price;
-    this.sellerAddy = this.data.sellerAddy;
-    const epochTime = this.data.avgDeliveryTime;
-    this.floats = this.data.floats;
-    this.imageLink = this.data.imageLink;
+
+    this.firstFormGroup = this._formBuilder.group({
+      firstCtrl: ['', Validators.pattern(
+        /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+&token=.+$/
+      ),],
+    });
+
+    this.item = data;
+
+    const epochTime: number = parseInt(this.item.averageSellerDeliveryTime);
 
     //If average delivery time is less than 1 hour, display in minutes
     if (epochTime < 3600) {
@@ -49,7 +60,15 @@ export class BuyDialog {
     this.dialogRef.close();
   }
 
-  // setName() {
-  //   this.data.name = this.name;
-  // }
+  isBuyNowClicked: boolean = false;
+  onBuyNowClick(): void {
+    this.isBuyNowClicked = true;
+  }
+
+  //isCheckOutClicked: boolean = false;
+  onCheckOutClick(): void {
+    //this.isCheckOutClicked = true;
+    //this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)"
+  }
+
 }

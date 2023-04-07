@@ -3,21 +3,117 @@
 
 
 <mat-dialog-content >
+  <button mat-icon-button mat-dialog-close style="position: absolute; top: 5px; right: 5px;">
+    <mat-icon>close</mat-icon>
+  </button>
   <div style="text-align: center;">
-    <img style="margin: 10%; max-width: 50%;" mat-card-image [src]="imageLink">
+    <h3>{{item.itemMarketName}}</h3>
+    <mat-card>
+      <mat-card-content>
+        <img style="margin: 10%; max-width: 50%;" mat-card-image [src]="item.itemImageUrl">
+        <div style="position: absolute; bottom: 5%; left: 0;" *ngIf="item.stickers">
+          <span *ngFor="let sticker of item.stickers">
+            <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="500" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="25%" alt="{{item.itemMarketName}}">
+          </span>
+        </div>
+      </mat-card-content>
+     
+        <app-float-bar [min]="item.float[1]" [max]="item.float[2]" [value]="item.float[0]" ></app-float-bar>
+     
+    </mat-card>
 
+    <div style="height: 10px;"></div>
+  
+  <mat-grid-list *ngIf="!isBuyNowClicked" cols="2" rowHeight="3:1">
+    <mat-grid-tile>
+      <div>
+        <p><b>Price</b></p>
+        <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">{{item.etherPrice}} ETH</p>
+      </div>      
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div>
+        <p><b>Seller</b></p>
+        <p matTooltip="{{item.seller}}">{{item.trimmedAddress}}</p>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div>
+        <p><b>Pattern Index</b></p>
+        <p>(To be added)</p>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div>
+        <p><b>Avg delivery</b></p>
+        <p *ngIf="avgDeliveryTime != '0'" matTooltip="Average delivery time from seller">
+          {{avgDeliveryTime}} <span *ngIf="isInMinutes">minutes</span> <span *ngIf="!isInMinutes">hours</span>
+        </p>
+        <p *ngIf="avgDeliveryTime == '0'" matTooltip="Seller has no average delivery time yet.">
+          N/A
+        </p>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <!-- spacer -->
+  <div style="height: 10px;"></div>
 
-  <h3>{{name}}</h3>
-  <div style="max-width: 525px;">
-    <app-float-bar [min]="floats.min" [max]="floats.max" [value]="floats.float" ></app-float-bar>
-  </div>
-  <p>Price: {{price}} ETH</p>
-  <p>Seller: {{sellerAddy}}</p>
-  <p matTooltip="Average delivery time from seller">Avg delivery: {{avgDeliveryTime}} <span *ngIf="isInMinutes">minutes</span> <span *ngIf="!isInMinutes">hours</span></p>
+  <mat-stepper hide-header *ngIf="isBuyNowClicked" [linear]="isLinear" #stepper>
+  <mat-step [stepControl]="firstFormGroup">
+    <form [formGroup]="firstFormGroup">
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <p style="color: red" matTooltip="Ensure Steam Inventory is Public during trades to avoid unexpected results."><b>Warning: Set Steam Inventory to Public for trade success.</b></p>
+      <mat-form-field style="width: 100%;" appearance="fill" matTooltipPosition="above" matTooltip="Make sure your Steam Inventory has visibility set to Public at all times during the trade or the trade outcome might not end as expected.">
+        <mat-label><a href="http://" target="_blank" rel="noopener noreferrer">Trade Link Url?</a>:</mat-label>
+        <!-- Give heads up warning that they need to have inventory set to public -->
+        <input matInput formControlName="firstCtrl" required>
+        <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('required')">
+          Trade link is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('pattern')">
+          Trade link must be <strong>valid</strong>
+        </mat-error>
+      </mat-form-field>
+      <div>
+        <br>
+        <button mat-button color="primary" style="font-size: large; color: green !important; min-width: 250px;" matStepperNext cdkFocusInitial (click)="onCheckOutClick()">Checkout</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="secondFormGroup" label="Sign Wallet TX">
+    <div style="height: 20px;"></div>
+    <div  class="centered-loading-spinner">
+      <mat-progress-spinner
+      color="primary"
+      mode="indeterminate">
+    </mat-progress-spinner>
+    <p class="example-margin" style="margin: 1rem;">Open MetaMask and Sign TX.</p>
+    </div>
+    <!-- <button mat-button matStepperPrevious>Back</button>
+    <button mat-button matStepperNext>Next</button> -->
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-stepper>
+      <!-- <p>Price: {{price}} ETH</p>
+      <p>Seller: {{sellerAddy}}</p>
+      <p *ngIf="avgDeliveryTime != '0'" matTooltip="Average delivery time from seller">
+        Avg delivery: {{avgDeliveryTime}} <span *ngIf="isInMinutes">minutes</span> <span *ngIf="!isInMinutes">hours</span>
+      </p>
+      <p *ngIf="avgDeliveryTime == '0'" matTooltip="Seller has no average delivery time.">
+        Avg delivery: N/A
+      </p> -->
+
  </div>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button color="primary" mat-dialog-close>Cancel</button>
-  <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Buy Now</button>
+<mat-dialog-actions align="center" *ngIf="!isBuyNowClicked">
+  <button mat-button color="primary" style="font-size: large; color: green !important; min-width: 250px;" (click)="onBuyNowClick()" cdkFocusInitial>BUY NOW</button>
 </mat-dialog-actions>
 
+<div style="height: 20px;"></div>
