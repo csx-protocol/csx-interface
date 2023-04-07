@@ -46,7 +46,7 @@
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Pending'">
         <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
       </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Committed'">
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Committed'">
         <button (click)="openDialog()" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
       </td>
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Committed'">
