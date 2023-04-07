@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     tradeFactory: {
-      address: "0xcCd04FB4A854e4aDB63Be5de4D3332bEF9BC1A07",
+      address: "0xc83729093587c4451e1fFB9E79fc06a4C51b8d51",
       abi: [
         {
           "inputs": [
@@ -1274,7 +1274,7 @@ export const environment = {
       ],
     },
     keepersContract: {
-      address: '0x3BBA65B3e0A657b829D50593B2782C759F28A489',
+      address: '0xB57A5a8b834b7C431D92829347F8580c1270e18C',
       abi: [
         {
           "inputs": [
@@ -1461,7 +1461,7 @@ export const environment = {
       ],
     },
     usersContract: {
-      address: '0x81e15BBd8297572D69708aABE1981301c1b80542',
+      address: '0x931cFC25A448f90eB02a878EC39FB45c082b5ea9',
       abi: [
         {
           "inputs": [
