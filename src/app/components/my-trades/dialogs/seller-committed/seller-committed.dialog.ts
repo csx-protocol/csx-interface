@@ -2,13 +2,13 @@ import { Component, Inject } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 @Component({
-  selector: 'trades-committed-dialog',
-  templateUrl: './committed.dialog.html',
-  styleUrls: ['./committed.dialog.scss'],
+  selector: 'trades-seller-committed-dialog',
+  templateUrl: './seller-committed.dialog.html',
+  styleUrls: ['./seller-committed.dialog.scss'],
 })
-export class CommittedDialog {
+export class SellerCommittedDialog {
   constructor(
-    public dialogRef: MatDialogRef<CommittedDialog>,
+    public dialogRef: MatDialogRef<SellerCommittedDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
 
