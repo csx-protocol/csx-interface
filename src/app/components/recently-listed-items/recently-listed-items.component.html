@@ -102,7 +102,7 @@
           <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: {{item.etherPrice}} ETH</p>
         </mat-card-content>
         <mat-card-actions>
-          <button (click)="openDialog(item.itemMarketName, item.etherPrice, item.trimmedAddress, item.averageSellerDeliveryTime, {min: item.float.min, max: item.float.max, float: item.float.value}, item.itemImageUrl)" mat-button color="primary">BUY</button>
+          <button (click)="openDialog(item)" mat-button color="primary">BUY</button>
           <button (click)="this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)" mat-button color="primary">DETAILS</button>
           <a matTooltip="Inspect In-Game" style="text-decoration: none;" [href]="sanitizer.bypassSecurityTrustUrl(item.inspectLink)">
             <button style="width: 10px;" mat-button color="primary">

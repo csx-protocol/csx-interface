@@ -7,12 +7,13 @@ import {
 } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { fromEvent, map } from 'rxjs';
-import { Web3Service } from 'src/app/shared/web3.service';
+import { Web3Service } from '../../shared/web3.service';
 import { CsgoItemsService } from '../../shared/csgo-items.service';
 import { RecentlyListedItemsService } from './recently-listed-items.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
-import { BuyDialog, FloatValues } from './utils/buy.dialog';
+import { BuyDialog } from './utils/buy.dialog';
+import { Item } from '../../shared/item.interface';
 
 @Component({
   selector: 'app-recently-listed-items',
@@ -98,17 +99,27 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
           : 5;
   }
 
-  openDialog(name: string, price: string, sellerAddy: string, avgDeliveryTime: string, floats: FloatValues, imageLink: string): void {
-    // Open dialog with name:
+  // openDialog1(name: string, price: string, sellerAddy: string, avgDeliveryTime: string, floats: FloatValues, imageLink: string): void {
+  //   // Open dialog with name:
+  //   const dialogRef = this.dialog.open(BuyDialog, {
+  //     data: {
+  //       name: name,
+  //       price: price,
+  //       sellerAddy: sellerAddy,
+  //       avgDeliveryTime: avgDeliveryTime,
+  //       floats: floats,
+  //       imageLink: imageLink
+  //     },
+  //   });
+
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     console.log(`Dialog result: ${result}`);
+  //   });
+  // }
+
+  openDialog(_item: Item): void {   
     const dialogRef = this.dialog.open(BuyDialog, {
-      data: {
-        name: name,
-        price: price,
-        sellerAddy: sellerAddy,
-        avgDeliveryTime: avgDeliveryTime,
-        floats: floats,
-        imageLink: imageLink
-      },
+      data: _item,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
