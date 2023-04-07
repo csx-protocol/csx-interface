@@ -9,7 +9,7 @@ export class RecentlyListedItemsService {
   isLoading: boolean = true;
   isLoadingChip: boolean = false;
   filterToData = new Map<string, FilterItemsAndIndex>();
-  step = 5;
+  step:number = 0; //= 5;
   totalContracts: number = 0;
   initialized: boolean = false;
   filteredItems: any[] | undefined = undefined;

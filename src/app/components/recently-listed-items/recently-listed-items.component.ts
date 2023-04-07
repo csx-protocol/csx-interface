@@ -69,16 +69,27 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
+    
     this.recentlyListed.initialize();
   }
 
   initBreakpoint() {
     this.breakpoint =
-      window.innerWidth <= 400
+      window.innerWidth <= 499
         ? 1
-        : window.innerWidth <= 600
+        : window.innerWidth <= 736
         ? 2
-        : window.innerWidth <= 900
+        : window.innerWidth <= 970
+        ? 3
+        : window.innerWidth <= 1200
+        ? 4
+        : 5;
+    this.recentlyListed.step =
+      window.innerWidth <= 499
+        ? 1
+        : window.innerWidth <= 736
+        ? 2
+        : window.innerWidth <= 970
         ? 3
         : window.innerWidth <= 1200
         ? 4
@@ -88,15 +99,25 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
   onResize(event: EventTarget | null | any) {
     if (event)
       this.breakpoint =
-        event.target.innerWidth <= 400
+        event.target.innerWidth <= 499
           ? 1
-          : event.target.innerWidth <= 600
+          : event.target.innerWidth <= 736
           ? 2
-          : event.target.innerWidth <= 900
+          : event.target.innerWidth <= 970
           ? 3
           : event.target.innerWidth <= 1200
           ? 4
           : 5;
+
+      this.recentlyListed.step = event.target.innerWidth <= 499
+      ? 1
+      : event.target.innerWidth <= 736
+      ? 2
+      : event.target.innerWidth <= 970
+      ? 3
+      : event.target.innerWidth <= 1200
+      ? 4
+      : 5;
   }
 
   // openDialog1(name: string, price: string, sellerAddy: string, avgDeliveryTime: string, floats: FloatValues, imageLink: string): void {
