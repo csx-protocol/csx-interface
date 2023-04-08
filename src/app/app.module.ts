@@ -60,8 +60,9 @@ import { BuyDialog } from './components/recently-listed-items/utils/buy.dialog';
 import { MyTradesComponent } from './components/my-trades/my-trades.component';
 import { SellerCommittedDialog } from './components/my-trades/dialogs/seller-committed/seller-committed.dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { DialogComponent } from './components/my-trades/dialogs/dialog/dialog.component';
+import { DialogComponent } from './components/my-trades/dialog/dialog.component';
 import { ForSaleDialog } from './components/my-trades/dialogs/for-sale/for-sale.dialog';
+import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-committed/buyer-committed.dialog';
 
 
 @NgModule({
@@ -74,11 +75,12 @@ import { ForSaleDialog } from './components/my-trades/dialogs/for-sale/for-sale.
     RecentlyListedItemsComponent,
     FloatBarComponent,
     //Make own modules later
-    BuyDialog,
-    SellerCommittedDialog,
-    ForSaleDialog,
-    MyTradesComponent,
-    DialogComponent // recently listed item comp
+    BuyDialog, // recently listed items comp
+    MyTradesComponent, // my trades comp
+    DialogComponent, // my trades comp
+    ForSaleDialog, // my trades comp
+    BuyerCommittedDialog, // my trades comp
+    SellerCommittedDialog, // my trades comp
   ],
   imports: [
     BrowserModule,
