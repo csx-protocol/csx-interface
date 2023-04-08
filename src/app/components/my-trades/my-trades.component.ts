@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { MyTradesService } from './my-trades.service';
-import { DialogComponent } from './dialogs/dialog/dialog.component';
+import { DialogComponent } from './dialog/dialog.component';
 import { MyTradeItem } from './dialogs/my-trade-item.interface';
 
 // Role of the trade
