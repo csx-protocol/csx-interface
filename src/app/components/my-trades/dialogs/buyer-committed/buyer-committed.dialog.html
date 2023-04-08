@@ -1,0 +1,39 @@
+<span *ngIf="item">
+    <span *ngIf="item.uiInfo.role === 'Buyer'">
+        <div>
+            <h1 mat-dialog-title>Buyer's Remorse</h1>
+          </div>
+          <mat-dialog-content>
+            <i style="color: #7f94be !important;">You can cancel the order before the seller accepts the trade, your tokens committed will be refunded to you.</i>
+            <br>
+            <br>
+            Are you sure you want to cancel {{item.itemMarketName}} buy order?
+            <br>
+            <br>
+            <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes, Cancel My Buy Order!</button>
+            <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Buy Order!</button>
+          </mat-dialog-content>
+    </span>   
+
+    <span *ngIf="item.uiInfo.role === 'Seller'">
+        <div>
+            <h1 mat-dialog-title>Decision</h1>
+        </div>
+        <mat-dialog-content>
+            <i style="color: #7f94be !important;">Todo</i>
+            <br>
+            <br>
+             {{item.itemMarketName}}
+            <br>
+            <br>
+            <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes</button>
+            <button mat-button cdkFocusInitial [mat-dialog-close]="false">No</button>
+          </mat-dialog-content>
+    </span>
+
+  </span>
+  <span *ngIf="!item">
+    <mat-dialog-content>
+      Error! Please try again later.
+    </mat-dialog-content>
+  </span>
