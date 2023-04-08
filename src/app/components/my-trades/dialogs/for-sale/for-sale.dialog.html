@@ -1,10 +1,20 @@
-<div style="max-width: 490px;">
-  <h1 mat-dialog-title>Cancel Order</h1>
+<span *ngIf="item">
+  <div>
+    <h1 mat-dialog-title>Cancel Sell Order</h1>
+  </div>
   <mat-dialog-content>
-    Are you sure you want to cancel this order?
+    <i style="color: #7f94be !important;">You can cancel the order before anyone buys your item without affecting your sales stats.</i>
     <br>
     <br>
-    <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Cancel Order</button>
-    <button mat-button [mat-dialog-close]="false">Close</button>
+    Are you sure you want to cancel {{item.itemMarketName}} sell order?
+    <br>
+    <br>
+    <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes, Cancel My Sell Order!</button>
+    <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button>
   </mat-dialog-content>
-</div>
+</span>
+<span *ngIf="!item">
+  <mat-dialog-content>
+    Error! Please try again later.
+  </mat-dialog-content>
+</span>

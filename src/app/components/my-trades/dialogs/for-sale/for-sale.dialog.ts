@@ -1,5 +1,5 @@
-import { Component, Inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { Component, Inject, Input } from "@angular/core";
+import { MyTradeItem } from "../my-trade-item.interface";
 
 @Component({
   selector: 'trades-for-sale-dialog',
@@ -7,12 +7,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
   styleUrls: ['./for-sale.dialog.scss'],
 })
 export class ForSaleDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ForSaleDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
+  @Input() item: MyTradeItem | undefined
+  constructor() { }
 }
