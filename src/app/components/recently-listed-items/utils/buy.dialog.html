@@ -60,7 +60,7 @@
   <!-- spacer -->
   <div style="height: 10px;"></div>
 
-  <mat-stepper hide-header *ngIf="isBuyNowClicked" [linear]="isLinear" #stepper>
+  <mat-stepper [@cardAnimation]="state" hide-header *ngIf="isBuyNowClicked" [linear]="isLinear" #stepper>
   <mat-step [stepControl]="firstFormGroup">
     <form [formGroup]="firstFormGroup">
       <ng-template matStepLabel>Fill out your name</ng-template>

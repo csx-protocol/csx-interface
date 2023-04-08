@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Item } from "../../../shared/item.interface";
 import { Web3Service } from "src/app/shared/web3.service";
+import { animate, state, style, transition, trigger } from "@angular/animations";
 
 // export interface FloatValues {
 //   min: number;
@@ -14,9 +15,21 @@ import { Web3Service } from "src/app/shared/web3.service";
   selector: 'buy-dialog',
   templateUrl: './buy.dialog.html',
   styleUrls: ['./buy.dialog.scss'],
+  animations: [
+    trigger('cardAnimation', [
+      state('in', style({ opacity: 1, transform: 'scale(1)' })),
+      transition('void => *', [
+        style({ opacity: 0, transform: 'scale(0.5)' }),
+        animate(150),
+      ]),
+      transition('* => void', [
+        animate(150, style({ opacity: 0, transform: 'scale(0.5)' })),
+      ]),
+    ]),
+  ],
 })
 export class BuyDialog {
-
+  state = 'in'; // for animation
   avgDeliveryTime: string;
   isInMinutes: boolean = false;
 
