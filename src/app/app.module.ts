@@ -38,7 +38,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSortModule} from '@angular/material/sort';
-
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 /**
  * Custom Modules
  */
@@ -120,7 +120,8 @@ import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-commi
     ScrollingModule,
     MatChipsModule,
     MatButtonToggleModule,
-    MatSortModule
+    MatSortModule,
+    MatProgressBarModule
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
   providers: [],
