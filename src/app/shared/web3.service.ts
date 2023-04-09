@@ -520,6 +520,16 @@ export class Web3Service implements OnDestroy {
     );
   }
 
+  public async getVariableFromTradeContract(address: string, variable: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.tradeContract.abi as AbiItem[],
+      address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods[variable]().call();
+  }
+
   async getTradeDetailsByAddress(_address: string): Promise<any> {
     try {
       let tradeDetails = await this.csxInstance.tradeFactory.methods
