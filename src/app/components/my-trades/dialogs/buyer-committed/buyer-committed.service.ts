@@ -10,8 +10,8 @@ export class BuyerCommittedService {
 
   // isLoading: boolean = true;
 
-  cancelTrade(contractAddress: string) {
-    this.web3.cancelTrade(contractAddress);
+  async cancelTrade(contractAddress: string, isBuyer: boolean) {
+    return await this.web3.cancelTrade(contractAddress, isBuyer);
   }
 
   async getBuyerCommitTimestamp(contractAddress: string) {
