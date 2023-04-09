@@ -9,7 +9,7 @@ export interface Item {
     itemImageUrl: string;
     weiPrice: string;
     averageSellerDeliveryTime: string;
-    float: [max: number, min: number, value: number];
+    float: floatValues;
     status: string;
     stickers: any[];
     weaponType: string;
@@ -25,4 +25,10 @@ export interface Item {
         etherPrice: string;
         priceInUSD: number;
     };
+}
+
+interface floatValues {
+    max: number;
+    min: number;
+    value: number;
 }
