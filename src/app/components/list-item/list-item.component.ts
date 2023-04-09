@@ -323,9 +323,9 @@ export class ListItemComponent implements OnDestroy {
       const weaponType = this.itemData.weapon_type;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
       if(!this.isStickerAsItem){
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.stickers, weaponType);
+        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, this.itemData.stickers, weaponType);
       } else {
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), [], weaponType);
+        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, [], weaponType);
       }
 
     } else {
