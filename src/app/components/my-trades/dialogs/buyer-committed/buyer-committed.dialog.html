@@ -3,8 +3,8 @@
         <div>
             <h1 mat-dialog-title>Buyer's Remorse</h1>
           </div>
-          <mat-dialog-content>
-            <i style="color: #7f94be !important;">You can cancel the order before the seller accepts the trade, your tokens committed will be refunded to you.</i>
+          <mat-dialog-content *ngIf="has24HoursPassed">
+            <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your committed tokens will be refunded.</i>
             <br>
             <br>
             Are you sure you want to cancel {{item.itemMarketName}} buy order?
@@ -13,21 +13,42 @@
             <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes, Cancel My Buy Order!</button>
             <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Buy Order!</button>
           </mat-dialog-content>
+          <mat-dialog-content *ngIf="!has24HoursPassed">
+            <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your committed tokens will be refunded.</i>
+            <br>
+            <br>
+            At the moment, you are unable to cancel the trade. However, if the seller neither accepts nor denies the trade within 24 hours from the time you committed, you will gain the ability to cancel the trade.
+            <br>
+            <br>
+            If the seller has not accepted or denied the trade in {{timeLeft}}, you will be able to cancel the trade.
+            <br>
+            <br>
+            
+            <mat-progress-bar [mode]="getUIMode(committedService.isLoading)" [value]="progressBarValue"></mat-progress-bar>
+
+          </mat-dialog-content>
     </span>   
 
     <span *ngIf="item.uiInfo.role === 'Seller'">
         <div>
-            <h1 mat-dialog-title>Decision</h1>
+            <h1 mat-dialog-title>Someone has purchased your item!</h1>
         </div>
         <mat-dialog-content>
-            <i style="color: #7f94be !important;">Todo</i>
+             It's time to accept or reject the trade.
+         A Buyer has purchased your {{item.itemMarketName}} with float value {{item.float[0]}}, and is waiting for you to accept the trade.
             <br>
             <br>
-             {{item.itemMarketName}}
+               <i style="color: #7f94be !important;">The delivery timer has started.
             <br>
             <br>
-            <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes</button>
-            <button mat-button cdkFocusInitial [mat-dialog-close]="false">No</button>
+            If you reject the order, it will negatively affect your sales stats and the delivery time will be ignored.</i>
+            <br>
+            <br>
+             Do you accept the trade of your {{item.itemMarketName}} for {{item.etherPrice}} ETH?
+            <br>
+            <br>
+            <button mat-button cdkFocusInitial color="primary" style="color: #56a753 !important;" [mat-dialog-close]="true">Accept and Deliver</button>
+            <button mat-button color="warn" [mat-dialog-close]="false" style="color: rgb(244 67 54 / 98%) !important;">Reject and Get Lower Reputation</button>
           </mat-dialog-content>
     </span>
 
