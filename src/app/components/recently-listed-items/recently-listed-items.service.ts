@@ -37,7 +37,7 @@ export class RecentlyListedItemsService {
 
   async sortKnownMappingsAndCurrentFilteredItems(sortBy: 'index' | 'weiPrice', sortDirection: 'asc' | 'desc'){
     for (const iterator of this.filterToData) {
-      console.log('iteratooooor', iterator);
+      // console.log('iteratooooor', iterator);
       //const filterName = iterator[0];
       const indexes = iterator[1].indexes;
       const items = iterator[1].items;
@@ -155,9 +155,8 @@ export class RecentlyListedItemsService {
   async filterNames(event: any) {
     clearTimeout(this.filterTimeout);
     this.filterTimeout = setTimeout(async () => {
-      // your existing code here
       this._filterNames(event);
-      console.log('GGNANBU', this.filterToData);
+      console.log('RESULTS', this.filterToData);
     }, 10);
   }
 
@@ -189,7 +188,8 @@ export class RecentlyListedItemsService {
               break;
             }
             let details = await this.web3.getTradeDetailsByIndex(item.index);
-            details = { ...details, indexInfo: item };
+            const [max, min, value] = this.getFloatValues(details.skinInfo);
+            details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
             _filteredItems.push(details);
           }
 
@@ -347,7 +347,8 @@ export class RecentlyListedItemsService {
             break;
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index);
-          details = { ...details, indexInfo: item };
+          const [max, min, value] = this.getFloatValues(details.skinInfo);
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};          
           _filteredItems.push(details);
         }
         console.log('SETTING: selectedFilter', selectedFilter);
@@ -407,10 +408,11 @@ export class RecentlyListedItemsService {
       for (let i = startIndex; i < endIndex; i++) {
         const item = filteredIndexes[i];
         let details = await this.web3.getTradeDetailsByIndex(item.index);
-        details = { ...details, indexInfo: item };
+        const [max, min, value] = this.getFloatValues(details.skinInfo);
+        details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
         _filteredItems.push(details);
       }
-      console.log('SETTING: selectedFilter', selectedFilter);
+      // console.log('SETTING: selectedFilter', selectedFilter);
 
       this.filterToData.set(selectedFilter, {
         items: [...filteredItems, ..._filteredItems],
@@ -427,7 +429,7 @@ export class RecentlyListedItemsService {
         this.autoScroll = false;
       }
     }
-    console.log(this.filteredItems);
+    // console.log(this.filteredItems);
 
     this.isLoading = false;
   }
@@ -439,7 +441,7 @@ export class RecentlyListedItemsService {
     this.selectedPriceFilter = selectedPriceFilter;
     let _filteredItems = [];
 
-    console.log('mgmawklsmfA,', selectedPriceFilter);
+    // console.log('mgmawklsmfA,', selectedPriceFilter);
 
     if (selectedPriceFilter !== undefined) {
       _filteredItems = await this._loadFirstStep(selectedPriceFilter);
@@ -522,13 +524,14 @@ export class RecentlyListedItemsService {
             break;
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index);
-          details = { ...details, indexInfo: item };
+          const [max, min, value] = this.getFloatValues(details.skinInfo);
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
         }
-        console.log(
-          'SETTING: this.selectedPriceFilter + selectedFilter',
-          this.selectedPriceFilter + selectedFilter
-        );
+        // console.log(
+        //   'SETTING: this.selectedPriceFilter + selectedFilter',
+        //   this.selectedPriceFilter + selectedFilter
+        // );
 
         this.filterToData.set(this.selectedPriceFilter + selectedFilter, {
           indexes: _filteredIndexItems,
@@ -560,7 +563,7 @@ export class RecentlyListedItemsService {
       this.isLoading = false;
       this.isLoadingChip = false;
     } else {
-      console.log('????', this.selectedPriceFilter);
+      //console.log('????', this.selectedPriceFilter);
       this.selectedGunsTypeFilter = undefined;
       await this.onPriceFilterChange({ value: this.selectedPriceFilter });
     }
@@ -672,7 +675,8 @@ export class RecentlyListedItemsService {
             break;
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index);
-          details = { ...details, indexInfo: item };
+          const [max, min, value] = this.getFloatValues(details.skinInfo);
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
         }
         console.log('SETTING: selectedFilterKey', selectedFilterKey);
@@ -751,10 +755,11 @@ export class RecentlyListedItemsService {
             break;
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index);
-          details = { ...details, indexInfo: item };
+          const [max, min, value] = this.getFloatValues(details.skinInfo);
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
         }
-        console.log('SETTING: selectedFilterKey', selectedFilterKey);
+        // console.log('SETTING: selectedFilterKey', selectedFilterKey);
 
         this.filterToData.set(selectedFilterKey, {
           indexes: _filteredIndexItems,
@@ -853,6 +858,12 @@ export class RecentlyListedItemsService {
     'Broken Fang Gloves',
     'Driver Gloves',
   ];
+
+  getFloatValues(skinInfo: any) {
+    const floatValues = skinInfo.floatValues;
+    const floatValuesArray = JSON.parse(floatValues);
+    return floatValuesArray;
+  }
 }
 const filteredItemsAndIndex = {
   items: [] as any[],
