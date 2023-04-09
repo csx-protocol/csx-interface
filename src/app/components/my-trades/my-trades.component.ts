@@ -4,6 +4,7 @@ import { Sort } from '@angular/material/sort';
 import { MyTradesService } from './my-trades.service';
 import { DialogComponent } from './dialog/dialog.component';
 import { MyTradeItem } from './dialogs/my-trade-item.interface';
+import { IntervalService } from './dialogs/interval.service';
 
 // Role of the trade
 export enum TradeRole {
@@ -42,7 +43,7 @@ export class MyTradesComponent {
 
   sortedData: UserInteraction[];
 
-  constructor(public myTradesService: MyTradesService, private dialog: MatDialog) {
+  constructor(public myTradesService: MyTradesService, private dialog: MatDialog, private intervalService: IntervalService) {
     this.sortedData = this.myTradesService.userItems.slice();
   }
 
@@ -77,6 +78,7 @@ export class MyTradesComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
+      this.intervalService.stopAllIntervals();
     });
   }
 
