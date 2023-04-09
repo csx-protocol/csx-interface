@@ -338,24 +338,48 @@ export class Web3Service implements OnDestroy {
    * this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice
    */
 
+
+
+
   public listItem(
-    _itemHashName: string,
-    _tradeUrl: string,
-    _assetId: string,
-    _inspectLink: string,
-    _itemImageUrl: string,
-    _weiPrice: string,
-    _floatVal: string,
-    _floatMin: string,
-    _floatMax: string,
-    _stickers: any[],
-    _weaponType: string
-  ) {
-    const FloatInfo = {
-      value: _floatVal,
-      min: _floatMin,
-      max: _floatMax,
-    };
+  //   _itemHashName: string,
+  //   _tradeUrl: string,
+  //   _assetId: string,
+  //   _inspectLink: string,
+  //   _itemImageUrl: string,
+  //   _weiPrice: string,
+  //   _floatVal: string,
+  //   _floatMin: string,
+  //   _floatMax: string,
+  //   _stickers: any[],
+  //   _weaponType: string
+  // ) {
+  //   const FloatInfo = {
+  //     value: _floatVal,
+  //     min: _floatMin,
+  //     max: _floatMax,
+  //   };
+  _itemHashName: string,
+  _tradeUrl: string,
+  _assetId: string,
+  _inspectLink: string,
+  _itemImageUrl: string,
+  _weiPrice: string,
+  _floatVal: string,
+  _floatMin: string,
+  _floatMax: string,
+  _paintSeed: string,
+  _paintIndex: string,
+  _stickers: any[],
+  _weaponType: string
+) {
+  const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
+
+  const SkinInfo = {
+    floatValues: floatInfoString,
+    paintSeed: _paintSeed,
+    paintIndex: _paintIndex,
+  };
 
     const url = _tradeUrl;
     if (this.isValidUrl(url)) {
@@ -377,7 +401,7 @@ export class Web3Service implements OnDestroy {
           _inspectLink,
           _itemImageUrl,
           _weiPrice,
-          FloatInfo,
+          SkinInfo,
           _stickers,
           _weaponType
         )
