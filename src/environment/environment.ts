@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     tradeFactory: {
-      address: "0xc83729093587c4451e1fFB9E79fc06a4C51b8d51",
+      address: "0x3d11e23C7D85721EDae6eB10239dafE472EdEF81",
       abi: [
         {
           "inputs": [
@@ -249,22 +249,22 @@ export const environment = {
               "components": [
                 {
                   "internalType": "string",
-                  "name": "value",
+                  "name": "floatValues",
                   "type": "string"
                 },
                 {
-                  "internalType": "string",
-                  "name": "min",
-                  "type": "string"
+                  "internalType": "uint256",
+                  "name": "paintSeed",
+                  "type": "uint256"
                 },
                 {
-                  "internalType": "string",
-                  "name": "max",
-                  "type": "string"
+                  "internalType": "uint256",
+                  "name": "paintIndex",
+                  "type": "uint256"
                 }
               ],
-              "internalType": "struct FloatInfo",
-              "name": "_float",
+              "internalType": "struct SkinInfo",
+              "name": "_skinInfo",
               "type": "tuple"
             },
             {
@@ -395,22 +395,22 @@ export const environment = {
                   "components": [
                     {
                       "internalType": "string",
-                      "name": "value",
+                      "name": "floatValues",
                       "type": "string"
                     },
                     {
-                      "internalType": "string",
-                      "name": "min",
-                      "type": "string"
+                      "internalType": "uint256",
+                      "name": "paintSeed",
+                      "type": "uint256"
                     },
                     {
-                      "internalType": "string",
-                      "name": "max",
-                      "type": "string"
+                      "internalType": "uint256",
+                      "name": "paintIndex",
+                      "type": "uint256"
                     }
                   ],
-                  "internalType": "struct FloatInfo",
-                  "name": "float",
+                  "internalType": "struct SkinInfo",
+                  "name": "skinInfo",
                   "type": "tuple"
                 },
                 {
@@ -550,22 +550,22 @@ export const environment = {
                   "components": [
                     {
                       "internalType": "string",
-                      "name": "value",
+                      "name": "floatValues",
                       "type": "string"
                     },
                     {
-                      "internalType": "string",
-                      "name": "min",
-                      "type": "string"
+                      "internalType": "uint256",
+                      "name": "paintSeed",
+                      "type": "uint256"
                     },
                     {
-                      "internalType": "string",
-                      "name": "max",
-                      "type": "string"
+                      "internalType": "uint256",
+                      "name": "paintIndex",
+                      "type": "uint256"
                     }
                   ],
-                  "internalType": "struct FloatInfo",
-                  "name": "float",
+                  "internalType": "struct SkinInfo",
+                  "name": "skinInfo",
                   "type": "tuple"
                 },
                 {
@@ -769,22 +769,22 @@ export const environment = {
               "components": [
                 {
                   "internalType": "string",
-                  "name": "value",
+                  "name": "floatValues",
                   "type": "string"
                 },
                 {
-                  "internalType": "string",
-                  "name": "min",
-                  "type": "string"
+                  "internalType": "uint256",
+                  "name": "paintSeed",
+                  "type": "uint256"
                 },
                 {
-                  "internalType": "string",
-                  "name": "max",
-                  "type": "string"
+                  "internalType": "uint256",
+                  "name": "paintIndex",
+                  "type": "uint256"
                 }
               ],
-              "internalType": "struct FloatInfo",
-              "name": "_float",
+              "internalType": "struct SkinInfo",
+              "name": "_skinInfo",
               "type": "tuple"
             }
           ],
@@ -806,20 +806,7 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "buyerCommittedTimestamp",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "buyerDeposited",
+          "name": "buyerCommitTimestamp",
           "outputs": [
             {
               "internalType": "uint256",
@@ -843,6 +830,19 @@ export const environment = {
               "internalType": "string",
               "name": "token",
               "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "depositedValue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -895,29 +895,6 @@ export const environment = {
               "internalType": "contract ITradeFactory",
               "name": "",
               "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "float",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "value",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "min",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "max",
-              "type": "string"
             }
           ],
           "stateMutability": "view",
@@ -1016,6 +993,19 @@ export const environment = {
         },
         {
           "inputs": [],
+          "name": "sellerAcceptedTimestamp",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "sellerTradeUrl",
           "outputs": [
             {
@@ -1027,6 +1017,29 @@ export const environment = {
               "internalType": "string",
               "name": "token",
               "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "skinInfo",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "floatValues",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "paintSeed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "paintIndex",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -1204,6 +1217,40 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "buyerCancel",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "sellerCommited",
+              "type": "bool"
+            }
+          ],
+          "name": "sellerTradeVeridict",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "buyerConfirmReceived",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "sellerConfirmsTrade",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bool",
@@ -1212,20 +1259,6 @@ export const environment = {
             }
           ],
           "name": "keeperNodeConfirmsTrade",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "acceptTradeOffer",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "confirmReceived",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -1274,7 +1307,7 @@ export const environment = {
       ],
     },
     keepersContract: {
-      address: '0xB57A5a8b834b7C431D92829347F8580c1270e18C',
+      address: '0x5F39235681503Aee9aaF04757bf09Bf62a09Ae00',
       abi: [
         {
           "inputs": [
@@ -1461,7 +1494,7 @@ export const environment = {
       ],
     },
     usersContract: {
-      address: '0x931cFC25A448f90eB02a878EC39FB45c082b5ea9',
+      address: '0x80f6A33A91Bc3E63aB4A95D150B8B76E75EcB91C',
       abi: [
         {
           "inputs": [
