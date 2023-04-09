@@ -11,7 +11,7 @@ export interface MyTradeItem {
     itemImageUrl: string;
     weiPrice: string;
     averageSellerDeliveryTime: string;
-    float: [max: number, min: number, value: number];
+    float: FloatValues;
     status: string;
     stickers: Sticker[];
     weaponType: string;
@@ -31,4 +31,10 @@ export interface MyTradeItem {
     contractAddress: string;
     role: string;
     status: string;
+  }
+
+  interface FloatValues {
+    max: number;
+    min: number;
+    value: number;
   }
