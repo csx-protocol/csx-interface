@@ -32,6 +32,7 @@ export interface UserInteraction {
   role: TradeRole;
   status: TradeStatus;
   statusString: string;
+  index: number;
 }
 
 @Component({
