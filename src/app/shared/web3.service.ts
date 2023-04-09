@@ -421,6 +421,23 @@ export class Web3Service implements OnDestroy {
    * Used in components/recently-listed-items
    */
 
+  handleError(error: any) {
+    switch (error.code) {
+      case -32000:
+        this.notificationsService.openSnackBar(
+          'RPC error, you might need to refresh site or change RPC endpoint in wallet.',
+          'OK'
+        );
+        break;
+      default:
+        this.notificationsService.openSnackBar(
+          'Error, you might need to refresh site or change RPC endpoint in wallet.',
+          'OK'
+        );
+        break;
+    }
+  }
+
   async getTradeDetailsByIndex(_index: number): Promise<any> {
     try {
       let tradeDetails = await this.csxInstance.tradeFactory.methods
@@ -435,20 +452,7 @@ export class Web3Service implements OnDestroy {
       tradeDetails = { ...tradeDetails, etherPrice, trimmedAddress };
       return tradeDetails;
     } catch (error: any) {
-      switch (error.code) {
-        case -32000:
-          this.notificationsService.openSnackBar(
-            'RPC error, you might need to refresh site or change RPC endpoint in wallet.',
-            'OK'
-          );
-          break;
-        default:
-          this.notificationsService.openSnackBar(
-            'Error, you might need to refresh site or change RPC endpoint in wallet.',
-            'OK'
-          );
-          break;
-      }
+      this.handleError(error);
     }
   }
 
@@ -527,21 +531,36 @@ export class Web3Service implements OnDestroy {
    * getUserTotalTradeUIs
    */
 
-  public async cancelTrade(contractAddress: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.tradeContract.abi as AbiItem[],
-      contractAddress,
-      { from: this.webUser.address }
-    );
-
-    contractInstance.methods
-      .sellerCancel()
-      .send({ from: this.webUser.address })
-      .then((receipt: any) => {
-        console.log('TX receipt', receipt);
-        //return false;
-      }
-    );
+  public async cancelTrade(contractAddress: string, isBuyer: boolean): Promise<boolean> {
+    try {
+      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.tradeContract.abi as AbiItem[],
+        contractAddress,
+        { from: this.webUser.address }
+      );
+  
+      if (isBuyer) {
+        return contractInstance.methods
+          .buyerCancel()
+          .send({ from: this.webUser.address })
+          .then((receipt: any) => {
+            console.log('TX receipt', receipt);
+            return true;
+          });
+      } else {
+        return contractInstance.methods
+          .sellerCancel()
+          .send({ from: this.webUser.address })
+          .then((receipt: any) => {
+            console.log('TX receipt', receipt);
+            return true;
+          });
+      }         
+    } catch (error: any) {
+      this.handleError(error);
+      return false;
+    }
+   
   }
 
   public async getVariableFromTradeContract(address: string, variable: string) {
