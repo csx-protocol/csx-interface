@@ -563,6 +563,28 @@ export class Web3Service implements OnDestroy {
    
   }
 
+  public async sellerTradeVeridict(contractAddress: string, sellerCommited:boolean): Promise<boolean> {
+    try {
+      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.tradeContract.abi as AbiItem[],
+        contractAddress,
+        { from: this.webUser.address }
+      );
+  
+      return contractInstance.methods
+        .sellerTradeVeridict(sellerCommited)
+        .send({ from: this.webUser.address })
+        .then((receipt: any) => {
+          console.log('TX receipt', receipt);
+          return true;
+        });
+    } catch (error) {
+      console.error(error)
+      return false;
+    }
+    
+  }
+
   public async getVariableFromTradeContract(address: string, variable: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.tradeContract.abi as AbiItem[],
