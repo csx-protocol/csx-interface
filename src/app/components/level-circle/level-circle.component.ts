@@ -1,10 +1,15 @@
-import { Component, Input, OnChanges, SimpleChanges, } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Web3Service } from '../../shared/web3.service';
+import { environment } from 'src/environment/environment';
+
+// class UserTradeDetails {
+//   contractAddress: string;
+// }
 
 @Component({
   selector: 'app-level-circle',
   templateUrl: './level-circle.component.html',
-  styleUrls: ['./level-circle.component.scss']
+  styleUrls: ['./level-circle.component.scss'],
 })
 export class LevelCircleComponent implements OnChanges {
   @Input() percent: number = 20;
@@ -24,15 +29,18 @@ export class LevelCircleComponent implements OnChanges {
   @Input() subtitleFontSize: string = '12px';
 
   @Input() userAddress: string = '0x000000';
+  @Input() displayTradeDetails: boolean = false;
 
   constructor(private web3Service: Web3Service) {}
 
+  firstTime: boolean = true;
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('LevelCircleComponent ngOnChanges', changes);
-    console.log('this.userAddress', this.userAddress);   
-    if(changes.hasOwnProperty('userAddress')){
+
+    if(changes.hasOwnProperty('userAddress')){      
       this.getLevel();
-    }
+      this.getTradeDetails();
+    } 
+
   }
 
   getLevel() {
@@ -43,13 +51,13 @@ export class LevelCircleComponent implements OnChanges {
         console.log('LevelCircleComponent getLevel', level);
         // For testing purposes only, for every second, increase one level
         // level = 5;
-        setInterval(() => {
-          level++;
-          this.title = 'LEVEL ' + level;
-          this.innerStrokeColor = this.getInnerStrokeColor(level);
-          this.outerStrokeColor = this.getOuterStrokeColor(level);
-          this.percent = this.getProgress(level);
-        }, 1000);
+        // setInterval(() => {
+        //   level++;
+        //   this.title = 'LEVEL ' + level;
+        //   this.innerStrokeColor = this.getInnerStrokeColor(level);
+        //   this.outerStrokeColor = this.getOuterStrokeColor(level);
+        //   this.percent = this.getProgress(level);
+        // }, 1000);
 
         this.title = 'LEVEL ' + level;
         this.innerStrokeColor = this.getInnerStrokeColor(level);
@@ -60,9 +68,51 @@ export class LevelCircleComponent implements OnChanges {
     }
   }
 
-  onClick(){
+  reputationNeg: number = 0;
+  reputationPos: number = 0;
+  totalTradesAsSeller: number = 0;
+  totalTradesAsBuyer: number = 0;
+  totalTrades: number = 0;
+  avgDeliveryTime: string = '0';
+  isInMinutes: boolean = false;
+
+  getTradeDetails() {
+    if(this.displayTradeDetails){
+      this.web3Service.getUserDataFromUsers(this.userAddress).then((tradeDetails: any) => {
+        // console.log('LevelCircleComponent getTradeDetails', tradeDetails);
+        this.reputationNeg = tradeDetails.reputationNeg;
+        this.reputationPos = tradeDetails.reputationPos;
+        this.totalTradesAsSeller = tradeDetails.totalTradesAsSeller;
+        this.totalTradesAsBuyer = tradeDetails.totalTradesAsBuyer;
+        this.totalTrades = parseInt(tradeDetails.totalTradesAsBuyer) + parseInt(tradeDetails.totalTradesAsSeller);
+        
+        const epochTime: number = parseInt(tradeDetails.deliveryInfo.averageDeliveryTime);       
+
+        //If average delivery time is less than 1 hour, display in minutes
+        if (epochTime < 3600) {
+          this.avgDeliveryTime = (epochTime / 60).toString();
+          this.isInMinutes = true;
+          return;
+        }    
+        this.avgDeliveryTime = (epochTime / 60 / 60).toString();
+      });
+    }
+  }
+
+  async onClick(){
     const isOwner = this.userAddress == this.web3Service.webUser.address ? true : false;
+    console.log('LevelCircleComponent onClick isOwner?:', isOwner);    
     // Open Dialog for Level Up
+    if(isOwner){
+
+      this.web3Service.getUserDataFromProfileLevel(this.userAddress).then((levels: any) => {
+         console.log('levels', levels);         
+      });
+
+      const res = await this.web3Service.levelUpProfileLevel('2000');
+      console.log(res, 'res');
+      
+    }
   }
 
   getTrimmedAddress(address: string) {
@@ -74,13 +124,13 @@ export class LevelCircleComponent implements OnChanges {
     const colors = [
       '#2a2c52', // 1-9
       '#c0392b', // red:ish
-      '#d35400', // orange:ish
+      '#ff6b00', // orange:ish
       '#f1c40f', // yellow:ish
       '#27ae60', // darkGreen:ish
       '#2980b9', // blue:ish
       '#8e44ad', // purple:ish
       '#e84393', // pink:ish
-      '#641e16', // vinered:ish
+      '#5b2c2f', // vinered:ish
       '#c5a880', // sand:ish
       '#a5a5a5', // darkwhite:ish
     ];
@@ -93,13 +143,13 @@ export class LevelCircleComponent implements OnChanges {
     const levelGroup = Math.floor(level / 10);
     const colors = [
       '#c0392b', // red:ish
-      '#d35400', // orange:ish
+      '#ff6b00', // orange:ish
       '#f1c40f', // yellow:ish
       '#27ae60', // darkGreen:ish
       '#2980b9', // blue:ish
       '#8e44ad', // purple:ish
       '#e84393', // pink:ish
-      '#641e16', // vinered:ish
+      '#5b2c2f', // vinered:ish
       '#c5a880', // sand:ish
       '#a5a5a5', // darkwhite:ish
  
