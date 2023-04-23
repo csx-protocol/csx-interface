@@ -6,6 +6,7 @@ interface Notification {
   message: string;
   link?: string;
   linkText?: string;
+  isDialog: boolean;
 };
 
 @Injectable({
@@ -21,11 +22,27 @@ export class NotificationService implements OnDestroy {
     this.newNotification$ = this.notificationSubject.asObservable();
   }
 
-  notify(_notice: string, _link?: string, _linkText?: string) {
-    const _notify: Notification = {
-      message: _notice,
-      link: _link,
-      linkText: _linkText
+  notify(_notice: string, _link?: string, _linkText?: string, isDialog?: boolean) {
+    // const _notify: Notification = {
+    //   message: _notice,
+    //   link: _link,
+    //   linkText: _linkText,
+    // }
+    let _notify: Notification;
+    if (isDialog) {
+      _notify = {
+        message: _notice,
+        link: _link,
+        linkText: _linkText,
+        isDialog: true,
+      }
+    } else {
+      _notify = {
+        message: _notice,
+        link: _link,
+        linkText: _linkText,
+        isDialog: false,
+      }
     }
     this.notifications.unshift(_notify);
     this.notificationSubject.next(1);
