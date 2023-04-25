@@ -8,22 +8,39 @@ import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
 import { NotificationService } from './notification.service';
-import { TradeStatus } from '../components/my-trades/my-trades.component';
+import { TradeRole, TradeStatus } from '../components/my-trades/my-trades.component';
 import { ChainEventsService } from './chain-events.service';
 
 interface CSXInstance {
   window: Document | any;
   tradeFactory: any;
   usersContract: any;
+  WETHToken: any;
+  USDCToken: any;
+  USDTToken: any;
+  CSXToken: any;
+  sCSXToken: any;
+  eCSXToken: any;
+  vCSXToken: any;
   accountSubject: Subject<any>;
+}
+
+interface Balance {
+  balanceWei: string;
+  balanceEth: string;
+}
+
+interface Balances {
+  [key: string]: Balance;
 }
 
 interface WebUser {
   address?: string;
   shortAddy?: string;
   myAccount$?: Observable<any>;
-  balanceWei?: string;
-  balanceEth?: string;
+  // balanceWei?: string;
+  // balanceEth?: string;
+  balances: Balances;
   isWrongChain: boolean;
   isConnected: boolean;
   isUserWalletConnected: boolean;
@@ -40,10 +57,51 @@ export class Web3Service implements OnDestroy {
     tradeFactory: undefined,
     usersContract: undefined,
     accountSubject: new Subject<any>(),
+    CSXToken: undefined,
+    sCSXToken: undefined,
+    eCSXToken: undefined,
+    vCSXToken: undefined,
+    WETHToken: undefined,
+    USDCToken: undefined,
+    USDTToken: undefined
   };
 
   public webUser: WebUser = {
-    balanceWei: '0',
+    balances: {
+      ETH: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      WETH: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      USDC: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      USDT: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      CSX: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      sCSX: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      eCSX: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+      vCSX: {
+        balanceWei: '0',
+        balanceEth: '0',
+      },
+
+    },
     isConnected: false,
     isUserWalletConnected: false,
     isWrongChain: true,
@@ -127,6 +185,8 @@ export class Web3Service implements OnDestroy {
       //console.log(this.window.ethereum.chainId)
       if (currentChainId != environment.NETWORK.chainId) {
         this.webUser.isWrongChain = true;
+        this.webUser.isUserWalletConnected = false;
+        this.webUser.isConnected = false;
         console.log('Incorrect Network in MetaMask!');
         //this._requestAddOrChangeNetwork();
       } else {
@@ -150,14 +210,19 @@ export class Web3Service implements OnDestroy {
         this.webUser.address = __accounts[0];
 
         Web3.utils.toChecksumAddress(this.webUser.address!);
-        this.webUser.balanceWei = parseFloat(
+
+        this.webUser.balances!['ETH'].balanceWei =
+          await this.csxInstance.window.web3.eth.getBalance(
+            this.webUser.address
+          );
+
+        this.webUser.balances!['ETH'].balanceEth = parseFloat(
           Web3.utils.fromWei(
-            await this.csxInstance.window.web3.eth.getBalance(
-              this.webUser.address
-            ),
+            await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
             'ether'
           )
         ).toFixed(3);
+
         this.csxInstance.accountSubject.next(__accounts[0]);
 
         //document.location.reload();
@@ -173,6 +238,8 @@ export class Web3Service implements OnDestroy {
         this.notificationsService.notify(
           'Error, you might need to refresh site or change RPC endpoint in wallet.'
         );
+        console.log(error);
+
       }
     } else if (this.webUser.isWrongChain) {
       console.log('Wr0ng chain!');
@@ -208,8 +275,8 @@ export class Web3Service implements OnDestroy {
     console.log('gg?');
 
     await this.___getTrimmedAddress();
-    await this.___requestUserEthBalance();
     await this.___initContractInstances();
+    await this.___updateUserBalances();    
     await this.___notifyUserWalletConnected();
 
     this.csxInstance.accountSubject.next(this.webUser.address);
@@ -224,7 +291,7 @@ export class Web3Service implements OnDestroy {
   }
 
   private async ___requestUserEthBalance() {
-    this.webUser.balanceEth = parseFloat(
+    this.webUser.balances!['ETH'].balanceEth = parseFloat(
       Web3.utils.fromWei(
         await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
         'ether'
@@ -242,8 +309,57 @@ export class Web3Service implements OnDestroy {
 
     this.csxInstance.usersContract =
       await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.usersContract.abi as AbiItem[],
-        environment.CONTRACTS.usersContract.address,
+        environment.CONTRACTS.Users.abi as AbiItem[],
+        environment.CONTRACTS.Users.address,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.CSXToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.CSXToken.abi as AbiItem[],
+        environment.CONTRACTS.CSXToken.address,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.sCSXToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.StakedCSX.abi as AbiItem[],
+        environment.CONTRACTS.StakedCSX.address,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.eCSXToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.EscrowedCSX.abi as AbiItem[],
+        environment.CONTRACTS.EscrowedCSX.address,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.vCSXToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.VestedCSX.abi as AbiItem[],
+        environment.CONTRACTS.VestedCSX.address,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.WETHToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.Currencies.abi as AbiItem[],
+        environment.CONTRACTS.Currencies.addresses.WETH,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.USDTToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.Currencies.abi as AbiItem[],
+        environment.CONTRACTS.Currencies.addresses.USDT,
+        { from: this.webUser.address }
+      );
+
+    this.csxInstance.USDCToken =
+      await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.Currencies.abi as AbiItem[],
+        environment.CONTRACTS.Currencies.addresses.USDC,
         { from: this.webUser.address }
       );
 
@@ -263,22 +379,6 @@ export class Web3Service implements OnDestroy {
   }
 
   private async _requestAddOrChangeNetwork() {
-    // this.smInstance.window.ethereum
-    //   .request({
-    //     method: 'wallet_addEthereumChain',
-    //     params: [
-    //       {
-    //         chainId: environment.NETWORK.chainId,
-    //         chainName: environment.NETWORK.chainName,
-    //         nativeCurrency: environment.NETWORK.nativeCurrency,
-    //         rpcUrls: environment.NETWORK.rpcUrls,
-    //         blockExplorerUrls: environment.NETWORK.blockExplorerUrls,
-    //       },
-    //     ],
-    //   })
-    //   .catch((error: any) => {
-    //     console.log(error);
-    //   });
     try {
       await this.csxInstance.window.ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -308,6 +408,98 @@ export class Web3Service implements OnDestroy {
       }
       // handle other "switch" errors
     }
+  }
+
+  private async ___updateUserBalances() {
+
+    this.webUser.balances!['ETH'].balanceWei = await this.csxInstance.window.web3.eth.getBalance(
+      this.webUser.address
+    );
+
+    this.webUser.balances!['ETH'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['ETH'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['CSX'].balanceWei = await this.csxInstance.CSXToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+    this.webUser.balances!['CSX'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['CSX'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['sCSX'].balanceWei = await this.csxInstance.sCSXToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+    this.webUser.balances!['sCSX'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['sCSX'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['eCSX'].balanceWei = await this.csxInstance.eCSXToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+    this.webUser.balances!['eCSX'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['eCSX'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['vCSX'].balanceWei = await this.csxInstance.vCSXToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+    this.webUser.balances!['vCSX'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['vCSX'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['WETH'].balanceWei = await this.csxInstance.WETHToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+    this.webUser.balances!['WETH'].balanceEth = parseFloat(
+      Web3.utils.fromWei(
+        this.webUser.balances!['WETH'].balanceWei,
+        'ether'
+      )
+    ).toFixed(4);
+
+    this.webUser.balances!['USDT'].balanceWei = await this.csxInstance.USDTToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+      const decimals = 6;
+      const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+
+      const usdtBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDT'].balanceWei);
+      const usdtBalanceInteger = usdtBalanceBN.div(tenPowerDecimals).toString(10);
+      const usdtBalanceFraction = usdtBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+
+      this.webUser.balances!['USDT'].balanceEth = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toFixed(2);
+
+    this.webUser.balances!['USDC'].balanceWei = await this.csxInstance.USDCToken.methods
+      .balanceOf(this.webUser.address)
+      .call();
+
+      const usdcBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDC'].balanceWei);
+      const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
+      const usdcBalanceFraction = usdcBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+
+      this.webUser.balances!['USDC'].balanceEth = parseFloat(`${usdcBalanceInteger}.${usdcBalanceFraction}`).toFixed(2);
   }
 
   /**
@@ -342,44 +534,44 @@ export class Web3Service implements OnDestroy {
 
 
   public listItem(
-  //   _itemHashName: string,
-  //   _tradeUrl: string,
-  //   _assetId: string,
-  //   _inspectLink: string,
-  //   _itemImageUrl: string,
-  //   _weiPrice: string,
-  //   _floatVal: string,
-  //   _floatMin: string,
-  //   _floatMax: string,
-  //   _stickers: any[],
-  //   _weaponType: string
-  // ) {
-  //   const FloatInfo = {
-  //     value: _floatVal,
-  //     min: _floatMin,
-  //     max: _floatMax,
-  //   };
-  _itemHashName: string,
-  _tradeUrl: string,
-  _assetId: string,
-  _inspectLink: string,
-  _itemImageUrl: string,
-  _weiPrice: string,
-  _floatVal: string,
-  _floatMin: string,
-  _floatMax: string,
-  _paintSeed: string,
-  _paintIndex: string,
-  _stickers: any[],
-  _weaponType: string
-) {
-  const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
+    //   _itemHashName: string,
+    //   _tradeUrl: string,
+    //   _assetId: string,
+    //   _inspectLink: string,
+    //   _itemImageUrl: string,
+    //   _weiPrice: string,
+    //   _floatVal: string,
+    //   _floatMin: string,
+    //   _floatMax: string,
+    //   _stickers: any[],
+    //   _weaponType: string
+    // ) {
+    //   const FloatInfo = {
+    //     value: _floatVal,
+    //     min: _floatMin,
+    //     max: _floatMax,
+    //   };
+    _itemHashName: string,
+    _tradeUrl: string,
+    _assetId: string,
+    _inspectLink: string,
+    _itemImageUrl: string,
+    _weiPrice: string,
+    _floatVal: string,
+    _floatMin: string,
+    _floatMax: string,
+    _paintSeed: string,
+    _paintIndex: string,
+    _stickers: any[],
+    _weaponType: string
+  ) {
+    const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
 
-  const SkinInfo = {
-    floatValues: floatInfoString,
-    paintSeed: _paintSeed,
-    paintIndex: _paintIndex,
-  };
+    const SkinInfo = {
+      floatValues: floatInfoString,
+      paintSeed: _paintSeed,
+      paintIndex: _paintIndex,
+    };
 
     const url = _tradeUrl;
     if (this.isValidUrl(url)) {
@@ -449,7 +641,11 @@ export class Web3Service implements OnDestroy {
         tradeDetails.contractAddress
       );
 
-      tradeDetails = { ...tradeDetails, etherPrice, trimmedAddress };
+      const sellerTrimmedAddress = this.getTrimmedAddress(
+        tradeDetails.seller
+      );
+
+      tradeDetails = { ...tradeDetails, etherPrice, trimmedAddress, sellerTrimmedAddress };
       return tradeDetails;
     } catch (error: any) {
       this.handleError(error);
@@ -538,7 +734,7 @@ export class Web3Service implements OnDestroy {
         contractAddress,
         { from: this.webUser.address }
       );
-  
+
       if (isBuyer) {
         return contractInstance.methods
           .buyerCancel()
@@ -555,22 +751,22 @@ export class Web3Service implements OnDestroy {
             console.log('TX receipt', receipt);
             return true;
           });
-      }         
+      }
     } catch (error: any) {
       this.handleError(error);
       return false;
     }
-   
+
   }
 
-  public async sellerTradeVeridict(contractAddress: string, sellerCommited:boolean): Promise<boolean> {
+  public async sellerTradeVeridict(contractAddress: string, sellerCommited: boolean): Promise<boolean> {
     try {
       const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
         environment.CONTRACTS.tradeContract.abi as AbiItem[],
         contractAddress,
         { from: this.webUser.address }
       );
-  
+
       return contractInstance.methods
         .sellerTradeVeridict(sellerCommited)
         .send({ from: this.webUser.address })
@@ -582,7 +778,7 @@ export class Web3Service implements OnDestroy {
       console.error(error)
       return false;
     }
-    
+
   }
 
   public async getVariableFromTradeContract(address: string, variable: string) {
@@ -594,6 +790,8 @@ export class Web3Service implements OnDestroy {
 
     return await contractInstance.methods[variable]().call();
   }
+
+
 
   async getTradeDetailsByAddress(_address: string): Promise<any> {
     try {
@@ -648,6 +846,129 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
     return isTradeContract;
   }
+
+  /**
+   * Level Circle
+   */
+  public async getProfileLevel(address: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
+      environment.CONTRACTS.UserProfileLevel.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods.getUserLevel(address).call();
+  }
+
+  async getUserDataFromUsers(address: string) {
+    const tradeUI = await this.csxInstance.usersContract.methods
+      .getUserData(address)
+      .call({ from: this.webUser.address });
+    return tradeUI;
+  }
+
+  async getUserDataFromProfileLevel(address: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
+      environment.CONTRACTS.UserProfileLevel.address,
+      { from: this.webUser.address }
+    );
+
+    const levels = await contractInstance.methods
+      .getUserData(address)
+      .call({ from: this.webUser.address });
+
+    return levels;
+  }
+
+  async getCostForNextLevels(address: string, newLevels: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
+      environment.CONTRACTS.UserProfileLevel.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .getCostForNextLevels(address, newLevels)
+      .call({ from: this.webUser.address });
+  }
+
+  async approveCSXTokenFromUserProfileLevel(CSXTokenWeiAmount: string) {
+    const spenderAddress = this.csxInstance.window.web3.utils.toChecksumAddress(environment.CONTRACTS.UserProfileLevel.address);
+    return await this.csxInstance.CSXToken.methods
+      .approve(spenderAddress, CSXTokenWeiAmount)
+      .send({ from: this.webUser.address });
+  }
+
+  async approveCSX(spenderAddress: string, tokenAmount: string) {
+  const tokenContractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    environment.CONTRACTS.CSXToken.abi as AbiItem[],
+    environment.CONTRACTS.CSXToken.address,
+    { from: this.webUser.address }
+  );
+
+  return await tokenContractInstance.methods
+    .approve(spenderAddress, tokenAmount)
+    .send({ from: this.webUser.address });
+}
+
+
+  async allowanceCSX(owner: string, spender: string) {
+    return await this.csxInstance.CSXToken.methods
+      .allowance(owner, spender)
+      .call({ from: this.webUser.address });
+  }
+
+  async levelUp(CSXTokenWeiAmount: string, newLevels: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
+      environment.CONTRACTS.UserProfileLevel.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .levelUp(CSXTokenWeiAmount, newLevels)
+      .send({ from: this.webUser.address });
+  }
+
+  async levelUpProfileLevel(newLevels: string) {
+    console.log('THIS WEB USER', this.webUser.address);
+    
+    // Figure out how much CSX is needed
+    const CSXTokenWeiAmount = await this.getCostForNextLevels(
+      this.webUser.address!,
+      newLevels
+    );
+
+    // //Check if approved
+    // const isApproved = await this.allowanceCSX(this.webUser.address!, environment.CONTRACTS.UserProfileLevel.address);
+    // console.log('isApproved', isApproved);
+    // console.log('CSXTokenWeiAmount', CSXTokenWeiAmount);
+
+    // // Convert CSXTokenWeiAmount & isApproved to BN and then compare
+    // const isApprovedBN = new this.csxInstance.window.web3.utils.BN(isApproved);
+    // const CSXTokenWeiAmountBN = new this.csxInstance.window.web3.utils.BN(CSXTokenWeiAmount);
+
+    // if (isApprovedBN.lt(CSXTokenWeiAmountBN)) {
+    //   // Not approved, approve
+    //   await this.approveCSXTokenFromUserProfileLevel(CSXTokenWeiAmount);
+    // }
+
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
+      environment.CONTRACTS.UserProfileLevel.address,
+      { from: this.webUser.address }
+    );
+
+    // Assuming it's already approved
+      
+    return await contractInstance.methods
+      .levelUp(CSXTokenWeiAmount, newLevels)
+      .send({ from: this.webUser.address });
+  }
+
+
+
 
   /**
    * Committed Dialog
@@ -720,8 +1041,8 @@ export class Web3Service implements OnDestroy {
 
   async getKeeperOracleAddress(): Promise<string> {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.keepersContract.abi as AbiItem[],
-      environment.CONTRACTS.keepersContract.address,
+      environment.CONTRACTS.Keepers.abi as AbiItem[],
+      environment.CONTRACTS.Keepers.address,
       { from: this.webUser.address }
     );
 
@@ -741,7 +1062,103 @@ export class Web3Service implements OnDestroy {
       .on('error', (error: any) => {
         this.chainEvents.onError(error);
       });
+    this._checkForNewNotifications();
   }
 
-  ngOnDestroy(): void {}
+  private async _checkForNewNotifications() {
+    const currentBlock = await this.csxInstance.window.web3.eth.getBlockNumber();
+
+    const fromBlock = currentBlock - 50; // Replace 1000 with the desired range
+
+    this.csxInstance.tradeFactory.getPastEvents(
+      'TradeContractStatusChange',
+      {
+        fromBlock: fromBlock,
+        toBlock: 'latest',
+      },
+      (error: any, _pastEvents: any[]) => {
+        if (error) {
+          console.error('Error getting past events:', error);
+        } else {
+          // if this.webUser.address is either seller or buyer, make a const array of events
+          const myPastEvents = _pastEvents.filter((event) => {
+            return (
+              event.returnValues.sellerAddress.toLowerCase() == this.webUser.address?.toLowerCase() ||
+              event.returnValues.buyerAddress.toLowerCase() == this.webUser.address?.toLowerCase()
+            );
+          });
+
+          myPastEvents.forEach((event) => {
+            //console.log('MAIN EVENT', event);
+
+            //this.chainEvents.onEvent(event.returnValues);
+            //console.log('event', event);
+
+            this.collectPastEvent(event.returnValues);
+          });
+          this.processPastEvents();
+        }
+      }
+    );
+  }
+
+  //pastEvents array
+  pastEvents: any[] = [];
+  collectPastEvent(event: any) {
+    // get the event data
+    console.log('collectPastEvent', event);
+
+    const contractAddress = event.contractAddress;
+    const status = event[1];
+    const sellerAddress = event.sellerAddress;
+    const buyerAddress = event.buyerAddress;
+    const data = event.data;
+
+    // find the index of the event in the array
+    const index = this.pastEvents.findIndex(
+      (e) => e.contractAddress === contractAddress
+    );
+
+    // if the event is not in the array, add it
+    if (index === -1) {
+      this.pastEvents.push({ contractAddress, status, data, sellerAddress, buyerAddress });
+    }
+
+    // if the event is in the array, just update the status.
+    if (index > -1) {
+      this.pastEvents[index].status = status;
+      this.pastEvents[index].data = data;
+    }
+  }
+
+  processPastEvents() {
+    this.pastEvents.forEach((event) => {
+      // this.chainEvents.onEvent(event);
+      // Push notification
+      console.log('hello', event);
+      console.log('event.sellerAddress', event.sellerAddress);
+
+
+      // figure out the role of the user
+      const role: TradeRole = event.sellerAddress.toLowerCase() == this.webUser.address?.toLowerCase() ? TradeRole.SELLER : TradeRole.BUYER;
+
+      //Find if it is relevant to notify or not.
+      if (event.status == TradeStatus.BuyerCommitted) {
+        //Notify
+        if (role == TradeRole.BUYER) {
+
+        }
+
+        if (role == TradeRole.SELLER) {
+          this.notificationsService.notify('Someone has purchased your AYJTEM', event.contractAddress, 'Check now!', true)
+        }
+
+      }
+      //If it is relevant, then notify.
+
+
+    });
+  }
+
+  ngOnDestroy(): void { }
 }
