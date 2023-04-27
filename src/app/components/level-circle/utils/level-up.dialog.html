@@ -1,0 +1,81 @@
+<div style="max-width: 380px; text-align: center;"> <!--490 -->
+    <mat-dialog-content>
+        <span>
+           
+            <div>
+              <h1 mat-dialog-title style="color: rgba(68, 248, 52, 0.85) !important;">💎Ice-Out Your CSX Profile💎</h1>
+            </div>
+            <mat-dialog-content>
+                Increase your CSX level by burning CSX tokens.
+              
+              <br>
+              <br>
+              <span *ngIf="!isLeveledUp">
+                <b style="color: #7f94be !important;">What is your next CSX Level?</b>
+                <br>
+               <br> 
+              </span> 
+              <span *ngIf="isLeveledUp">
+                <b style="color: #7f94be !important;">Your new CSX level is {{currentLevel}}!</b>
+              </span> 
+              <br>  
+              <br>  
+              <mat-slider *ngIf="!isLeveledUp"
+                [disabled]="isLevelingUp"
+                style="width: 70%;"
+                step="1"
+                [min]="currentLevel"
+                [max]="currentLevel + 100"
+                showTickMarks
+                discrete
+                [displayWith]="formatLabel"
+                >
+                <input [(ngModel)]="selectedLevels" matSliderThumb (ngModelChange)="calculateCost()" />
+              </mat-slider>
+              <app-level-circle *ngIf="isLeveledUp" [reactOnClick]="false" [userAddress]="this.web3.webUser.address!" [displayTradeDetails]="false"></app-level-circle>
+
+              <br><br>
+              <div style="flex: 1; padding: 0 1px;">
+                <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">🔥 Burn <span *ngIf="isLeveledUp">Made</span><span *ngIf="!isLeveledUp">Required</span> 🔥</div>
+                <div style="font-size: .9rem; color: #9295b3;"><i>{{ addCommas(totalCost) }} CSX tokens</i></div>
+              </div>
+
+
+              <div *ngIf="!isLeveledUp">
+                <br><br>
+              <i style="color: #7f94be !important;">The more you burn, the higher your CSX Level will be.</i>
+              
+              <br><br>         
+              <i style="color: #7f94be !important;" 
+                  matTooltip="You can transfer your CSX level profile to another address that does not have any levels as long as no ban has been given.">
+                  CSX Profile Levels are transferable.
+              </i>
+              <br>
+           
+          
+              </div>
+              <br> <br>
+              <div *ngIf="isLevelingUp">                
+                <div class="centered-loading-spinner">                
+                  <span *ngIf="isApproving">Approve Token Spend (1/2 TX) </span><span *ngIf="isSigninTX">Confirm Burn in Wallet 🔥 </span><mat-progress-spinner
+                  class="example-margin"
+                  color="primary"
+                  mode="indeterminate"
+                  [diameter]="25">
+                </mat-progress-spinner>
+                </div>
+              </div>
+              
+              <!-- <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button> -->
+              <button *ngIf="!isLevelingUp && !isLeveledUp" [disabled]="this.selectedLevels == this.currentLevel" mat-button color="primary" (click)="levelUp()" style="color: rgba(68, 248, 52, 0.85) !important; width: 100%;">LEVEL UP NOW</button>
+              <button *ngIf="!isLevelingUp && isLeveledUp" mat-button color="primary" (click)="reset()" style="color: rgba(68, 248, 52, 0.85) !important; width: 100%;">DO IT AGAIN</button>              
+            
+            </mat-dialog-content>
+          </span>
+          <span *ngIf="!data">
+            <mat-dialog-content>
+              Error! Please try again later.
+            </mat-dialog-content>
+          </span>
+    </mat-dialog-content>
+</div>
