@@ -1,28 +1,19 @@
 
 .toolbarTextColor {
   color: #a0a3c4;
-  //position: relative;
-  //max-width: 1200px;
-  //margin: 0 auto;
 }
 
 .toolbarBg {
-  background-color: #26262612;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0.7rem 0.8rem rgba(0, 0, 0, 0.2);
+  border: 1px solid hsla(0, 0%, 100%, 0.0784313725);
 }
 
 .example-spacer {
   flex: 1 1 auto;
 }
 
-// .gg {
-//   margin: auto;
-//   margin-left : 15% !important;
-//   margin-right: 15% !important;
-// }
-
 .mat-tooltip {
-  /* your own custom styles here */
-  /* e.g. */
   color: yellow;
 }
 
@@ -30,8 +21,37 @@
   font-family: 'Material Icons';
 }
 
-//Button border-color
-// .mat-mdc-outlined-button:not(:disabled) {
-//   // border-color: var(--mdc-outlined-button-outline-color, rgba(0, 0, 0, 0.12));
-//   border-color: var(--mdc-outlined-button-outline-color, rgba(0, 0, 0, 0.12));
-// }
+.swing-animation {
+  animation: swing 2s ease infinite;
+}
+
+@keyframes swing {
+  0% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(10deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  60% {
+    transform: rotate(7deg);
+  }
+  80% {
+    transform: rotate(-7deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+.navbar-content-wrapper {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

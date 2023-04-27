@@ -1,38 +1,42 @@
-<mat-toolbar class="mat-elevation-z6 toolbarBg toolbarTextColor">
-  <!-- <button mat-icon-button> -->
-   <!-- <mat-icon mat-button [matMenuTriggerFor]="navMenu">menu</mat-icon> -->
+<mat-toolbar class="mat-elevation-z6 toolbarBg toolbarTextColor" style="background: transparent 0 0 no-repeat padding-box;">
+  
+  <div class="navbar-content-wrapper">
+    <button routerLink="/" mat-button>
+      <span class="mat-button-wrapper" style="display: flex; align-items: center;">
+        <img height="35" src="../../../assets/csx-logo.png" class="skins-market-logo">
+        <span style="font-size: 13px; padding: .5rem; color: rgb(175 178 214) !important;"><h1><b style="font-weight: 100;">CSX</b></h1></span>
+      </span>
+    </button>
+    <span fxHide fxShow.gt-xs>
+      <a style="text-decoration: none; margin: 1%;" routerLink="/" ><button mat-button style="color: rgb(175 178 214) !important;">Trade</button></a>
+      <a style="text-decoration: none; margin: 1%;" routerLink="/earn"><button mat-button style="color: rgb(175 178 214) !important;">Earn</button></a>
+      <a style="text-decoration: none; margin: 1%;"><button disabled="true" mat-button style="color: rgb(175 178 214) !important;">Buy</button></a>
+      <a style="text-decoration: none; margin: 1%;" routerLink="/referrals"><button mat-button style="color: rgb(175 178 214) !important;">Referrals</button></a>
+    </span>
+    <span class="example-spacer"></span>
+    <button mat-icon-button  fxHide fxShow.lt-sm [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button> 
+    <button [ngClass]="{ 'swing-animation': unreadNotifications !== 0 }" mat-icon-button (click)="onNotiBellClick()" [matMenuTriggerFor]="notisMenu" matBadge="{{unreadNotifications}}" [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">
+      <mat-icon>notifications</mat-icon>
+    </button>
+  
+    <button matBadge="X" matBadgeColor="warn" *ngIf="!this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnect" aria-label="Example icon-button with a menu">
+      <mat-icon mat-button >wallet</mat-icon>
+    </button>
+    
+    <button matBadge="&#x2713;" matBadgeColor="primary" *ngIf="this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
+      <mat-icon mat-button >wallet</mat-icon>
+    </button>
+    
+    <button (click)="onIncorrectNetworkClick()" *ngIf="this._web3.webUser.isWrongChain && this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9);">Incorrect Network</button>
+    
+    <a href="https://metamask.io/" target="_blank" *ngIf="!this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9); font-size: 12px;">No Wallet Found</a>  
+  </div>
 
-   <!-- <mat-menu #navMenu="matMenu" class="backgroundColor">
-    <button class="toolbarTextColor" mat-menu-item>Home</button>
-    <button class="toolbarTextColor" mat-menu-item>My Contract</button>
-  </mat-menu> -->
- <!-- </button> -->
- <button routerLink="/" mat-stroked-button >
-  <span class="mat-button-wrapper" style="display: flex; align-items: center;">
-  <img  height="55" src="../../../assets/csx-logo.png" class="skins-market-logo">
-  <!-- <span style="font-size: 13px; padding: .5rem;"><h1><b>CSX.gg</b></h1></span> -->
-</span></button>
-<span>
- <button style="margin: 1%;" mat-stroked-button [matMenuTriggerFor]="menu">About</button>
-</span>
 
+</mat-toolbar>
 
- <span class="example-spacer"></span>
-
- <!-- -->
- <!-- -->
- <!-- -->
-
- <!-- x -->
- <button mat-icon-button (click)="onNotiBellClick()" [matMenuTriggerFor]="notisMenu" matBadge="{{unreadNotifications}}" [matBadgeHidden]="unreadNotifications === 0" matBadgeColor="warn">
-  <mat-icon>notifications</mat-icon>
- </button>
-
-<mat-menu #menu="matMenu" class="backgroundColor">
-  <a style="text-decoration: none;" href="https://github.com/csx-protocol" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Protocol</p></button></a>
-  <a style="text-decoration: none;" href="https://docs.csx.gg" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Docs</p></button></a>
-  <a style="text-decoration: none;" href="https://gov.csx.gg" target="_blank" rel="noopener noreferrer"><button mat-menu-item><p class="toolbarTextColor">Governance</p></button></a>
-</mat-menu>
 <mat-menu #notisMenu="matMenu" class="backgroundColor">
   <mat-list>
     <p style="font-size: 16px; margin: initial; margin-bottom: 10px;" class="toolbarTextColor">    Notifications</p>
@@ -42,7 +46,10 @@
       <br>
       <mat-list-item>
        <p style="font-size: 12px;" class="toolbarTextColor">{{notice.message}}</p>
-       <div *ngIf="notice.link"><a href="{{notice.link}}" target="_blank"><p style="font-size: 14px;">({{notice.linkText}}).</p></a></div>
+       <div *ngIf="notice.link">
+        <a *ngIf="!notice.isDialog" href="{{notice.link}}" target="_blank"><p style="font-size: 14px;">({{notice.linkText}}).</p></a>
+        <a *ngIf="notice.isDialog" (click)="openDaDialog(notice.link)"><p style="font-size: 14px;">({{notice.linkText}}).</p></a>
+       </div>
       </mat-list-item>
       <br>
       <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
@@ -53,56 +60,73 @@
 
   </mat-list>
 </mat-menu>
- <!-- x -->
 
-<!-- -->
-
-
- <button matBadge="X" matBadgeColor="warn" *ngIf="!this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnect" aria-label="Example icon-button with a menu">
-  <mat-icon mat-button >wallet</mat-icon>
-</button>
-
-<button matBadge="&#x2713;" matBadgeColor="primary" *ngIf="this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
-  <mat-icon mat-button >wallet</mat-icon>
-</button>
-
-<button (click)="onIncorrectNetworkClick()" *ngIf="this._web3.webUser.isWrongChain && this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9);">Incorrect Network</button>
-
-<a href="https://metamask.io/" target="_blank" *ngIf="!this._web3.webUser.hasEthWallet" mat-stroked-button style="color: rgb(236, 9, 9); font-size: 12px;">No Wallet Found</a>
+<mat-menu #menu="matMenu" class="backgroundColor" style="margin: 5%; overflow-y: hidden !important;">
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://github.com/csx-protocol" target="_blank"><p style="color: rgb(175 178 214) !important;">Protocol</p></a>
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://gov.csx.gg" target="_blank"><p style="color: rgb(175 178 214) !important;">Governance</p></a>
+    <a mat-menu-item [disabled]="true" style="text-decoration: none; margin: 1%;" href="" target="_blank"><p style="color: rgb(175 178 214) !important;">Voting</p></a>
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://app.csx.gg" target="_blank"><p style="color: rgb(175 178 214) !important;">Docs</p></a>
+</mat-menu>
 
 <mat-menu #walletMenuConnect="matMenu" class="backgroundColor" style="margin: 5%;">
   <button (click)="connectWallet()" mat-menu-item><p class="toolbarTextColor">Connect Wallet</p></button>
 </mat-menu>
-<mat-menu #walletMenuConnected="matMenu" class="backgroundColor" style="margin: 5%;">
-  <p style="font-size: 16px; margin: initial; margin-bottom: 10px;" class="toolbarTextColor">    Wallet</p>
-      <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
 
-  <p class="toolbarTextColor " style="font-size: 14px; padding-left: 10px;" >{{this._web3.webUser.shortAddy}}  </p>
-  <p class="toolbarTextColor " style="font-size: 12px; padding-left: 10px;">ETH: {{this._web3.webUser.balanceEth}}</p>
+<mat-menu #walletMenuConnected="matMenu" class="backgroundColor" style="margin: 5%;"> 
+  <app-level-circle *ngIf="this._web3.webUser.isUserWalletConnected" [userAddress]="this._web3.webUser.address!" [displayTradeDetails]="true"></app-level-circle>
+
   <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
 
-  <p class="toolbarTextColor " style="font-size: 12px; padding-left: 10px;">Listing(s): 0</p>
+  <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: 0rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">CSX</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['CSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+      <div style="flex: 1; padding: 0 1px;">
+        <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">ETH</div>
+        <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['ETH'].balanceEth)}}</div>
+      </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDC</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['USDC'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDT</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['USDT'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="this._web3.webUser.balances!['sCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">sCSX</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['sCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="this._web3.webUser.balances!['eCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">eCSX</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['eCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="this._web3.webUser.balances!['vCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">vCSX</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['vCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
+  <p class="toolbarTextColor " style="font-size: .9rem; padding-left: 10px;" matTooltip="Permanent Ban: 3 Minor Misconducts or 1 Major Misconduct">Warnings: <span>0</span></p>
+  <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
 </mat-menu>
-<!-- -->
-
-</mat-toolbar>
-
-
-
-<!-- <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-  <mat-icon>more_vert</mat-icon>
-</button>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>dialpad</mat-icon>
-    <span>Redial</span>
-  </button>
-  <button mat-menu-item disabled>
-    <mat-icon>voicemail</mat-icon>
-    <span>Check voice mail</span>
-  </button>
-  <button mat-menu-item>
-    <mat-icon>notifications_off</mat-icon>
-    <span>Disable alerts</span>
-  </button>
-</mat-menu> -->
