@@ -13,41 +13,41 @@
     ANY = 'ANY'
     }
 -->
-<div style="max-width: 490px;">
+<div style="max-width: 400px;"> <!--490 -->
    <mat-dialog-content>
     <button mat-icon-button mat-dialog-close style="position: absolute; top: 5px; right: 5px; z-index: 998;">
       <mat-icon>close</mat-icon>
     </button>
 
     <!-- For Sale: 0 -->
-    <trades-for-sale-dialog [item]="item" *ngIf="item.status === '0'"></trades-for-sale-dialog>
+    <trades-for-sale-dialog [item]="item" *ngIf="item.status == '0'"></trades-for-sale-dialog>
 
     <!-- Seller Cancelled: 1 -->
-    <!-- <trades-seller-cancelled-dialog *ngIf="item.status === '1'"></trades-seller-cancelled-dialog> -->
+    <trades-seller-cancelled-dialog [item]="item" *ngIf="item.status == '1'"></trades-seller-cancelled-dialog>
 
     <!-- Buyer Committed: 2 -->
-    <trades-buyer-committed-dialog [item]="item" *ngIf="item.status === '2'"></trades-buyer-committed-dialog>
+    <trades-buyer-committed-dialog [item]="item" *ngIf="item.status == '2'"></trades-buyer-committed-dialog>
 
     <!-- Buyer Cancelled: 3 -->
-    <!-- <trades-buyer-cancelled-dialog *ngIf="item.status === '3'"></trades-buyer-cancelled-dialog> -->
+    <trades-buyer-cancelled-dialog [item]="item" *ngIf="item.status == '3'"></trades-buyer-cancelled-dialog>
 
     <!-- Seller Committed: 4 -->
-    <trades-seller-committed-dialog [item]="item" *ngIf="item.status === '4'"></trades-seller-committed-dialog>
+    <trades-seller-committed-dialog [item]="item" *ngIf="item.status == '4'"></trades-seller-committed-dialog>
 
     <!-- Seller Cancelled After Buyer Committed: 5 -->
-    <!-- <trades-seller-cancelled-after-buyer-committed-dialog *ngIf="item.status === '5'"></trades-seller-cancelled-after-buyer-committed-dialog> -->
+    <trades-seller-cancelled-after-buyer-committed-dialog [item]="item" *ngIf="item.status == '5'"></trades-seller-cancelled-after-buyer-committed-dialog>
 
     <!-- Completed: 6 -->
-    <!-- <trades-completed-dialog *ngIf="item.status === '6'"></trades-completed-dialog> -->
+    <trades-completed-dialog [item]="item" *ngIf="item.status == '6'"></trades-completed-dialog>
 
     <!-- Disputed: 7 -->
-    <!-- <trades-disputed-dialog *ngIf="item.status === '7'"></trades-disputed-dialog> -->
+    <trades-disputed-dialog [item]="item" *ngIf="item.status == '7'"></trades-disputed-dialog>
 
     <!-- Resolved: 8 -->
-    <!-- <trades-resolved-dialog *ngIf="item.status === '8'"></trades-resolved-dialog> -->
+    <trades-resolved-dialog [item]="item" *ngIf="item.status == '8'"></trades-resolved-dialog>
 
     <!-- Clawbacked: 9 -->
-    <!-- <trades-clawbacked-dialog *ngIf="item.status === '9'"></trades-clawbacked-dialog> -->
+    <trades-clawbacked-dialog [item]="item" *ngIf="item.status == '9'"></trades-clawbacked-dialog>
 
     <!-- ANY: 'ANY' -->
     <!-- <trades-any-dialog *ngIf="item.status === 'ANY'"></trades-any-dialog> -->
