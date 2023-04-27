@@ -1,0 +1,35 @@
+<span *ngIf="item">
+  <span *ngIf="item.uiInfo.role === 'Buyer'">
+    <div>
+      <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Seller has cancelled</h1>
+    </div>
+    <mat-dialog-content>
+      <i style="color: #7f94be !important;">The seller has rejected the order and has been negatively impacted.</i>
+      <br>
+      <br>
+      The funds has been returned to your wallet address.
+      <br>
+      <br>
+      <button mat-button cdkFocusInitial [mat-dialog-close]="false">OK!</button>
+    </mat-dialog-content>
+  </span>
+
+  <span *ngIf="item.uiInfo.role === 'Seller'">
+    <div>
+      <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">You have successfully cancelled the order.</h1>
+    </div>
+    <mat-dialog-content>
+      <i style="color: #7f94be !important;">Unfulfilled orders in your sales data have experienced an uptick and the funds has been returned to the buyer.</i>
+      <br>
+      <br>
+      <button mat-button cdkFocusInitial [mat-dialog-close]="false">OK!</button>
+    </mat-dialog-content>
+  </span>
+  
+</span>
+
+<span *ngIf="!item">
+  <mat-dialog-content>
+    Error! Please try again later.
+  </mat-dialog-content>
+</span>

@@ -1,0 +1,20 @@
+<span *ngIf="item">
+  <div>
+    <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Seller has cancelled</h1>
+  </div>
+  <mat-dialog-content>
+    <i style="color: #7f94be !important;">The seller has rejected the order.</i>
+    <br>
+    <br>
+    Are you sure you want to cancel {{item.itemMarketName}} sell order?
+    <br>
+    <br>
+    <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes, Cancel My Sell Order!</button>
+    <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button>
+  </mat-dialog-content>
+</span>
+<span *ngIf="!item">
+  <mat-dialog-content>
+    Error! Please try again later.
+  </mat-dialog-content>
+</span>

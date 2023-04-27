@@ -1,0 +1,47 @@
+<span *ngIf="item">
+  <span *ngIf="item.uiInfo.role === 'Buyer'" style="text-align: center;">
+      <div>
+          <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Buy Order Cancelled</h1>      
+          <img [src]="item.itemImageUrl" style="max-width: 150px; height: auto; border-radius: 5px;">     
+      </div>
+        <mat-dialog-content>
+          <p>{{item.itemMarketName}}</p>
+          <i style="color: #7f94be !important;">You have successfully cancelled the buy order.</i>
+          <!-- <br>
+          <br>
+          At the moment, you are unable to cancel the trade. However, if the seller neither accepts nor denies the trade within 24 hours from the time you committed, you will gain the ability to cancel the trade. -->
+          <!-- <br>
+          <br>
+          If the seller has not accepted or rejected the trade in  then you will be able to cancel the trade. -->
+          <br>
+          <br>            
+          
+
+        </mat-dialog-content>
+  </span>   
+
+  <span *ngIf="item.uiInfo.role === 'Seller'" style="text-align: center;">
+      <div>
+          <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">The buyer has cancelled the buy order of {{item.itemMarketName}}!</h1>
+          <img [src]="item.itemImageUrl" style="max-width: 150px; height: auto; border-radius: 5px;">
+      </div>
+      <br>
+      <br>  
+      <mat-dialog-content>
+        Do you want to relist the item?
+        <br>
+        <br>
+        <button mat-button cdkFocusInitial color="primary" style="color: #56a753 !important;">Yes, Relist Item</button>  
+      </mat-dialog-content>
+
+      <div>
+        <!-- <app-list-item></app-list-item> -->
+      </div>
+  </span>
+
+</span>
+<span *ngIf="!item">
+  <mat-dialog-content>
+    Error! Please try again later.
+  </mat-dialog-content>
+</span>
