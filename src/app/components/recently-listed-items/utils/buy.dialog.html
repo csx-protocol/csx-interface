@@ -36,17 +36,27 @@
     <mat-grid-tile>
       <div>
         <p><b>Seller</b></p>
-        <p matTooltip="{{item.seller}}">{{item.trimmedAddress}}</p>
+        <ng-template #customTooltipTemplate>
+          <div style="background-color: rgb(16 16 30 / 94%) !important;">
+            <app-level-circle [userAddress]="item.seller" [displayTradeDetails]="true"></app-level-circle>
+          </div>
+        </ng-template>
+
+      <p [appCustomTooltip]="customTooltipTemplate"><a>Stats</a></p>
       </div>
     </mat-grid-tile>
-    <mat-grid-tile>
+    <mat-grid-tile>      
       <div>
-        <p><b>Pattern Index</b></p>
+        <p matTooltip="Ranging from 1 to 1000, determines the unique pattern of a skin, such as the placement of the artwork, wear, and color distribution."><b>Paint Seed</b></p>
         <p>(To be added)</p>
       </div>
     </mat-grid-tile>
     <mat-grid-tile>
       <div>
+        <p matTooltip="Paint index is a fixed value for each skin and does not change across different instances of the same skin. Ex. the AWP Dragon Lore has a paint index of 344."><b>Pattern Index</b></p>
+        <p>(To be added)</p>
+      </div>
+      <!-- <div>
         <p><b>Avg delivery</b></p>
         <p *ngIf="avgDeliveryTime != '0'" matTooltip="Average delivery time from seller">
           {{avgDeliveryTime}} <span *ngIf="isInMinutes">minutes</span> <span *ngIf="!isInMinutes">hours</span>
@@ -54,7 +64,7 @@
         <p *ngIf="avgDeliveryTime == '0'" matTooltip="Seller has no average delivery time yet.">
           N/A
         </p>
-      </div>
+      </div> -->
     </mat-grid-tile>
   </mat-grid-list>
   <!-- spacer -->
