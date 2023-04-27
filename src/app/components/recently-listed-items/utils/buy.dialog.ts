@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Item } from "../../../shared/item.interface";
 import { Web3Service } from "src/app/shared/web3.service";
 import { animate, state, style, transition, trigger } from "@angular/animations";
+import { ReferralService } from "src/app/shared/referral.service";
 
 // export interface FloatValues {
 //   min: number;
@@ -46,7 +47,10 @@ export class BuyDialog {
 
   constructor(
     public dialogRef: MatDialogRef<BuyDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private _formBuilder: FormBuilder, private web3: Web3Service
+    @Inject(MAT_DIALOG_DATA) public data: any, 
+    private _formBuilder: FormBuilder, 
+    private web3: Web3Service,
+    private referralService: ReferralService
   ) {
 
     this.firstFormGroup = this._formBuilder.group({
@@ -76,11 +80,18 @@ export class BuyDialog {
   isBuyNowClicked: boolean = false;
   onBuyNowClick(): void {
     this.isBuyNowClicked = true;
+    const code = this.referralService.getBytes32ReferralCode();
+    if(code == '0x'.padEnd(66, '0')){
+      console.log("no code");
+    }
+    console.log("refferal-code in bytes32", code);
   }
 
   //isCheckOutClicked: boolean = false;
   onCheckOutClick(): void {
     //this.isCheckOutClicked = true;
+    
+    
     //this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)"
   }
 
