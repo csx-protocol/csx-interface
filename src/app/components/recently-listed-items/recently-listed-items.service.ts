@@ -263,7 +263,8 @@ export class RecentlyListedItemsService {
       );
       this.totalContracts = totalContracts;
       console.log('GOTYOPENDINGs', pendings);
-
+      console.log('totalContracts', totalContracts);
+      
       //Sorting highest first, lowest last.
       this.pendings = pendings.sort(
         (a: { index: number }, b: { index: number }) => b.index - a.index
