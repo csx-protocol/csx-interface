@@ -688,8 +688,9 @@ export class Web3Service implements OnDestroy {
   }
 
   public async BuyItem(
-    contractAddress: string,
+    itemAddress: string,
     buyerTradeUrl: string,
+    refCode: string,
     weiPrice: string
   ) {
     if (this.isValidUrl(buyerTradeUrl)) {
@@ -704,12 +705,12 @@ export class Web3Service implements OnDestroy {
       const contractInstance =
         await new this.csxInstance.window.web3.eth.Contract(
           environment.CONTRACTS.tradeContract.abi as AbiItem[],
-          contractAddress,
+          itemAddress,
           { from: this.webUser.address }
         );
 
       contractInstance.methods
-        .commitBuy(TradeUrl)
+        .commitBuy(TradeUrl, refCode)
         .send({ from: this.webUser.address, value: weiPrice })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
@@ -790,8 +791,6 @@ export class Web3Service implements OnDestroy {
 
     return await contractInstance.methods[variable]().call();
   }
-
-
 
   async getTradeDetailsByAddress(_address: string): Promise<any> {
     try {
@@ -910,8 +909,7 @@ export class Web3Service implements OnDestroy {
   return await tokenContractInstance.methods
     .approve(spenderAddress, tokenAmount)
     .send({ from: this.webUser.address });
-}
-
+ }
 
   async allowanceCSX(owner: string, spender: string) {
     return await this.csxInstance.CSXToken.methods
@@ -967,7 +965,21 @@ export class Web3Service implements OnDestroy {
       .send({ from: this.webUser.address });
   }
 
+  /**
+   * Referral Component
+   */
 
+  async getReferralInfo(refCode32: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .getReferralInfo(refCode32)
+      .call({ from: this.webUser.address });
+  }
 
 
   /**
