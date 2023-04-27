@@ -1,161 +1,167 @@
-<p>Role</p>
-<mat-chip-listbox aria-label="Role selection" (change)="this.myTradesService.onRoleFilterChange($event);">
-  <mat-chip-option color="accent" value="SELLER">As Seller</mat-chip-option>
-  <mat-chip-option color="accent" value="BUYER">As Buyer</mat-chip-option>
-</mat-chip-listbox>
-<p>Status</p>
-<mat-chip-listbox aria-label="High Level Status selection" (change)="this.myTradesService.onStatusFilterChange($event);">
-  <mat-chip-option value="groupOnGoing">On-Going</mat-chip-option>
-  <mat-chip-option value="groupEnded">Ended</mat-chip-option>
-</mat-chip-listbox>
-<!-- On-Going listbox -->
-<mat-chip-listbox aria-label="Status selection" *ngIf="myTradesService.isOnGoingSelected" (change)="this.myTradesService.onStatusFilterChange2($event);">
-  <mat-chip-option value="FOR_SALE">For Sale</mat-chip-option>
-  <mat-chip-option value="BUYER_COMMITTED">Buyer Committed</mat-chip-option>
-  <mat-chip-option value="SELLER_COMMITTED">Seller Accepted</mat-chip-option>
-  <mat-chip-option value="DISPUTED">Disputed</mat-chip-option>
-</mat-chip-listbox>
-<!-- Ended listbox -->
-<mat-chip-listbox aria-label="Status selection" *ngIf="myTradesService.isEndedSelected" (change)="this.myTradesService.onStatusFilterChange2($event);">
-  <mat-chip-option value="COMPLETED">Completed</mat-chip-option>
-  <mat-chip-option matTooltip="If you have listed an item without any buyer has committed coins and you cancelled the listing" value="SELLER_CANCELLED">Seller Voided</mat-chip-option>
-  <mat-chip-option matTooltip="If buyer committed coins and the seller rejected the trade." value="SELLER_CANCELLED_AFTER_BUYER_COMMITTED">Rejected</mat-chip-option>
-  <mat-chip-option matTooltip="Buyer's remorse; If buyer has committed coins and regrets buy before the seller has accepted the deal." value="BUYER_CANCELLED">Buyer Backout</mat-chip-option>
-  <mat-chip-option matTooltip="If buyer or seller disputed the trade and ruling favoured the buyer." value="CLAWBACKED">Clawbacked</mat-chip-option>
-  <mat-chip-option matTooltip="If buyer or seller disputed the trade and ruling favoured the seller." value="RESOLVED">Resolved</mat-chip-option>
-</mat-chip-listbox>
-<p>Trades</p>
-<!-- *ngIf="!this.myTradesService.isLoading" -->
-<table matSort (matSortChange)="sortData($event)" style="inline-size: -webkit-fill-available;" >
+<span *ngIf="this.myTradesService.hasItems">
+  <p>Role</p>
+  <mat-chip-listbox aria-label="Role selection" (change)="this.myTradesService.onRoleFilterChange($event);">
+    <mat-chip-option color="accent" value="SELLER">As Seller</mat-chip-option>
+    <mat-chip-option color="accent" value="BUYER">As Buyer</mat-chip-option>
+  </mat-chip-listbox>
+  <p>Status</p>
+  <mat-chip-listbox aria-label="High Level Status selection" (change)="this.myTradesService.onStatusFilterChange($event);">
+    <mat-chip-option value="groupOnGoing">On-Going</mat-chip-option>
+    <mat-chip-option value="groupEnded">Ended</mat-chip-option>
+  </mat-chip-listbox>
+  <!-- On-Going listbox -->
+  <mat-chip-listbox aria-label="Status selection" *ngIf="myTradesService.isOnGoingSelected" (change)="this.myTradesService.onStatusFilterChange2($event);">
+    <mat-chip-option value="FOR_SALE">For Sale</mat-chip-option>
+    <mat-chip-option value="BUYER_COMMITTED">Buyer Committed</mat-chip-option>
+    <mat-chip-option value="SELLER_COMMITTED">Seller Accepted</mat-chip-option>
+    <mat-chip-option value="DISPUTED">Disputed</mat-chip-option>
+  </mat-chip-listbox>
+  <!-- Ended listbox -->
+  <mat-chip-listbox aria-label="Status selection" *ngIf="myTradesService.isEndedSelected" (change)="this.myTradesService.onStatusFilterChange2($event);">
+    <mat-chip-option value="COMPLETED">Completed</mat-chip-option>
+    <mat-chip-option matTooltip="If you have listed an item without any buyer has committed coins and you cancelled the listing" value="SELLER_CANCELLED">Seller Voided</mat-chip-option>
+    <mat-chip-option matTooltip="If buyer committed coins and the seller rejected the trade." value="SELLER_CANCELLED_AFTER_BUYER_COMMITTED">Rejected</mat-chip-option>
+    <mat-chip-option matTooltip="Buyer's remorse; If buyer has committed coins and regrets buy before the seller has accepted the deal." value="BUYER_CANCELLED">Buyer Backout</mat-chip-option>
+    <mat-chip-option matTooltip="If buyer or seller disputed the trade and ruling favoured the buyer." value="CLAWBACKED">Clawbacked</mat-chip-option>
+    <mat-chip-option matTooltip="If buyer or seller disputed the trade and ruling favoured the seller." value="RESOLVED">Resolved</mat-chip-option>
+  </mat-chip-listbox>
+  <p>Trades</p>
+  <!-- *ngIf="!this.myTradesService.isLoading" -->
+  <table matSort (matSortChange)="sortData($event)" style="inline-size: -webkit-fill-available;" >
 
-  <tr>
-    <!-- <th mat-sort-header="contractAddress">Trade Address</th> -->
-    <th mat-sort-header="itemMarketName">Item</th>
-    <th mat-sort-header="tradeRole" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">Role</th>
-    <th mat-sort-header="tradeStatus">Status</th>
-    <th mat-sort-header="etherPrice">Price</th>
-    <th mat-header="tradeAction">Action</th>
-  </tr>
-
-    <tr *ngFor="let userInteraction of myTradesService.userItems.slice()" style="height: 38px;">
-      <!-- <td><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg>{{userInteraction.trimmedAddress}}</td> -->
-      <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg> {{userInteraction.itemMarketName}}</td>
-      <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
-      <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
-      <td class="tdColor">{{userInteraction.etherPrice}} ETH</td>
-      <!-- <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
-        <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
-      </td> -->
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
-        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Sell</button>
-      </td>
-
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled'">
-        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
-      </td>
-
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Committed'">
-        <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
-      </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Committed'">
-        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Buy</button>
-      </td>
-
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
-        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
-      </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
-        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
-      </td>
-
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Committed'">
-        <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Deliver Item</button>
-      </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Committed'">
-        <button (click)="openDialog(userInteraction)" mat-button color="primary" style="color: #56a753 !important;">Confirm</button>
-      </td>
-
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
-        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
-      </td>
-      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
-        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
-      </td>
-     
+    <tr>
+      <!-- <th mat-sort-header="contractAddress">Trade Address</th> -->
+      <th mat-sort-header="itemMarketName">Item</th>
+      <th mat-sort-header="tradeRole" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">Role</th>
+      <th mat-sort-header="tradeStatus">Status</th>
+      <th mat-sort-header="etherPrice">Price</th>
+      <th mat-header="tradeAction">Action</th>
     </tr>
 
-     <tr *ngIf="this.myTradesService.isLoading">
-      <td class="tdColor">
-        <ngx-skeleton-loader
-          count="5"
-          appearance="line"
-          animation="progress"
-          [theme]="{
-            'background-color': 'rgb(20 21 37)',
-            height: '19px',
-            'border-radius': 5
-          }" style="display: block; width: 80%;">
-        </ngx-skeleton-loader>
-      </td>
-      <td *ngIf="myTradesService.selectedRoleFilter == 'ANY'" class="tdColor">
-        <ngx-skeleton-loader
-          count="5"
-          appearance="line"
-          animation="progress"
-          [theme]="{
-            'background-color': 'rgb(20 21 37)',
-            height: '19px',
-            'border-radius': 5
-          }" style="display: block; width: 80%;">
-        </ngx-skeleton-loader>
-      </td>
-      <td class="tdColor">
-        <ngx-skeleton-loader
-          count="5"
-          appearance="line"
-          animation="progress"
-          [theme]="{
-            'background-color': 'rgb(20 21 37)',
-            height: '19px',
-            'border-radius': 5
-          }" style="display: block; width: 80%;">
-        </ngx-skeleton-loader>
-      </td>
-      <td class="tdColor">
-        <ngx-skeleton-loader
-          count="5"
-          appearance="line"
-          animation="progress"
-          [theme]="{
-            'background-color': 'rgb(20 21 37)',
-            height: '19px',
-            'border-radius': 5
-          }" style="display: block; width: 80%;">
-        </ngx-skeleton-loader>
-      </td>
-      <td class="tdColor">
-        <ngx-skeleton-loader
-          count="5"
-          appearance="line"
-          animation="progress"
-          [theme]="{
-            'background-color': 'rgb(20 21 37)',
-            height: '19px',
-            'border-radius': 5
-          }" style="display: block; width: 80%;">
-        </ngx-skeleton-loader>
-      </td>
-    </tr>
+      <tr *ngFor="let userInteraction of myTradesService.userItems.slice()" style="height: 38px;">
+        <!-- <td><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg>{{userInteraction.trimmedAddress}}</td> -->
+        <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg> {{userInteraction.itemMarketName}}</td>
+        <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
+        <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
+        <td class="tdColor">{{userInteraction.etherPrice}} ETH</td>
+        <!-- <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
+          <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
+        </td> -->
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
+          <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Sell</button>
+        </td>
 
-</table>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled'">
+          <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
+        </td>
 
-<button style="inline-size: -webkit-fill-available; width: 100%;" *ngIf="!this.myTradesService.isLoading && this.myTradesService.hasMoreItemsToLoad" (click)="this.myTradesService.loadNextStep(); this.myTradesService.autoScroll = true;" mat-button>Load more</button>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Committed'">
+          <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
+        </td>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Committed'">
+          <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Buy</button>
+        </td>
+
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
+          <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+        </td>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
+          <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
+        </td>
+
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Committed'">
+          <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Deliver Item</button>
+        </td>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Committed'">
+          <button (click)="openDialog(userInteraction)" mat-button color="primary" style="color: #56a753 !important;">Confirm</button>
+        </td>
+
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
+          <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+        </td>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
+          <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+        </td>
+      
+      </tr>
+
+      <tr *ngIf="this.myTradesService.isLoading">
+        <td class="tdColor">
+          <ngx-skeleton-loader
+            count="5"
+            appearance="line"
+            animation="progress"
+            [theme]="{
+              'background-color': 'rgb(20 21 37)',
+              height: '19px',
+              'border-radius': 5
+            }" style="display: block; width: 80%;">
+          </ngx-skeleton-loader>
+        </td>
+        <td *ngIf="myTradesService.selectedRoleFilter == 'ANY'" class="tdColor">
+          <ngx-skeleton-loader
+            count="5"
+            appearance="line"
+            animation="progress"
+            [theme]="{
+              'background-color': 'rgb(20 21 37)',
+              height: '19px',
+              'border-radius': 5
+            }" style="display: block; width: 80%;">
+          </ngx-skeleton-loader>
+        </td>
+        <td class="tdColor">
+          <ngx-skeleton-loader
+            count="5"
+            appearance="line"
+            animation="progress"
+            [theme]="{
+              'background-color': 'rgb(20 21 37)',
+              height: '19px',
+              'border-radius': 5
+            }" style="display: block; width: 80%;">
+          </ngx-skeleton-loader>
+        </td>
+        <td class="tdColor">
+          <ngx-skeleton-loader
+            count="5"
+            appearance="line"
+            animation="progress"
+            [theme]="{
+              'background-color': 'rgb(20 21 37)',
+              height: '19px',
+              'border-radius': 5
+            }" style="display: block; width: 80%;">
+          </ngx-skeleton-loader>
+        </td>
+        <td class="tdColor">
+          <ngx-skeleton-loader
+            count="5"
+            appearance="line"
+            animation="progress"
+            [theme]="{
+              'background-color': 'rgb(20 21 37)',
+              height: '19px',
+              'border-radius': 5
+            }" style="display: block; width: 80%;">
+          </ngx-skeleton-loader>
+        </td>
+      </tr>
+
+  </table>
+
+  <button style="inline-size: -webkit-fill-available; width: 100%;" *ngIf="!this.myTradesService.isLoading && this.myTradesService.hasMoreItemsToLoad" (click)="this.myTradesService.loadNextStep(); this.myTradesService.autoScroll = true;" mat-button>Load more</button>
+</span>
+
+<span style="text-align: center;" *ngIf="!this.myTradesService.hasItems && !this.myTradesService.isLoading">
+  <p>Got no trade history to display here yet 🤷</p>
+</span>
 
 <div *ngIf="this.myTradesService.isLoading" class="centered-loading-spinner" >
-  <mat-progress-spinner
+  Loading... <mat-progress-spinner
   class="example-margin"
   color="primary"
   mode="indeterminate"
   [diameter]="25">
-</mat-progress-spinner>
+</mat-progress-spinner> 🤔
 </div>

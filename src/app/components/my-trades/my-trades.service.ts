@@ -43,11 +43,21 @@ export class MyTradesService implements OnDestroy{
     this.subscriptionService.unsubscribeAllWithOrigin('MyTradesService');
   }
 
+  hasItems: boolean = false;
   async init() {
     if (!this.initialized) {
       this.initialized = true;
       this.totalUserTrades = await this._getTradesTotal();
-      this.userUIs = await this._getTradeUIs(this.totalUserTrades);      
+      this.userUIs = await this._getTradeUIs(this.totalUserTrades);    
+      
+      // if this.userUIs is empty
+      if (this.userUIs.length == 0) {
+        this.isLoading = false;
+        this.hasItems = false;
+        return;
+      }
+
+      this.hasItems = true;
 
       if (this.totalUserTrades > 0) {
         this.filterToData.set('ANY', {
