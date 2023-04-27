@@ -1,5 +1,3 @@
-import { TradeStatus } from "../my-trades.component";
-
 export interface MyTradeItem {
     contractAddress: string;
     seller: string;
