@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Web3Service } from '../../shared/web3.service';
 import { TradeRole, TradeStatus, UserInteraction } from './my-trades.component';
+import { SubscriptionService } from './dialogs/subscription.service';
 
 export interface FilterType<T> {
   filter: T;
@@ -17,7 +18,7 @@ export interface FilterType<T> {
 @Injectable({
   providedIn: 'root',
 })
-export class MyTradesService {
+export class MyTradesService implements OnDestroy{
   initialized: boolean = false;
   autoScroll: boolean = false;
   step: number = 5;
@@ -31,15 +32,22 @@ export class MyTradesService {
 
   selectedRoleFilter: TradeRole = TradeRole.ANY;
   selectedStatusFilter: any = 'ANY';
-  constructor(public web3: Web3Service) {
+
+  constructor(public web3: Web3Service, private subscriptionService: SubscriptionService) {
+    console.log('MyTradesService constructor, initialized?', this.initialized);
     this.init();
   }
 
+  ngOnDestroy(): void {
+    console.log('MyTradesService ngOnDestroy');    
+    this.subscriptionService.unsubscribeAllWithOrigin('MyTradesService');
+  }
+
   async init() {
-    if(!this.initialized) {
+    if (!this.initialized) {
       this.initialized = true;
       this.totalUserTrades = await this._getTradesTotal();
-      this.userUIs = await this._getTradeUIs(this.totalUserTrades);
+      this.userUIs = await this._getTradeUIs(this.totalUserTrades);      
 
       if (this.totalUserTrades > 0) {
         this.filterToData.set('ANY', {
@@ -152,7 +160,7 @@ export class MyTradesService {
 
         // All Statues that has 'ended'.
         const groupEnded = this.userUIs.filter(
-          (ui) => ui.status == TradeStatus.SellerCancelled || ui.status == TradeStatus.BuyerCancelled  || ui.status == TradeStatus.SellerCancelledAfterBuyerCommitted  || ui.status == TradeStatus.Completed || ui.status == TradeStatus.Resolved || ui.status == TradeStatus.Clawbacked
+          (ui) => ui.status == TradeStatus.SellerCancelled || ui.status == TradeStatus.BuyerCancelled || ui.status == TradeStatus.SellerCancelledAfterBuyerCommitted || ui.status == TradeStatus.Completed || ui.status == TradeStatus.Resolved || ui.status == TradeStatus.Clawbacked
         );
         this.filterToData.set('groupEnded', {
           UIs: groupEnded,
@@ -164,7 +172,102 @@ export class MyTradesService {
       this.userItems = await this._loadFirstStep('ANY');
       console.log('userItems', this.userItems);
       this.isLoading = false;
+      // this.hasMoreItemsToLoad =
+      //   this.hasMoreItemsToLoad && this.userItems.length < this.totalUserTrades;
+
+      // Status Stream
+      const allContractAddresses: string[] = this.userUIs.map((ui) => ui.contractAddress);
+      this.initStatusStream(allContractAddresses);
+    }     
+  }
+
+  initStatusStream(contractAddresses: string[]) {
+    this.subscriptionService.addSubscription(contractAddresses, (event) => {
+      console.log('Updating Trade Status');
+      
+      this.updateTradeStatus(event.contractAddress, event[1]);
+      
+      console.log('event: ', event);
+
+     //make another stream without addressScope and if user address is invovled, then update status
+     // if status is 'BuyerCommitted', then data is:
+     // data:"225482466+EP2Wgs2R||225482466+TESTTOKEN||0x4a2282ccf3ccfc727e961adef83299649ebefd7e||297776550000000000"
+    //  const buyerAddress = event[1] == TradeStatus.BuyerCommitted ? event[2].split('||')[2] : null;
+    //  console.log('buyerAddress: ', buyerAddress);
+     
+    }, 'MyTradesService');
+  }
+
+
+
+  updateTradeStatus(contractAddress: string, status: TradeStatus): boolean {
+    const tradeUI = this.userUIs.find((ui) => ui.contractAddress == contractAddress);
+    if (tradeUI) {
+      tradeUI.status = status;
+      // this.userItems = this.userItems.filter((item) => item.contractAddress != contractAddress);
+      for (const [key, value] of this.filterToData.entries()) {
+        console.log("Key: ", key);
+        console.log("Value: ", value);
+        // if contract address found, change status
+        const uiIndex = value.UIs.findIndex((ui) => ui.contractAddress == contractAddress);
+        if (uiIndex > -1) {
+          value.UIs[uiIndex].status = status;          
+        }
+
+        const itemsIndex = value.items.findIndex((ui) => ui.contractAddress == contractAddress);
+        if (itemsIndex > -1) {
+          value.items[itemsIndex].status = status;          
+          value.items[itemsIndex].uiInfo.status = this.__getStatusString(status.toString());
+        }
+
+        // if status is 'ended', remove from 'on-going' group
+        if (status == TradeStatus.SellerCancelled || status == TradeStatus.BuyerCancelled || status == TradeStatus.SellerCancelledAfterBuyerCommitted || status == TradeStatus.Completed || status == TradeStatus.Resolved || status == TradeStatus.Clawbacked) {
+          const uiIndex = this.filterToData.get('groupOnGoing')?.UIs.findIndex((ui) => ui.contractAddress == contractAddress);
+          if (uiIndex !== undefined && uiIndex > -1) {           
+            this.filterToData.get('groupOnGoing')?.UIs.splice(uiIndex, 1);
+          }
+
+          const itemsIndex = this.filterToData.get('groupOnGoing')?.items.findIndex((ui) => ui.contractAddress == contractAddress);
+          if (itemsIndex !== undefined && itemsIndex > -1) {
+            this.filterToData.get('groupOnGoing')?.items.splice(itemsIndex, 1);
+          }          
+        }
+        // if status is 'on-going', remove from 'ended' group
+        if (status == TradeStatus.ForSale || status == TradeStatus.BuyerCommitted || status == TradeStatus.SellerCommitted || status == TradeStatus.Disputed) {
+          const uiIndex = this.filterToData.get('groupEnded')?.UIs.findIndex((ui) => ui.contractAddress == contractAddress);
+          if (uiIndex !== undefined && uiIndex > -1) {
+            this.filterToData.get('groupEnded')?.UIs.splice(uiIndex, 1);
+          }
+
+          const itemsIndex = this.filterToData.get('groupEnded')?.items.findIndex((ui) => ui.contractAddress == contractAddress);
+          if (itemsIndex !== undefined && itemsIndex > -1) {            
+            this.filterToData.get('groupEnded')?.items.splice(itemsIndex, 1);
+          }
+        }
+      }
+
+      //update this.userItems if contract address found, change status.
+      const index = this.userItems.findIndex((ui) => ui.contractAddress == contractAddress);
+      if (index > -1) {
+        this.userItems[index].status = status;
+        this.userItems[index].uiInfo.status = this.__getStatusString(status.toString());        
+      }
+
+      //if selectedStatusFilter is not Any or Appropiate (and condition to ended and on-going), remove from this.userItems.
+      const isOnGoing = status == TradeStatus.ForSale || status == TradeStatus.BuyerCommitted || status == TradeStatus.SellerCommitted || status == TradeStatus.Disputed;
+      const isEnded = status == TradeStatus.SellerCancelled || status == TradeStatus.BuyerCancelled || status == TradeStatus.SellerCancelledAfterBuyerCommitted || status == TradeStatus.Completed || status == TradeStatus.Resolved || status == TradeStatus.Clawbacked;
+      if (this.selectedStatusFilter !== 'ANY' && this.selectedStatusFilter !== status) {
+        if (this.selectedStatusFilter == 'groupOnGoing' && !isOnGoing) {
+          this.userItems = this.userItems.filter((item) => item.contractAddress != contractAddress);
+        }
+        if (this.selectedStatusFilter == 'groupEnded' && !isEnded) {
+          this.userItems = this.userItems.filter((item) => item.contractAddress != contractAddress);
+        }
+      }
+      
+      return true;
     }
+    return false;
   }
 
   async onRoleFilterChange(event: any) {
@@ -196,12 +299,12 @@ export class MyTradesService {
     //this.isLoadingChip = true;
     const selectedFilter = event.value;
     this.selectedStatusFilter = selectedFilter;
-    if(this.selectedStatusFilter == 'groupOnGoing'){
+    if (this.selectedStatusFilter == 'groupOnGoing') {
       this.isOnGoingSelected = true;
     } else {
       this.isOnGoingSelected = false;
     }
-    if(this.selectedStatusFilter == 'groupEnded'){
+    if (this.selectedStatusFilter == 'groupEnded') {
       this.isEndedSelected = true;
     } else {
       this.isEndedSelected = false;
@@ -229,9 +332,9 @@ export class MyTradesService {
 
     //IsMoreToLoad based on the total number of items available for the current filter vs what have been shown (not using this.totalUserTrades)
     this.hasMoreItemsToLoad =
-      this.hasMoreItemsToLoad &&  _filteredLength < this.totalUserTrades;
+      this.hasMoreItemsToLoad && _filteredLength < this.totalUserTrades;
 
-      this.userItems = _filteredItems;
+    this.userItems = _filteredItems;
   }
 
   async onStatusFilterChange2(event: any) {
@@ -279,41 +382,44 @@ export class MyTradesService {
             _filteredItems = filteredObject.items;
           }
         } else
-        if (filteredObject && filteredObject?.UIs) {
-          //console.log('MY-TRADES: Dont have items in map');
-          //console.log('this.filterToData', this.filterToData);
+          if (filteredObject && filteredObject?.UIs) {
+            //console.log('MY-TRADES: Dont have items in map');
+            //console.log('this.filterToData', this.filterToData);
 
-          for (const item of filteredObject.UIs) {
-            if (_filteredItems.length >= this.step) {
-              break;
+            for (const item of filteredObject.UIs) {
+              if (_filteredItems.length >= this.step) {
+                break;
+              }
+              let details = await this.web3.getTradeDetailsByAddress(
+                item.contractAddress
+              );
+              const [max, min, value] = this.getFloatValues(details.skinInfo);
+              details = {
+                ...details,
+                uiInfo: {
+                  ...item,
+                  status: this.__getStatusString(item.status),
+                  role: this.__getRoleString(item.role),
+                },
+                float: { max: max, min: min, value: value }
+              };
+
+              _filteredItems.push(details);
             }
-            let details = await this.web3.getTradeDetailsByAddress(
-              item.contractAddress
-            );
-            details = {
-              ...details,
-              uiInfo: {
-                ...item,
-                status: this.__getStatusString(item.status),
-                role: this.__getRoleString(item.role),
-              },
-            };
-            _filteredItems.push(details);
-          }
-          console.log('MY-TRADES: selectedFilter', selectedFilter);
+            console.log('MY-TRADES: selectedFilter', selectedFilter);
 
-          this.filterToData.set(selectedFilter as string, {
-            items: _filteredItems,
-            UIs: filteredObject.UIs,
-          });
-        }
+            this.filterToData.set(selectedFilter as string, {
+              items: _filteredItems,
+              UIs: filteredObject.UIs,
+            });
+          }
         if (filteredObject)
           this.hasMoreItemsToLoad =
             _filteredItems.length < filteredObject.UIs.length;
       } else {
         console.log('MY-TRADES: selectedFilter is not a key in the map');
       }
-    } 
+    }
     this.isLoading = false;
     return _filteredItems;
   }
@@ -365,7 +471,7 @@ export class MyTradesService {
         let details = await this.web3.getTradeDetailsByAddress(
           item.contractAddress
         );
-
+        const [max, min, value] = this.getFloatValues(details.skinInfo);
         details = {
           ...details,
           uiInfo: {
@@ -373,6 +479,7 @@ export class MyTradesService {
             status: this.__getStatusString(item.status as string),
             role: this.__getRoleString(item.role as string),
           },
+          float: { max: max, min: min, value: value }
         };
 
         _filteredItems.push(details);
@@ -429,7 +536,7 @@ export class MyTradesService {
     let trades = [];
 
     for (let i = 0; i < _total; i++) {
-      trades.push(await this.web3.getUserTradeUIByIndex(i));
+      trades.push({...await this.web3.getUserTradeUIByIndex(i), index : i});
     }
 
     return trades;
@@ -477,7 +584,7 @@ export class MyTradesService {
       case '4' || TradeStatus.SellerCommitted:
         return 'Seller Committed';
       case '5' || TradeStatus.SellerCancelledAfterBuyerCommitted:
-        return 'Seller Cancelled After Buyer Committed';        
+        return 'Seller Cancelled After Buyer Committed';
       case '6' || TradeStatus.Completed:
         return 'Completed';
       case '7' || TradeStatus.Disputed:
@@ -487,6 +594,7 @@ export class MyTradesService {
       case '9' || TradeStatus.Clawbacked:
         return 'Clawbacked';
       default:
+        console.log('ERROR', status);        
         return 'ERROR';
     }
   }
@@ -502,8 +610,14 @@ export class MyTradesService {
     }
   }
 
-  cancelTrade(contractAddress: string) {
-    this.web3.cancelTrade(contractAddress);
+  // cancelTrade(contractAddress: string, isBuyer: boolean) {
+  //   this.web3.cancelTrade(contractAddress, isBuyer);
+  // }
+
+  getFloatValues(skinInfo: any) {
+    const floatValues = skinInfo.floatValues;
+    const floatValuesArray = JSON.parse(floatValues);
+    return floatValuesArray;
   }
 }
 
