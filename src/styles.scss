@@ -86,11 +86,11 @@ a {
 
 // .custom-modalbox > mat-dialog-container {
 //   background-color: #17182c !important;
-//   color: #afb2d6 !important;
+//   color: #afbbd6 !important;
 // }
 
 .mat-mdc-snack-bar-container {
-  --mat-mdc-snack-bar-button-color: #afb2d6;
+  --mat-mdc-snack-bar-button-color: #afbbd6;
   --mdc-snackbar-container-color: #1b1c36f0;
   --mdc-snackbar-supporting-text-color: #f44336;
 }
@@ -98,18 +98,18 @@ a {
 
 .mdc-tooltip__surface {
   background-color: rgba(0, 0, 0, 0.712) !important;
-  color: #afb2d6 !important;
+  color: #afbbd6 !important;
   font-size: small !important;
 }
 
 mat-dialog-container {
   background-color: rgba(0, 0, 0, 0.54) !important;
   --mdc-dialog-container-color: rgb(16 16 30 / 81%) !important;
-  color: #afb2d6 !important;
+  color: #afbbd6 !important;
 }
 
 .mat-mdc-dialog-container .mdc-dialog__content {
-  color: #afb2d6 !important;
+  color: #afbbd6 !important;
 }
 
 .mat-mdc-dialog-container .mdc-dialog__title {
@@ -140,7 +140,7 @@ mat-dialog-container {
 }
 
 .mat-mdc-tab-header-pagination-chevron {
-  border-color: #afb2d6;
+  border-color: #afbbd6;
 }
 
 .mat-mdc-select-value {
@@ -256,4 +256,17 @@ mat-dialog-container {
 
 mat-stepper[hide-header] .mat-horizontal-stepper-header-container {
   display:none !important;
+}
+
+// Slider LevelupDialog
+.mdc-slider .mdc-slider__thumb--with-indicator .mdc-slider__value-indicator-container {
+  pointer-events: auto;
+  width: max-content !important;
+  z-index: 999;
+}
+
+// LevelupDialog
+.mat-mdc-dialog-container .mdc-dialog__content {
+  /* color: var(--mdc-dialog-supporting-text-color, black); */
+  overflow: visible !important;
 }
