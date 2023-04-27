@@ -49,11 +49,37 @@
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
         <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Sell</button>
       </td>
+
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled'">
+        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
+      </td>
+
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Committed'">
         <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Accept Trade Offer</button>
       </td>
       <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Committed'">
         <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Buy</button>
+      </td>
+
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
+        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+      </td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Buyer Cancelled'">
+        <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: #539aa7 !important;">Info</button>
+      </td>
+
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Committed'">
+        <button (click)="openDialog(userInteraction)" style="color: #56a753 !important;" mat-button>Deliver Item</button>
+      </td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Committed'">
+        <button (click)="openDialog(userInteraction)" mat-button color="primary" style="color: #56a753 !important;">Confirm</button>
+      </td>
+
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
+        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+      </td>
+      <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Seller Cancelled After Buyer Committed'">
+        <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
       </td>
      
     </tr>

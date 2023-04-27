@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 import { MyTradesService } from './my-trades.service';
 import { DialogComponent } from './dialog/dialog.component';
 import { MyTradeItem } from './dialogs/my-trade-item.interface';
 import { IntervalService } from './dialogs/interval.service';
+import { SubscriptionService } from './dialogs/subscription.service';
 
 // Role of the trade
 export enum TradeRole {
@@ -40,12 +41,20 @@ export interface UserInteraction {
   templateUrl: './my-trades.component.html',
   styleUrls: ['./my-trades.component.scss'],
 })
-export class MyTradesComponent {
+export class MyTradesComponent implements OnDestroy {
 
   sortedData: UserInteraction[];
 
-  constructor(public myTradesService: MyTradesService, private dialog: MatDialog, private intervalService: IntervalService) {
-    this.sortedData = this.myTradesService.userItems.slice();
+  constructor(
+    public myTradesService: MyTradesService,
+    private dialog: MatDialog,
+    private intervalService: IntervalService,
+    private subscriptionService: SubscriptionService) {
+    this.sortedData = this.myTradesService.userItems.slice();    
+  }
+
+  ngOnDestroy(): void {
+    this.intervalService.stopAllIntervals();
   }
 
   sortData(sort: Sort) {
