@@ -43,6 +43,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
  * Custom Modules
  */
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NgCircleProgressModule } from 'ng-circle-progress';
 
 /**
  * Components
@@ -58,11 +59,24 @@ import { RecentlyListedItemsComponent } from './components/recently-listed-items
 import { FloatBarComponent } from './components/float-bar/float-bar.component';
 import { BuyDialog } from './components/recently-listed-items/utils/buy.dialog';
 import { MyTradesComponent } from './components/my-trades/my-trades.component';
-import { SellerCommittedDialog } from './components/my-trades/dialogs/seller-committed/seller-committed.dialog';
+import { SellerCommittedDialog } from './components/my-trades/dialogs/4-seller-committed/seller-committed.dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DialogComponent } from './components/my-trades/dialog/dialog.component';
-import { ForSaleDialog } from './components/my-trades/dialogs/for-sale/for-sale.dialog';
-import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-committed/buyer-committed.dialog';
+import { ForSaleDialog } from './components/my-trades/dialogs/0-for-sale/for-sale.dialog';
+import { BuyerCommittedDialog } from './components/my-trades/dialogs/2-buyer-committed/buyer-committed.dialog';
+import { SellerCancelledDialog } from './components/my-trades/dialogs/1-seller-cancelled/seller-cancelled.dialog';
+import { BuyerCancelledDialog } from './components/my-trades/dialogs/3-buyer-cancelled/buyer-cancelled.dialog';
+import { SellerCancelledAfterBuyerCommittedDialog } from './components/my-trades/dialogs/5-seller-cancelled-after-buyer-committed/seller-cancelled-after-buyer-committed.dialog';
+import { CompletedDialog } from './components/my-trades/dialogs/6-completed/completed.dialog';
+import { DisputedDialog } from './components/my-trades/dialogs/7-disputed/disputed.dialog';
+import { ResolvedDialog } from './components/my-trades/dialogs/8-resovled/resolved.dialog';
+import { ClawbackedDialog } from './components/my-trades/dialogs/9-clawbacked/clawbacked.dialog';
+import { LevelCircleComponent } from './components/level-circle/level-circle.component';
+import { CustomTooltipDirective } from './shared/custom-tooltip.directive';
+import { LevelUpDialog } from './components/level-circle/utils/level-up.dialog';
+import {MatSliderModule} from '@angular/material/slider';
+import { EarnComponent } from './pages/earn/earn.component';
+import { ReferralsComponent } from './pages/referrals/referrals.component';
 
 
 @NgModule({
@@ -79,8 +93,17 @@ import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-commi
     MyTradesComponent, // my trades comp
     DialogComponent, // my trades comp
     ForSaleDialog, // my trades comp
+    SellerCancelledDialog, // my trades comp
     BuyerCommittedDialog, // my trades comp
+    BuyerCancelledDialog, // my trades comp
     SellerCommittedDialog, // my trades comp
+    SellerCancelledAfterBuyerCommittedDialog, // my trades comp
+    CompletedDialog, // my trades comp
+    DisputedDialog, // my trades comp
+    ResolvedDialog, // my trades comp
+    ClawbackedDialog, LevelCircleComponent, // my trades comp
+    CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
+    LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
   ],
   imports: [
     BrowserModule,
@@ -92,6 +115,14 @@ import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-commi
     FlexLayoutModule,
     //Custom Modules
     NgxSkeletonLoaderModule,
+    NgCircleProgressModule.forRoot({
+      // radius: 100,
+      // outerStrokeWidth: 16,
+      // innerStrokeWidth: 8,
+      // outerStrokeColor: "#78C000",
+      // innerStrokeColor: "#C7E596",
+      // animationDuration: 300,
+    }),
     //Angular Material Modules
     MatToolbarModule,
     MatIconModule,
@@ -121,7 +152,8 @@ import { BuyerCommittedDialog } from './components/my-trades/dialogs/buyer-commi
     MatChipsModule,
     MatButtonToggleModule,
     MatSortModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSliderModule,
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
   providers: [],
