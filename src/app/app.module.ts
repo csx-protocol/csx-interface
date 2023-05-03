@@ -77,6 +77,7 @@ import { LevelUpDialog } from './components/level-circle/utils/level-up.dialog';
 import {MatSliderModule} from '@angular/material/slider';
 import { EarnComponent } from './pages/earn/earn.component';
 import { ReferralsComponent } from './pages/referrals/referrals.component';
+import { StakeDialog } from './pages/earn/utils/stake.dialog';
 
 
 @NgModule({
@@ -104,6 +105,7 @@ import { ReferralsComponent } from './pages/referrals/referrals.component';
     ClawbackedDialog, LevelCircleComponent, // my trades comp
     CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
+    StakeDialog, // EarnComponent
   ],
   imports: [
     BrowserModule,
