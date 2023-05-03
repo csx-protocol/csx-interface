@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Web3Service } from '../../shared/web3.service';
 import { NotificationService } from '../../shared/notification.service';
@@ -13,7 +13,7 @@ import { TradeRole, TradeStatus } from '../../components/my-trades/my-trades.com
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss'],
 })
-export class NavBarComponent implements OnInit, OnDestroy {
+export class NavBarComponent implements OnDestroy {
   // isWalletConnected = false;
   web3AccSub?: Subscription;
   notificationCountSub: Subscription;
@@ -30,9 +30,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.notificationCountSub = notificationsService.newNotification$.subscribe((_noticeCount: any) => {
       this.unreadNotifications += _noticeCount;
     });
-  }
-
-  async ngOnInit(): Promise<void> {
   }
 
   async connectWallet(): Promise<void>{
@@ -182,9 +179,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy(): Promise<void> {
-    if(this.web3AccSub){
-      this.web3AccSub.unsubscribe();
-    }
+    this.web3AccSub?.unsubscribe();
     this.notificationCountSub.unsubscribe();
   }
 
