@@ -19,59 +19,42 @@
 </div>
 
 <div *ngIf="this.web3.webUser.isUserWalletConnected">
-    <mat-card class="margins background" >
-        <mat-card-content>
-        <h2>Balances</h2>
 
-        <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: 0rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">CSX</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['CSX'].balanceEth)}}</div>
-            </div>
-          </div>
-        
-          <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-              <div style="flex: 1; padding: 0 1px;">
-                <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">ETH</div>
-                <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['ETH'].balanceEth)}}</div>
-              </div>
-          </div>
-        
-          <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDC</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['USDC'].balanceEth)}}</div>
-            </div>
-          </div>
-        
-          <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDT</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['USDT'].balanceEth)}}</div>
-            </div>
-          </div>
-        
-          <div *ngIf="this.web3.webUser.balances!['sCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">sCSX</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['sCSX'].balanceEth)}}</div>
-            </div>
-          </div>
-        
-          <div *ngIf="this.web3.webUser.balances!['eCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">eCSX</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['eCSX'].balanceEth)}}</div>
-            </div>
-          </div>
-        
-          <div *ngIf="this.web3.webUser.balances!['vCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-            <div style="flex: 1; padding: 0 1px;">
-              <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">vCSX</div>
-              <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['vCSX'].balanceEth)}}</div>
-            </div>
-          </div>
-
-        </mat-card-content>
+    <mat-card class="margins background" style="align-items: center;">
+      <mat-card-content style="align-items: center; text-align: center; color: rgba(255, 255, 0, 0.671)" >
+        <h2>Airdrop Imminent!</h2>
+        <p>The CSX token will be distributed to the CSX Community shortly.</p>
+        <p>Buyers, Sellers & Affiliates are those who will be eligible for the airdrop.</p>
+        <p>Be Wary Of Scam Attempts</p>
+      </mat-card-content>
     </mat-card>
+
+    <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+
+    <mat-card class="margins background" style="align-items: center;">
+      <mat-card-content style="align-items: center; text-align: center;">
+        <h2>CSX Staking</h2>
+        <div style="flex: 1; padding: 0 1px;">
+          <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">Staked CSX</div>
+          <div style="font-size: 1rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['sCSX'].balanceEth)}}</div>
+          <br>
+          <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">ETH Reward</div>
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.weth.ether)}}</div>          
+          <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDC Reward</div>
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.usdc.ether)}}</div>
+          <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDT Reward</div>
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.usdt.ether)}}</div>
+          <br>
+        </div>  
+        <div style="display: flex; align-items: center;">
+          <button mat-button (click)="submitStake()">Stake</button> 
+          <button mat-button (click)="submitClaim()">Claim Rewards</button>
+          <button mat-button (click)="submitUnstake()">Unstake</button>                      
+        </div>
+      </mat-card-content>
+      
+    </mat-card>
+
+    <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+
 </div>
