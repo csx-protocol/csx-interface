@@ -84,6 +84,27 @@
     </div>
   </div>
 
+  <div *ngIf="this._web3.webUser.balances!['sCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">sCSX (Staked CSX)</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['sCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="this._web3.webUser.balances!['eCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">eCSX (Escrowed CSX)</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['eCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
+  <div *ngIf="this._web3.webUser.balances!['vCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+    <div style="flex: 1; padding: 0 1px;">
+      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">vCSX (Vested CSX)</div>
+      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['vCSX'].balanceEth)}}</div>
+    </div>
+  </div>
+
   <div style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
       <div style="flex: 1; padding: 0 1px;">
         <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">ETH</div>
@@ -102,27 +123,6 @@
     <div style="flex: 1; padding: 0 1px;">
       <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDT</div>
       <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['USDT'].balanceEth)}}</div>
-    </div>
-  </div>
-
-  <div *ngIf="this._web3.webUser.balances!['sCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-    <div style="flex: 1; padding: 0 1px;">
-      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">sCSX</div>
-      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['sCSX'].balanceEth)}}</div>
-    </div>
-  </div>
-
-  <div *ngIf="this._web3.webUser.balances!['eCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-    <div style="flex: 1; padding: 0 1px;">
-      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">eCSX</div>
-      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['eCSX'].balanceEth)}}</div>
-    </div>
-  </div>
-
-  <div *ngIf="this._web3.webUser.balances!['vCSX'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
-    <div style="flex: 1; padding: 0 1px;">
-      <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">vCSX</div>
-      <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['vCSX'].balanceEth)}}</div>
     </div>
   </div>
 
