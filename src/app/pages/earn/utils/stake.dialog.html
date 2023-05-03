@@ -1,0 +1,55 @@
+<mat-card class="margins background" style="align-items: center; text-align: center;">
+   
+    <mat-dialog-content>
+        <h2 *ngIf="mode == 'stake'">Stake CSX</h2>
+        <h2 *ngIf="mode == 'unstake'">Unstake CSX</h2>
+    </mat-dialog-content>
+</mat-card>
+
+<div style="max-width: 380px; text-align: center;"> <!--490 -->
+
+    <mat-card-content style="align-items: center;">
+
+        <form [formGroup]="tokenAmountForm">
+          <mat-form-field>
+            <mat-label>Enter CSX Amount</mat-label>
+            <input matInput type="number" formControlName="tokenAmount" />
+            <button mat-button matSuffix (click)="setMaxValue()">
+              Max
+            </button>
+          </mat-form-field>
+          <div *ngIf="tokenAmountForm.controls['tokenAmount'].invalid && (tokenAmountForm.controls['tokenAmount'].dirty || tokenAmountForm.controls['tokenAmount'].touched)" class="alert alert-danger">
+            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['required']">
+              <span style="color: #f44336">At least 1 required to stake 🤔</span>
+            </span>
+            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['min']">
+              <span style="color: #f44336">Amount must be a positive number. 🙄</span>
+            </span>
+            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['max'] && mode == 'stake'">
+              <span style="color: #f44336">Can't stake more amount than what you have 😭 ({{maxValue}}).</span>
+            </span>
+            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['max'] && mode == 'unstake'">
+              <span style="color: #f44336">Can't unstake more amount than what you have 😭 ({{maxValue}}).</span>
+            </span>
+          </div>
+        </form>
+        <div  style="display: flex; align-items: center;">
+                   
+        </div>
+        <button *ngIf="!isApproving && !isStaking && mode == 'stake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitStake()">Stake</button>
+        <button *ngIf="!isApproving && !isUnstaking && mode == 'unstake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitUnstake()">Unstake</button>
+        <div *ngIf="isApproving || isStaking || isUnstaking" style="margin-left: 1rem; display: flex; align-items: center;">
+          <mat-progress-spinner
+            class="example-margin"
+            color="primary"
+            mode="indeterminate"
+            [diameter]="25">
+          </mat-progress-spinner>
+          <p style="margin-left: 1rem;" *ngIf="isApproving">1/2 TXs, Approve CSX.</p>
+          <p style="margin-left: 1rem;" *ngIf="isStaking">2/2 TXs, Stake CSX.</p>
+          <p style="margin-left: 1rem;" *ngIf="isUnstaking">1/1 TXs, Unstake CSX.</p>
+        </div>
+        
+     
+      </mat-card-content>
+</div>
