@@ -87,7 +87,8 @@ export class LevelUpDialog {
 
     }
 
-    allowanceCSX: number = 0;
+    //allowanceCSX: number = 0;
+    csxCost: string = '0';
     isApproving: boolean = false;
     isSigninTX: boolean = false;
     isLeveledUp: boolean = false;
@@ -110,10 +111,11 @@ export class LevelUpDialog {
         const newLevels = this.selectedLevels - this.currentLevel;
         this.web3.getCostForNextLevels(this.web3.webUser.address!, newLevels.toString()).then((cost) => {
             console.log('cost', cost);
+            this.csxCost = cost;
         });
 
         this.web3.allowanceCSX(this.web3.webUser.address!, environment.CONTRACTS.UserProfileLevel.address).then((allowance) => {
-            this.allowanceCSX = allowance;
+            //this.allowanceCSX = allowance;
             console.log('allowance', allowance);
             console.log('totalCostInWei', totalCostInWei);
             
@@ -144,6 +146,7 @@ export class LevelUpDialog {
         this.isLeveledUp = false;
         this.selectedLevels = this.currentLevel;
         this.totalCost = 0;
+        this.csxCost = '0';
     }
 
     levelUpProfileLevel() {
@@ -155,7 +158,9 @@ export class LevelUpDialog {
             this.isLeveledUp = true;
             this.newLevelsMade += (this.selectedLevels-this.currentLevel)
             this.currentLevel += (this.selectedLevels-this.currentLevel);
-            this.selectedLevels = this.currentLevel;            
+            this.selectedLevels = this.currentLevel;
+            const csxCostInEther = this.web3.csxInstance.window.web3.utils.fromWei(this.csxCost, 'ether');
+            this.web3.decreaseBalance('CSX', csxCostInEther);     
         }).catch((error) => {
             this.isLevelingUp = false;
             this.isSigninTX = false;
