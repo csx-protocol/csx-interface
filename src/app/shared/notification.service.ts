@@ -53,7 +53,7 @@ export class NotificationService implements OnDestroy {
       duration: 10000,
       // here specify the position
       verticalPosition: 'bottom',
-      horizontalPosition: 'right',
+      horizontalPosition: 'center',
       panelClass: ['blue-snackbar'],
     });
   }
