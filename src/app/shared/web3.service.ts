@@ -107,6 +107,8 @@ export class Web3Service implements OnDestroy {
     isWrongChain: true,
   };
 
+  
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     public notificationsService: NotificationService,
@@ -276,7 +278,7 @@ export class Web3Service implements OnDestroy {
 
     await this.___getTrimmedAddress();
     await this.___initContractInstances();
-    await this.___updateUserBalances();    
+    await this.___initUserBalances();    
     await this.___notifyUserWalletConnected();
 
     this.csxInstance.accountSubject.next(this.webUser.address);
@@ -290,14 +292,14 @@ export class Web3Service implements OnDestroy {
     this.webUser.shortAddy = first6 + '...' + last4;
   }
 
-  private async ___requestUserEthBalance() {
-    this.webUser.balances!['ETH'].balanceEth = parseFloat(
-      Web3.utils.fromWei(
-        await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
-        'ether'
-      )
-    ).toFixed(4);
-  }
+  // private async ___requestUserEthBalance() {
+  //   this.webUser.balances!['ETH'].balanceEth = parseFloat(
+  //     Web3.utils.fromWei(
+  //       await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
+  //       'ether'
+  //     )
+  //   ).toFixed(4);
+  // }
 
   private async ___initContractInstances() {
     this.csxInstance.tradeFactory =
@@ -410,7 +412,7 @@ export class Web3Service implements OnDestroy {
     }
   }
 
-  private async ___updateUserBalances() {
+  private async ___initUserBalances() {
 
     this.webUser.balances!['ETH'].balanceWei = await this.csxInstance.window.web3.eth.getBalance(
       this.webUser.address
@@ -503,6 +505,66 @@ export class Web3Service implements OnDestroy {
   }
 
   /**
+   * Generic function to modify balance locally
+   */
+
+  //this.increaseBalance('ETH', '1');
+  public increaseBalance(token: string, increaseAmount: string) {
+    const decimals = this._getTokenDecimals(token);
+    const currentBalanceBN = Web3.utils.toBN(this.webUser.balances![token].balanceWei);
+    const increaseAmountBN = Web3.utils.toBN(Web3.utils.toWei(increaseAmount, 'ether'));
+    const newBalanceBN = currentBalanceBN.add(increaseAmountBN);
+
+    this.webUser.balances![token].balanceWei = newBalanceBN.toString();
+
+    const fixedValue = decimals === 18 ? 4 : 2;
+
+    this.webUser.balances![token].balanceEth =
+      parseFloat(
+        this._fromWeiWithDecimals(this.webUser.balances![token].balanceWei, decimals)
+      ).toFixed(fixedValue);
+  }
+
+  //this.decreaseBalance('ETH', '1');
+  public decreaseBalance(token: string, decreaseAmount: string) {
+    const decimals = this._getTokenDecimals(token);
+    const currentBalanceBN = Web3.utils.toBN(this.webUser.balances![token].balanceWei);
+    const decreaseAmountBN = Web3.utils.toBN(Web3.utils.toWei(decreaseAmount, 'ether'));
+    const newBalanceBN = currentBalanceBN.sub(decreaseAmountBN);
+  
+    if (newBalanceBN.isNeg()) {
+      throw new Error('Insufficient local balance');
+    }
+  
+    this.webUser.balances![token].balanceWei = newBalanceBN.toString();
+
+    const fixedValue = decimals === 18 ? 4 : 2;
+
+    this.webUser.balances![token].balanceEth = 
+      parseFloat(
+        this._fromWeiWithDecimals(this.webUser.balances![token].balanceWei, decimals)
+      ).toFixed(fixedValue);
+  }
+
+  private _getTokenDecimals(token: string): number {
+    switch (token) {
+      case 'USDC':
+      case 'USDT':
+        return 6;
+      default:
+        return 18; // Most tokens including ETH and WETH have 18 decimal places
+    }
+  }
+
+  private _fromWeiWithDecimals(amount: string, decimals: number): string {
+    const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+    const amountBN = Web3.utils.toBN(amount);
+    const integerPart = amountBN.div(tenPowerDecimals).toString(10);
+    const fractionalPart = amountBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+    return `${integerPart}.${fractionalPart}`;
+  }
+
+  /**
    * Used in frame/nav-bar
    */
   public requestUserSwitchToCorrectNetwork() {
@@ -529,10 +591,6 @@ export class Web3Service implements OnDestroy {
    * Used in components/list-item
    * this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice
    */
-
-
-
-
   public listItem(
     //   _itemHashName: string,
     //   _tradeUrl: string,
@@ -892,13 +950,6 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
-  async approveCSXTokenFromUserProfileLevel(CSXTokenWeiAmount: string) {
-    const spenderAddress = this.csxInstance.window.web3.utils.toChecksumAddress(environment.CONTRACTS.UserProfileLevel.address);
-    return await this.csxInstance.CSXToken.methods
-      .approve(spenderAddress, CSXTokenWeiAmount)
-      .send({ from: this.webUser.address });
-  }
-
   async approveCSX(spenderAddress: string, tokenAmount: string) {
   const tokenContractInstance = await new this.csxInstance.window.web3.eth.Contract(
     environment.CONTRACTS.CSXToken.abi as AbiItem[],
@@ -938,20 +989,6 @@ export class Web3Service implements OnDestroy {
       newLevels
     );
 
-    // //Check if approved
-    // const isApproved = await this.allowanceCSX(this.webUser.address!, environment.CONTRACTS.UserProfileLevel.address);
-    // console.log('isApproved', isApproved);
-    // console.log('CSXTokenWeiAmount', CSXTokenWeiAmount);
-
-    // // Convert CSXTokenWeiAmount & isApproved to BN and then compare
-    // const isApprovedBN = new this.csxInstance.window.web3.utils.BN(isApproved);
-    // const CSXTokenWeiAmountBN = new this.csxInstance.window.web3.utils.BN(CSXTokenWeiAmount);
-
-    // if (isApprovedBN.lt(CSXTokenWeiAmountBN)) {
-    //   // Not approved, approve
-    //   await this.approveCSXTokenFromUserProfileLevel(CSXTokenWeiAmount);
-    // }
-
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
@@ -981,6 +1018,27 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
+
+  /**
+   * Stake Component
+   */
+
+  // Approve CSXToken first
+  async stake(amount: string): Promise<string> {
+    return await this.csxInstance.sCSXToken.methods.stake(amount).send({ from: this.webUser.address });
+  }
+
+  async unstake(amount: string): Promise<string> {
+    return await this.csxInstance.sCSXToken.methods.unStake(amount).send({ from: this.webUser.address });
+  }
+
+  async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
+    return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address });
+  }
+
+  async getClaimableAmount(): Promise<any> {
+    return await this.csxInstance.sCSXToken.methods.getClaimableAmount(this.webUser.address).call({ from: this.webUser.address });
+  }
 
   /**
    * Committed Dialog
