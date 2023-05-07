@@ -1,0 +1,17 @@
+.responsive-table {
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  @media (max-width: 768px) {
+    .responsive-table {
+      font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .responsive-table {
+      font-size: 10px;
+    }
+  }
+  

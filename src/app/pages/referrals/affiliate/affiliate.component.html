@@ -1,0 +1,126 @@
+
+
+
+<mat-tab-group (selectedTabChange)="tabChange($event)">
+    <mat-tab label="Create New">
+        <div class="tab-content-wrap">
+            <br><br>
+            <mat-stepper [@cardAnimation]="state" hide-header [linear]="true" #stepper>
+                <mat-step [stepControl]="firstFormGroup">
+                    <form [formGroup]="firstFormGroup">
+                        <ng-template matStepLabel>Enter Referral Code</ng-template>
+                        <p><b>Create Referral Code</b> to share fee benefits!</p>
+                        <br>
+                        <mat-form-field style="max-width: 500px;" appearance="fill" matTooltipPosition="above">
+                            <mat-label>Referral Code:</mat-label>
+                            <!-- Give heads up warning that they need to have inventory set to public -->
+                            <input (keydown)="onKeydown($event)" matInput formControlName="firstCtrl" required maxlength="43">
+                            <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('required')">
+                                Referral Code is <strong>required</strong>
+                            </mat-error>
+                            <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('pattern')">
+                                Trade link must be <strong>valid</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <div>
+                            <br>
+                            <button mat-button color="primary" style="font-size: large; min-width: 250px;"
+                                cdkFocusInitial (click)="onClickCheckAvailability()">Check Availability</button>
+                        </div>
+                    </form>
+                </mat-step>
+                <mat-step [stepControl]="secondFormGroup">
+                    <ng-template matStepLabel>Set Ratio</ng-template>
+                    <button mat-button matStepperPrevious><p style="font-size: large;"><mat-icon>keyboard_backspace</mat-icon></p></button> 
+                    <form [formGroup]="secondFormGroup">
+                        <h2>Referral Code Available</h2>
+                        <h3>https://app.csx.gg?r={{firstFormGroup.value.firstCtrl}}</h3>
+                      <div>
+                        <p>Adjust the slider to set your rebate and buyer's discount from the 2% fee.</p>
+                        <p style="font-size: .8rem;">Remaining 1% goes to CSX stakers. Share your code to earn and let others save on fees.</p>
+                  
+                        <div style="height: 20px;"></div>
+                        <p><b>Set Ratio</b></p>
+                        <div style="display: flex; align-items: center;">
+                            <label style="flex-grow: 1; margin-right: 5px;">{{secondFormGroup.value.scndCtrl/2}}% Rebate</label>
+                            <mat-slider step="2" class="w-20">
+                                <input matSliderThumb formControlName="scndCtrl"/>
+                            </mat-slider>
+                            <label style="flex-grow: 1; margin-left: 5px;">{{(100 - secondFormGroup.value.scndCtrl) / 2}}% Discount</label>
+                          </div>
+                          <br><br>
+                          <button *ngIf="!isCreatingCode" mat-button color="primary" style="font-size: larger;"
+                                cdkFocusInitial (click)="onClickCreateCode()">Create Link</button><br><br>
+                            
+                          <div class="centered-loading-spinner" *ngIf="isCreatingCode">                
+                            <span>Confirm in Wallet 🤝 </span><mat-progress-spinner
+                            class="example-margin"
+                            color="primary"
+                            mode="indeterminate"
+                            [diameter]="25">
+                          </mat-progress-spinner>
+                          </div>              
+                      </div>
+                    </form>
+                  </mat-step>
+                  
+                  
+                <mat-step>
+                    <ng-template matStepLabel>Done</ng-template>
+                    <p>You are now done.</p>
+                    <div>
+                        <button mat-button matStepperPrevious>Back</button>
+                        <button mat-button (click)="stepper.reset()">Reset</button>
+                    </div>
+                </mat-step>
+            </mat-stepper>
+            
+        </div>                    
+    </mat-tab>
+    <mat-tab label="My Links" >
+        <div class="tab-content-wrap">                        
+            <br><br>
+            <div>
+                <div style="max-width: 450px; display: inline-table; text-align: center;">
+                    <table mat-table [dataSource]="this.rebates" matSort (matSortChange)="sortData($event)" class="mat-elevation-z8 responsive-table" style="background: #17182c !important; color: #afb2d6;">
+            
+                        <ng-container matColumnDef="referralCode">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by code"> Ref Code. </th>
+                        <td mat-cell *matCellDef="let element"> {{element.codeString}} </td>
+                        </ng-container> 
+                    
+                        <ng-container matColumnDef="rebateETH">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ETH Rebate"> Rebate ETH </th>
+                        <td mat-cell *matCellDef="let element"> {{element.rebates[2].rebate}} </td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="rebateUSDC">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by USDC Rebate"> Rebate USDC </th>
+                        <td mat-cell *matCellDef="let element"> {{element.rebates[0].rebate}} </td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="rebateUSDT">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by USDT Rebate"> Rebate USDT </th>
+                        <td mat-cell *matCellDef="let element"> {{element.rebates[1].rebate}} </td>
+                        </ng-container> 
+                        
+                        <ng-container matColumnDef="buyerRatio">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Buyer Discount"> Buyer Discount </th>
+                            <td mat-cell *matCellDef="let element"> {{ (element.buyerRatio) / 2 }}% </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="sellerRatio">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Your Rebate"> Your Rebate </th>
+                            <td mat-cell *matCellDef="let element"> {{ (element.sellerRatio) / 2}}% </td>
+                        </ng-container>
+                    
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </div>
+                <br><br>
+            </div>
+
+        </div>
+    </mat-tab>
+</mat-tab-group>
