@@ -270,3 +270,9 @@ mat-stepper[hide-header] .mat-horizontal-stepper-header-container {
   /* color: var(--mdc-dialog-supporting-text-color, black); */
   overflow: visible !important;
 }
+
+// Referrals Affiliate Page
+.mat-mdc-table tbody, .mat-mdc-table tfoot, .mat-mdc-table thead, .mat-mdc-cell, .mat-mdc-footer-cell, .mat-mdc-header-row, .mat-mdc-row, .mat-mdc-footer-row, .mat-mdc-table .mat-mdc-header-cell {
+  background: inherit;
+  color: #afb2d6 !important;
+}
