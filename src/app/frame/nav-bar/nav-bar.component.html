@@ -10,7 +10,7 @@
     <span fxHide fxShow.gt-xs>
       <a style="text-decoration: none; margin: 1%;" routerLink="/" ><button mat-button style="color: rgb(175 178 214) !important;">Trade</button></a>
       <a style="text-decoration: none; margin: 1%;" routerLink="/earn"><button mat-button style="color: rgb(175 178 214) !important;">Earn</button></a>
-      <a style="text-decoration: none; margin: 1%;"><button disabled="true" mat-button style="color: rgb(175 178 214) !important;">Buy</button></a>
+      <a style="text-decoration: none; margin: 1%;" matTooltip="Coming Soon."><button disabled="true" mat-button style="color: rgb(103, 105, 121) !important;">Buy</button></a>
       <a style="text-decoration: none; margin: 1%;" routerLink="/referrals"><button mat-button style="color: rgb(175 178 214) !important;">Referrals</button></a>
     </span>
     <span class="example-spacer"></span>
@@ -61,11 +61,11 @@
   </mat-list>
 </mat-menu>
 
-<mat-menu #menu="matMenu" class="backgroundColor" style="margin: 5%; overflow-y: hidden !important;">
-    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://github.com/csx-protocol" target="_blank"><p style="color: rgb(175 178 214) !important;">Protocol</p></a>
-    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://gov.csx.gg" target="_blank"><p style="color: rgb(175 178 214) !important;">Governance</p></a>
-    <a mat-menu-item [disabled]="true" style="text-decoration: none; margin: 1%;" href="" target="_blank"><p style="color: rgb(175 178 214) !important;">Voting</p></a>
-    <a mat-menu-item style="text-decoration: none; margin: 1%;" href="https://app.csx.gg" target="_blank"><p style="color: rgb(175 178 214) !important;">Docs</p></a>
+<mat-menu #menu="matMenu" class="backgroundColor">
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" routerLink="/"><p style="color: rgb(175 178 214) !important;">Trade</p></a>
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" routerLink="/earn"><p style="color: rgb(175 178 214) !important;">Earn</p></a>
+    <a mat-menu-item [disabled]="true" style="text-decoration: none; margin: 1%;" matTooltip="Coming Soon."><p style="color: rgb(103, 105, 121) !important;">Buy</p></a>
+    <a mat-menu-item style="text-decoration: none; margin: 1%;" routerLink="/referrals"><p style="color: rgb(175 178 214) !important;">Referrals</p></a>
 </mat-menu>
 
 <mat-menu #walletMenuConnect="matMenu" class="backgroundColor" style="margin: 5%;">
