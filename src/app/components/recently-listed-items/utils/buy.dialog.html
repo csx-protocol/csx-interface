@@ -30,7 +30,7 @@
     <mat-grid-tile>
       <div>
         <p><b>Price</b></p>
-        <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">{{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
+        <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD"><img *ngIf="item.priceType == '0'" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"><img *ngIf="item.priceType == '1'" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"><img *ngIf="item.priceType == '2'" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">{{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
       </div>      
     </mat-grid-tile>
     <mat-grid-tile>
