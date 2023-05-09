@@ -110,7 +110,7 @@
             {{item.itemMarketName}}
           </p>
           <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar>
-          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: {{item.etherPrice}} ETH</p>
+          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: {{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
         </mat-card-content>
         <mat-card-actions>
           <button (click)="openDialog(item)" mat-button color="primary">BUY</button>
