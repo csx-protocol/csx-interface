@@ -14,6 +14,7 @@ export interface Item {
     stickers: any[];
     weaponType: string;
     etherPrice: string;
+    priceType: string;
     trimmedAddress: string;
     indexInfo: {
         index: string;
@@ -24,6 +25,11 @@ export interface Item {
         nextIndex: string;
         etherPrice: string;
         priceInUSD: number;
+    };
+    skinInfo: {
+        floatValues: string;
+        paintIndex: string;
+        paintSeed: string;
     };
 }
 
