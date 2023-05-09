@@ -110,7 +110,7 @@
             {{item.itemMarketName}}
           </p>
           <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar>
-          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: {{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
+          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">Price: <span *ngIf="item.priceType == '0'">{{item.etherPrice}} </span> <span *ngIf="item.priceType != '0'">{{item.indexInfo.priceInUSD.toFixed(2)}} </span> <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
         </mat-card-content>
         <mat-card-actions>
           <button (click)="openDialog(item)" mat-button color="primary">BUY</button>
@@ -127,7 +127,6 @@
     </mat-grid-tile>
     </mat-grid-list>
 
-    <!---->
     <mat-grid-list *ngIf="this.recentlyListed.isLoading" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
       <mat-grid-tile style="overflow: visible;" *ngFor="let amount of createRangeForSkeletonLoader(this.recentlyListed.step)" >
 
@@ -179,25 +178,12 @@
                 }"
             >
             </ngx-skeleton-loader>
-              <!-- <app-float-bar [min]="0" [max]="1" [value]="0.5"></app-float-bar>
-              <p>Price: 0 ETH</p> -->
             </mat-card-content>
-            <!-- <mat-card-actions>
-              <button disabled="true" mat-button color="primary">BUY</button>
-              <button disabled="true" mat-button color="primary">DETAILS</button>
-
-
-                <button style="width: 10px;" mat-button color="primary">
-                  <mat-icon>search</mat-icon>
-                </button>
-
-            </mat-card-actions> -->
 
           </mat-card>
 
       </mat-grid-tile>
     </mat-grid-list>
-    <!---->
 
 
     <br>
