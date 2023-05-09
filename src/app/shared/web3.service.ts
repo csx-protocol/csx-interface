@@ -733,8 +733,16 @@ export class Web3Service implements OnDestroy {
 
     tradeIndexes = tradeIndexes.map((element: any) => {
       // Create a new object with the original element's properties and the extra variable
-      const etherPrice = this.fromWei(element.weiPrice);
-      const priceInUSD = ETHUSD * parseFloat(etherPrice);
+
+      // decimals if priceType 1 or 2 then its 6 otherwise 18
+      const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18; 
+
+      // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(element.weiPrice) : this.fromWei(element.weiPrice);
+
+      // if 6 then etherPrice otherwise etherPrice * ETHUSD
+      const priceInUSD = decimals == 6 ? parseFloat(etherPrice) : ETHUSD * parseFloat(etherPrice);
+      
       return {
         ...element,
         etherPrice: etherPrice,
@@ -1137,6 +1145,15 @@ export class Web3Service implements OnDestroy {
   public fromWei(weiVal: string): string {
     return Web3.utils.fromWei(weiVal, 'ether');
   }
+
+  public fromSmallestUnitToSixthDecimalBaseUnit(smallestUnitVal: string): string {
+    const decimals = 6;
+    const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+    const BalanceBN = Web3.utils.toBN(smallestUnitVal);
+    const BalanceInteger = BalanceBN.div(tenPowerDecimals).toString(10);
+    const BalanceFraction = BalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+    return `${BalanceInteger}.${BalanceFraction}`;
+}
 
   public isValidUrl(url: string): boolean {
     try {
