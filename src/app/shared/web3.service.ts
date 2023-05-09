@@ -1017,7 +1017,66 @@ export class Web3Service implements OnDestroy {
       .getReferralInfo(refCode32)
       .call({ from: this.webUser.address });
   }
+  
+  async getReferralCode(address: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
 
+    return await contractInstance.methods
+      .getReferralCode(address)
+      .call({ from: this.webUser.address });
+  }
+
+  async registerReferralCode(referralCode: string, ownerRatio: string, buyerRatio: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .registerReferralCode(referralCode, ownerRatio, buyerRatio)
+      .send({ from: this.webUser.address });
+  }
+
+  async getReferralCodesByUser(address: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .getReferralCodesByUser(address)
+      .call({ from: this.webUser.address });
+  }
+  
+  async getRebatePerCodePerPaymentToken(referralCode: string, paymentToken: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .getRebatePerCodePerPaymentToken(referralCode, paymentToken)
+      .call({ from: this.webUser.address });
+  }
+
+  async setReferralCodeAsUser(referralCode: string){
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+      environment.CONTRACTS.ReferralRegistry.address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .setReferralCodeAsUser(referralCode)
+      .send({ from: this.webUser.address });
+  }
 
   /**
    * Stake Component
