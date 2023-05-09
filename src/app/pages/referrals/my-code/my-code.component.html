@@ -1,0 +1,32 @@
+<h2>Primary Discount Code</h2>
+<p *ngIf="myReferralCode != ''">{{myReferralCode}} (Discount on Fee: -{{ (buyerRatio) / 2}}%)</p>
+<p *ngIf="myReferralCode == ''"> N/A</p>
+<mat-divider style="margin: 1%; visibility: hidden;"></mat-divider>
+<h2>Set Primary Discount Code</h2>
+<div>
+    <mat-form-field class="example-full-width">
+        <mat-label>Enter Referral Code</mat-label>
+        <input matInput [(ngModel)]="refferalCodeFromLocalStorage" [value]="refferalCodeFromLocalStorage">
+        <button *ngIf="refferalCodeFromLocalStorage" matSuffix mat-icon-button aria-label="Clear" (click)="refferalCodeFromLocalStorage=''">
+            <mat-icon>close</mat-icon>
+          </button>
+    </mat-form-field>
+    <button mat-button (click)="checkReferralCode()">{{buttonText}}</button>
+</div>
+
+<div *ngIf="isValidRefCode">
+    <h2><b>{{ (buyerRatio) / 2}}% Discount!</b></h2>
+    <!-- <p>Instead of the 2% fee, it's a {{(200-((buyerRatio) ))/100}}% fee instead on all purchases.</p> -->
+    <p>The fee on all purchases is reduced from 2% to {{(200-((buyerRatio) ))/100}}%.</p>
+    <button *ngIf="!isApplyingCode" mat-button (click)="applyCode()">Apply</button>
+</div>
+
+<div class="centered-loading-spinner" *ngIf="isApplyingCode">                
+    <span style="color: rgb(124, 130, 235) ">Confirm Primary Code in Wallet </span> <mat-progress-spinner
+    class="example-margin"
+    color="primary"
+    mode="indeterminate"
+    [diameter]="25">
+  </mat-progress-spinner>
+  </div>
+
