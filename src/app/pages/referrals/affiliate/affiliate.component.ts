@@ -7,6 +7,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { environment } from '../../../../environment/environment';
 import { Sort } from '@angular/material/sort';
+import { MatTabGroup } from '@angular/material/tabs';
 
 interface Rebate {
   token: string;
@@ -44,12 +45,16 @@ export class AffiliateComponent {
   firstFormGroup: FormBuilder | any;
   secondFormGroup: FormBuilder | any;
   @ViewChild('stepper') stepper: MatStepper | undefined;
+  @ViewChild('tabGroup') tabGroup: MatTabGroup | undefined;
   
-  displayedColumns: string[] = ['referralCode', 'rebateETH', 'rebateUSDC', 'rebateUSDT', 'buyerRatio', 'sellerRatio'];
+  displayedColumns: string[] = ['referralCode', 'buyerRatio', 'sellerRatio', 'rebateETH', 'rebateUSDC', 'rebateUSDT'];
 
   rebates: ReferralRebateData[] = [];
 
+  isLoading: boolean = false;
+  loadCount = '1';
   constructor(public web3: Web3Service, private referralService: ReferralService, private notify: NotificationService, private _formBuilder: FormBuilder,) {
+    this.isLoading = true;
     this.firstFormGroup = this._formBuilder.group({
       firstCtrl: ['', Validators.required]
     });
@@ -57,14 +62,12 @@ export class AffiliateComponent {
       scndCtrl: [50, Validators.required],
     });
 
-    this.getRebates().then((rebates: ReferralRebateData[]) => {
-      this.rebates = rebates;
-    });
     
   }
 
   async getRebates(): Promise<ReferralRebateData[]> {
     const refCodes = await this.web3.getReferralCodesByUser(this.web3.webUser.address!);
+    this.loadCount = ((refCodes.length - this.rebates.length)).toString();
     const rebates = await this._getRebatesFromBytes32Codes(refCodes);
     return rebates;
   }
@@ -73,9 +76,7 @@ export class AffiliateComponent {
     let rebates: ReferralRebateData[] = [];
     for (const code of codes) {
       const rebate = await this.__getRebatesFromBytes32Code(code);
-      const ratios = await this.web3.getReferralInfo(code);
-      console.log(ratios);
-      
+      const ratios = await this.web3.getReferralInfo(code);      
       const reb: ReferralRebateData = {
         codeString: this.referralService.bytes32ToString(code), 
         code: code, 
@@ -159,6 +160,7 @@ export class AffiliateComponent {
         this.secondFormGroup.value.scndCtrl = 50;
         this.firstFormGroup.value.firstCtrl = '';
         this.stepper!.previous();
+        this.tabGroup!.selectedIndex = 1;
         // Push the new code to the table
         
       }).catch((err: any) => {
@@ -181,8 +183,10 @@ export class AffiliateComponent {
 
   tabChange(event: any){
     if(event.index === 1){
+      this.isLoading = true;
       this.getRebates().then((rebates: ReferralRebateData[]) => {
         this.rebates = rebates;
+        this.isLoading = false;
       });
     }
   }
@@ -198,7 +202,7 @@ export class AffiliateComponent {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
         case 'referralCode': return this._compare(a.codeString, b.codeString, isAsc);
-        case 'rebateETH': return this._compare(a.rebates[2].rebate, b.rebates[2].rebate, isAsc); //Make sure they are not in wei and full (with 18 decimals) eth as string parsed to int
+        case 'rebateETH': return this._compare(a.rebates[2].rebate, b.rebates[2].rebate, isAsc); //Make sure they are not in wei and full eth (with 18 decimals) eth as string parsed to int
         case 'rebateUSDC': return this._compare(a.rebates[0].rebate, b.rebates[0].rebate, isAsc); //Make sure they are not in wei and full eth (with 6 decimals) as string parsed to int
         case 'rebateUSDT': return this._compare(a.rebates[1].rebate, b.rebates[1].rebate, isAsc); //Make sure they are not in wei and full eth (with 6 decimals) as string parsed to int
         case 'buyerRatio': return this._compare(parseInt(a.buyerRatio), parseInt(b.buyerRatio), isAsc);
