@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0xD90253da35Beb9aAd6A3a81063c96717B90Ce1a7",
+      address: "0xc2450CdCe6c3c25af24AB337F192D27ab570233A",
       abi: [
         {
           "inputs": [],
@@ -337,7 +337,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x117653004e08F060c39ca7c76E7Cbe11EEe51EE7",
+      address: "0x9BA470AcBc2Fb97B3D5e286325cEa3ea31204bB6",
       abi: [
         {
           "inputs": [
@@ -861,9 +861,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0x2b5276a5730b983F6bdF4029bCcB95bA7250d5C1",
-        USDT: "0x4a54358266fA56A7A01b9d0b4BCFD2079782600e",
-        WETH: "0x7493a3c8bD54A5d8bcC4BeB6497c30629050b112",
+        USDC: "0xb08ab0c027004d0D815E2a94776F0ec623edfe42",
+        USDT: "0x758FBFa3cd982ba34aA002c654c17E9D1C704428",
+        WETH: "0x00b92d65404C48C2b9703BaBb1d5d11F00E7eD83",
       },
       abi: [
         {
@@ -1164,7 +1164,7 @@ export const environment = {
       ],
     },
     EscrowedCSX: {
-      address: "0x6bA58eC8c2350079C9A1226576da3CA22616A0B7",
+      address: "0x27E2E3D01f71D1a97a62c6d7D66418ABB168acA1",
       abi: [
         {
           "inputs": [
@@ -1571,7 +1571,7 @@ export const environment = {
       ]
     },
     VestedCSX: {
-      address: "0x532d1f717BEbC3fF963d7Eb0D9082e165e261012",
+      address: "0x4B22c47Bc93759A04Abe729cB89CFd5fC97b6D29",
       abi: [
         {
           "inputs": [
@@ -2036,7 +2036,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x18b6EE6d9AA8Bb0f99d39bE1EB3998187f534737',
+      address: '0x2CDD444D5eE147b85Ccdcd76857d5631969D3674',
       abi: [
         {
           "inputs": [
@@ -2217,7 +2217,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0x73E9CaE3004Ab63904c9bb51DE8B7c831c1D8E87',
+      address: '0x2905E4c20c38ffC8981d68a154c0B40108F7E787',
       abi: [
         {
           "inputs": [
@@ -2930,7 +2930,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0x2458051587c8D20ff8536Be21A470E7c6575b8c6",
+      address: "0x937bb385F2b49C4652274c8fAdB4Bb569625d814",
       abi: [
         {
           "inputs": [
@@ -3127,7 +3127,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0xB8854fc8d281733fB9cD6C5DCB8ba0634AD12458",
+      address: "0x4351af0b1DeBF5fea7120e94a242D5Eb76E1CD4c",
       abi: [
         {
           "inputs": [],
@@ -3153,6 +3153,12 @@ export const environment = {
               "indexed": true,
               "internalType": "address",
               "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "paymentToken",
               "type": "address"
             },
             {
@@ -3280,6 +3286,49 @@ export const environment = {
             },
             {
               "internalType": "address",
+              "name": "paymentToken",
+              "type": "address"
+            }
+          ],
+          "name": "getRebatePerCodePerPaymentToken",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getReferralCodesByUser",
+          "outputs": [
+            {
+              "internalType": "bytes32[]",
+              "name": "",
+              "type": "bytes32[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "referralCode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
               "name": "user",
               "type": "address"
             }
@@ -3329,14 +3378,14 @@ export const environment = {
               "type": "address"
             },
             {
+              "internalType": "address",
+              "name": "_paymentToken",
+              "type": "address"
+            },
+            {
               "internalType": "bytes32",
               "name": "referralCode",
               "type": "bytes32"
-            },
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
             },
             {
               "internalType": "uint256",
@@ -3397,11 +3446,6 @@ export const environment = {
                 {
                   "internalType": "uint256",
                   "name": "buyerRatio",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "rebate",
                   "type": "uint256"
                 }
               ],
@@ -3478,7 +3522,7 @@ export const environment = {
       ],
     },
     tradeFactory: {
-      address: "0xf5F31c562E203644df460777Df5724e3f1B84e5d",
+      address: "0x1Ab57A0fB90aaf53e523Fa54c30bb1AdD608257a",
       abi: [
         {
           "inputs": [
