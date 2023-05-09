@@ -694,7 +694,9 @@ export class Web3Service implements OnDestroy {
         .getTradeDetailsByIndex(_index)
         .call({ from: this.webUser.address });
 
-      const etherPrice = this.fromWei(tradeDetails.weiPrice);
+      //const etherPrice = this.fromWei(tradeDetails.weiPrice);
+      const decimals = tradeDetails.priceType == 1 || tradeDetails.priceType == 2 ? 6 : 18; 
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(tradeDetails.weiPrice) : this.fromWei(tradeDetails.weiPrice);
       const trimmedAddress = this.getTrimmedAddress(
         tradeDetails.contractAddress
       );
@@ -742,7 +744,7 @@ export class Web3Service implements OnDestroy {
 
       // if 6 then etherPrice otherwise etherPrice * ETHUSD
       const priceInUSD = decimals == 6 ? parseFloat(etherPrice) : ETHUSD * parseFloat(etherPrice);
-      
+
       return {
         ...element,
         etherPrice: etherPrice,
