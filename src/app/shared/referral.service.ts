@@ -25,6 +25,10 @@ export class ReferralService {
     this.setReferralCode(newCode);
   }
 
+  removeRefferalCode(): void {
+    localStorage.removeItem(this.referralCodeKey);
+  }
+
   getBytes32ReferralCode(): string {
     if(this.hasReferralCode() === false) {
         // return empty bytes32 string
@@ -35,8 +39,13 @@ export class ReferralService {
     return bytes32Code;
   }
 
-  generateBytes32ReferralCode(referralCode: string): string {
+  stringToBytes32(referralCode: string): string {
     const bytes32Code = this.web3.csxInstance.window.web3.utils.utf8ToHex(referralCode).padEnd(66, '0');
     return bytes32Code;
+  }
+
+  //Converts bytes32 to string
+  bytes32ToString(bytes32: string): string {
+    return this.web3.csxInstance.window.web3.utils.hexToUtf8(bytes32);
   }
 }
