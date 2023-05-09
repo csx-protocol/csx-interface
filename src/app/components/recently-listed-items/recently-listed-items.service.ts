@@ -132,7 +132,11 @@ export class RecentlyListedItemsService {
         }
       } else if (sortBy === 'weiPrice') {
         console.log(sortBy, directionMultiplier);
-        return directionMultiplier * (a.weiPrice - b.weiPrice);
+        if(a.priceInUSD && b.priceInUSD !== undefined){
+         return directionMultiplier * (Number(a.priceInUSD) - Number(b.priceInUSD));
+        } else {
+          return directionMultiplier * (Number(a.indexInfo.priceInUSD) - Number(b.indexInfo.priceInUSD));
+        }
       } else {
         return 0;
       }
