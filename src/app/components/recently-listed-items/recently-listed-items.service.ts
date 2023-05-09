@@ -139,18 +139,6 @@ export class RecentlyListedItemsService {
     });
   }
 
-  // __sortObjects(objects: any[], sortBy: 'index' | 'weiPrice'): any[] {
-  //   return objects.sort((a, b) => {
-  //     if (sortBy === 'index') {
-  //       return a.index - b.index; //Maybe ParseInt?
-  //     } else if (sortBy === 'weiPrice') {
-  //       return a.weiPrice - b.weiPrice; //Maybe ParseInt?
-  //     } else {
-  //       return 0;
-  //     }
-  //   });
-  // }
-
   filterTimeout: any;
   async filterNames(event: any) {
     clearTimeout(this.filterTimeout);
