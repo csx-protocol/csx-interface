@@ -39,6 +39,9 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatSortModule} from '@angular/material/sort';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatTableModule} from '@angular/material/table';
+import {ClipboardModule} from '@angular/cdk/clipboard';
+
 /**
  * Custom Modules
  */
@@ -78,6 +81,8 @@ import {MatSliderModule} from '@angular/material/slider';
 import { EarnComponent } from './pages/earn/earn.component';
 import { ReferralsComponent } from './pages/referrals/referrals.component';
 import { StakeDialog } from './pages/earn/utils/stake.dialog';
+import { AffiliateComponent } from './pages/referrals/affiliate/affiliate.component';
+import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
 
 
 @NgModule({
@@ -105,7 +110,7 @@ import { StakeDialog } from './pages/earn/utils/stake.dialog';
     ClawbackedDialog, LevelCircleComponent, // my trades comp
     CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
-    StakeDialog, // EarnComponent
+    StakeDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
   ],
   imports: [
     BrowserModule,
@@ -115,6 +120,7 @@ import { StakeDialog } from './pages/earn/utils/stake.dialog';
     NgxJdenticonModule,
     FormsModule,
     FlexLayoutModule,
+    ClipboardModule,
     //Custom Modules
     NgxSkeletonLoaderModule,
     NgCircleProgressModule.forRoot({
@@ -156,6 +162,7 @@ import { StakeDialog } from './pages/earn/utils/stake.dialog';
     MatSortModule,
     MatProgressBarModule,
     MatSliderModule,
+    MatTableModule
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
   providers: [],

@@ -1,7 +1,7 @@
-<mat-card class="margins background" style="background-image: url(../../../assets/art_csx_sm.png);">
+<mat-card class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
     <mat-card-content>  
       <h1>Referrals</h1>
-      <p>Get fee discounts and earn rebates through the CSX referral program.</p>
+      <p>Get discounts and earn rebates with CSX referral program.</p>
       <p></p>
     </mat-card-content>
 </mat-card>
@@ -22,32 +22,23 @@
     <mat-card class="margins background">
         <mat-card-content>
             <h2>Select Role Below</h2>
-            <p>For more information, please read the <a href="#" target="_blank" rel="noopener noreferrer">referral program details</a>.</p>
+            <p>For more information, please read the <a href="https://docs.csx.gg/+/referrals" target="_blank" rel="noopener noreferrer">referral program details</a>.</p>
         </mat-card-content>
     </mat-card>
+    <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
     <mat-card class="margins background" >
         <mat-card-content >
-            <mat-tab-group>
+            <mat-tab-group (selectedTabChange)="onTabChange($event)">
                 <mat-tab label="Buyer">
-                    <div class="tab-content-wrap">
-                        <!-- <div>                            
-                            <app-level-circle [userAddress]="this.web3.webUser.address!"></app-level-circle>
-                        </div> -->
+                    <div class="tab-content-wrap">                        
                         <br><br>
-                        <div>
-                            <mat-form-field class="example-full-width">
-                                <mat-label>Enter Referral Code</mat-label>                                
-                                <input matInput [value]="refferalCode">
-                            </mat-form-field>
-                            <button mat-button (click)="checkReferralCode()">Check</button>
-                        </div>
-                        <button [disabled]="!isValidRefCode" mat-button (click)="checkReferralCode()">Apply</button>
+                       <app-my-code></app-my-code>
                     </div>
                 </mat-tab>
                 <mat-tab label="Affiliate">
                     <div class="tab-content-wrap">
-                        Generate Referral Code
-                        <input>
+                        <br><br>
+                        <app-affiliate *ngIf="hasClickedAffiliateTab"></app-affiliate>
                     </div>                    
                 </mat-tab>
               </mat-tab-group>
