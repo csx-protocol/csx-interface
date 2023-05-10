@@ -92,7 +92,7 @@ export class MyCodeComponent {
       this.refferalCodeFromLocalStorage = '';      
       this.isValidRefCode = false;
       this.isApplyingCode = false;
-      this.referralService.removeRefferalCode();
+      this.referralService.removeLocalRefferalCode();
     }
     ).catch((err) => {
       console.log(err);

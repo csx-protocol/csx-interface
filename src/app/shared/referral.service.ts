@@ -25,7 +25,7 @@ export class ReferralService {
     this.setReferralCode(newCode);
   }
 
-  removeRefferalCode(): void {
+  removeLocalRefferalCode(): void {
     localStorage.removeItem(this.referralCodeKey);
   }
 
