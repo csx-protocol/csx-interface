@@ -80,7 +80,7 @@ export class BuyDialog {
   isBuyNowClicked: boolean = false;
   onBuyNowClick(): void {
     this.isBuyNowClicked = true;
-    const code = this.referralService.getBytes32ReferralCode();
+    const code = this.referralService.getLocalBytes32ReferralCode();
     if(code == '0x'.padEnd(66, '0')){
       console.log("no code");
     }
