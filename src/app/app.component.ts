@@ -24,12 +24,12 @@ export class AppComponent implements OnInit {
           root.queryParams.pipe(first()).subscribe((params) => {
             const code = params['r'];
             if (code) {
-              if (this.referralService.hasReferralCode()) {
+              if (this.referralService.hasLocalReferralCode()) {
                 // Update referral code if it already exists
-                this.referralService.updateReferralCode(code);
+                this.referralService.updateLocalReferralCode(code);
               } else {
                 // Store the referral code in localStorage
-                this.referralService.setReferralCode(code);
+                this.referralService.setLocalReferralCode(code);
               }
             }
           });
