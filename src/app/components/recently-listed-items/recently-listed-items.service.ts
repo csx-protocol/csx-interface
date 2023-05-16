@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Web3Service } from '../../shared/web3.service';
 import { TradeStatus } from '../my-trades/my-trades.component';
+import { ReferralService } from '../../shared/referral.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,7 @@ export class RecentlyListedItemsService {
 
   pendings: any;
 
-  constructor(private web3: Web3Service) {}
+  constructor(private web3: Web3Service, private referralService: ReferralService) {}
 
   sortBy: 'index' | 'weiPrice' = 'index' as 'index' | 'weiPrice';
   sortDirection: 'asc' | 'desc' = 'desc';
@@ -179,7 +180,7 @@ export class RecentlyListedItemsService {
             if (_filteredItems.length >= this.step) {
               break;
             }
-            let details = await this.web3.getTradeDetailsByIndex(item.index);
+            let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
             const [max, min, value] = this.getFloatValues(details.skinInfo);
             details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
             _filteredItems.push(details);
@@ -245,14 +246,41 @@ export class RecentlyListedItemsService {
     this.filterNames({ target: { value: event.option.value } });
   }
 
+  //hasReferral: boolean = false;
+  //discountRatio: number = 0;
+
+  referralInfo: { 
+    hasReferral: boolean, 
+    buyerRatio: string, 
+    ownerRatio: string, 
+    owner: string, 
+    discountRatio: number 
+  } = { 
+    hasReferral: false, 
+    buyerRatio: '', 
+    ownerRatio: '', 
+    owner: '', 
+    discountRatio: 0 
+  };
+
   async initialize() {
     if (!this.initialized) {
       this.initialized = true;
+
+      // Check if the user has valid referral code set.
+      const [hasReferral, referralInfo] = await this.referralService.hasReferralCodeLocalOrChain();
+
+      const discountRatio = parseInt(referralInfo?.buyerRatio ?? '0');
+      this.referralInfo = {...referralInfo, discountRatio: discountRatio, hasReferral: hasReferral};
+
       const [pendings, totalContracts] = await this.web3.getTradeIndexesByStatus(
         TradeStatus.ForSale,
         0,
-        0
+        0,
+        hasReferral,
+        discountRatio
       );
+
       this.totalContracts = totalContracts;
       console.log('GOTYOPENDINGs', pendings);
       console.log('totalContracts', totalContracts);
@@ -339,7 +367,7 @@ export class RecentlyListedItemsService {
           if (_filteredItems.length >= this.step) {
             break;
           }
-          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
           details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};          
           _filteredItems.push(details);
@@ -400,7 +428,7 @@ export class RecentlyListedItemsService {
 
       for (let i = startIndex; i < endIndex; i++) {
         const item = filteredIndexes[i];
-        let details = await this.web3.getTradeDetailsByIndex(item.index);
+        let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
         const [max, min, value] = this.getFloatValues(details.skinInfo);
         details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
         _filteredItems.push(details);
@@ -516,7 +544,7 @@ export class RecentlyListedItemsService {
           if (_filteredItems.length >= this.step) {
             break;
           }
-          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
           details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
@@ -667,7 +695,7 @@ export class RecentlyListedItemsService {
           if (_filteredItems.length >= this.step) {
             break;
           }
-          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
           details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
@@ -747,7 +775,7 @@ export class RecentlyListedItemsService {
           if (_filteredItems.length >= this.step) {
             break;
           }
-          let details = await this.web3.getTradeDetailsByIndex(item.index);
+          let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
           details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
           _filteredItems.push(details);
