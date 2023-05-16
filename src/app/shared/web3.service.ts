@@ -107,8 +107,6 @@ export class Web3Service implements OnDestroy {
     isWrongChain: true,
   };
 
-  
-
   constructor(
     @Inject(DOCUMENT) private document: Document,
     public notificationsService: NotificationService,
@@ -688,7 +686,7 @@ export class Web3Service implements OnDestroy {
     }
   }
 
-  async getTradeDetailsByIndex(_index: number): Promise<any> {
+  async getTradeDetailsByIndex(_index: number, hasDiscount: boolean, discountRatio: number): Promise<any> {
     try {
       let tradeDetails = await this.csxInstance.tradeFactory.methods
         .getTradeDetailsByIndex(_index)
@@ -696,7 +694,12 @@ export class Web3Service implements OnDestroy {
 
       //const etherPrice = this.fromWei(tradeDetails.weiPrice);
       const decimals = tradeDetails.priceType == 1 || tradeDetails.priceType == 2 ? 6 : 18; 
-      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(tradeDetails.weiPrice) : this.fromWei(tradeDetails.weiPrice);
+
+      const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, 2, discountRatio);
+
+      // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice);
+
       const trimmedAddress = this.getTrimmedAddress(
         tradeDetails.contractAddress
       );
@@ -718,10 +721,56 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
+  calculateNetValue(
+      fullItemPriceWei: string,
+      isBuyerAffiliated: boolean,
+      baseFeePercent: number,
+      discountRatio: number
+  ) {
+      //console.log("calculateNetValue", fullItemPriceWei, isBuyerAffiliated, baseFeePercent, discountRatio);
+      discountRatio = discountRatio / 2;
+
+      if (discountRatio > 50) {
+        throw new Error("Invalid discount ratio");
+      }
+
+      // Calculate the base fee
+      let baseFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercent).divn(100);
+
+      let discountedFeeWei = Web3.utils.toBN(0);
+      let affiliatorNetRewardWei = Web3.utils.toBN(0);
+
+      // Calculate the discounted fee and affiliator reward if the buyer is affiliated
+      if (isBuyerAffiliated) {
+        discountedFeeWei = baseFeeWei.muln(discountRatio).divn(100);
+        affiliatorNetRewardWei = baseFeeWei.muln(50 - discountRatio).divn(100);
+      }
+
+      // Calculate the buyer net price
+      let buyerNetPriceWei = Web3.utils.toBN(fullItemPriceWei).sub(discountedFeeWei);
+
+      // Calculate the seller net proceeds
+      let sellerNetProceedsWei = Web3.utils.toBN(fullItemPriceWei).sub(baseFeeWei);
+
+      // Calculate the token holders net reward
+      let tokenHoldersNetRewardWei = baseFeeWei.sub(discountedFeeWei).sub(affiliatorNetRewardWei);
+
+      //console.log("buyerNetPriceWei", buyerNetPriceWei.toString());
+
+      return {
+        buyerNetPrice: buyerNetPriceWei.toString(),
+        sellerNetProceeds: sellerNetProceedsWei.toString(),
+        affiliatorNetReward: affiliatorNetRewardWei.toString(),
+        tokenHoldersNetReward: tokenHoldersNetRewardWei.toString()
+      };
+  }
+
   async getTradeIndexesByStatus(
     _status: TradeStatus,
     _from: number,
-    _maxResults: number
+    _maxResults: number,
+    hasDiscount: boolean,
+    discountRatio: number
   ): Promise<[any, any]> {
     if (_maxResults == 0) {
       //_maxResults = await this.getTotalContracts();
@@ -734,13 +783,17 @@ export class Web3Service implements OnDestroy {
     const ETHUSD = await this.getEthPrice();
 
     tradeIndexes = tradeIndexes.map((element: any) => {
-      // Create a new object with the original element's properties and the extra variable
+      // Create a new object with the original element's properties and the extra variables
+
+      console.log('weiPrajce', element.weiPrice, discountRatio);
+      
+      const netValues = this.calculateNetValue(element.weiPrice, hasDiscount, 2, discountRatio);
 
       // decimals if priceType 1 or 2 then its 6 otherwise 18
       const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18; 
 
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
-      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(element.weiPrice) : this.fromWei(element.weiPrice);
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice);
 
       // if 6 then etherPrice otherwise etherPrice * ETHUSD
       const priceInUSD = decimals == 6 ? parseFloat(etherPrice) : ETHUSD * parseFloat(etherPrice);
@@ -779,6 +832,41 @@ export class Web3Service implements OnDestroy {
 
       contractInstance.methods
         .commitBuy(TradeUrl, refCode)
+        .send({ from: this.webUser.address, value: weiPrice })
+        .then((receipt: any) => {
+          console.log('TX receipt', receipt);
+          //return false;
+        })
+        .catch((error: any) => {
+          console.log('TX error', error);
+          //return false;
+        });
+    }
+  }
+
+  //function BuyWithEthToWeth(TradeUrl memory _buyerTradeUrl, bytes32 _affLink, address _tradeContract) public payable 
+  public async BuyItemWithEthToWeth(itemAddress: string, buyerTradeUrl: string, refCode: string, weiPrice: string) {
+    if (this.isValidUrl(buyerTradeUrl)) {
+      const params = new URLSearchParams(new URL(buyerTradeUrl).search);
+      const partnerId = params.get('partner');
+      const token = params.get('token');
+      const TradeUrl = {
+        partner: partnerId,
+        token: token,
+      };
+
+      console.log('BuyItemWithEthToWeth', TradeUrl, refCode, itemAddress, weiPrice);
+      
+
+      const contractInstance =
+        await new this.csxInstance.window.web3.eth.Contract(
+          environment.CONTRACTS.BuyAssistoor.abi as AbiItem[],
+          environment.CONTRACTS.BuyAssistoor.address,
+          { from: this.webUser.address }
+        );
+
+      contractInstance.methods
+        .BuyWithEthToWeth(TradeUrl, refCode, itemAddress)
         .send({ from: this.webUser.address, value: weiPrice })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
@@ -1013,6 +1101,62 @@ export class Web3Service implements OnDestroy {
   }
 
   /**
+   * Wrapped ETH Swap Dialog
+   */
+
+  //get WETH allowance
+  async allowenceWETH(owner: string, spender: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.addresses.WETH,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .allowance(owner, spender)
+      .call({ from: this.webUser.address });
+  }
+
+  //approve WETH
+  async approveWETH(spenderAddress: string, tokenAmount: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.addresses.WETH,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .approve(spenderAddress, tokenAmount)
+      .send({ from: this.webUser.address });
+  }
+
+  //unwrap WETH
+  async unwrapWETH(amount: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.addresses.WETH,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .withdraw(amount)
+      .send({ from: this.webUser.address });
+  }
+
+  //wrap ETH
+  async wrapETH(amount: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.addresses.WETH,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .deposit()
+      .send({ from: this.webUser.address, value: amount });
+  }
+
+  /**
    * Referral Component
    */
 
@@ -1135,6 +1279,19 @@ export class Web3Service implements OnDestroy {
       }
     );
   }
+
+  /**
+   * Seller Committed Dialog
+   * 
+   * function openDispute(
+        string memory _complaint
+    ) 
+
+    function buyerConfirmReceived() public
+
+    function sellerConfirmsTrade() 
+   */
+  
 
   /**
    * Utils
