@@ -20,7 +20,7 @@ export class MyCodeComponent {
     private web3: Web3Service,
     private notify: NotificationService
   ) {
-    const code = this.referralService.getReferralCode();
+    const code = this.referralService.getLocalReferralCode();
     if (code) {
       this.refferalCodeFromLocalStorage = code;
     } else {
@@ -92,7 +92,7 @@ export class MyCodeComponent {
       this.refferalCodeFromLocalStorage = '';      
       this.isValidRefCode = false;
       this.isApplyingCode = false;
-      this.referralService.removeLocalRefferalCode();
+      this.referralService.removeLocalReferralCode();
     }
     ).catch((err) => {
       console.log(err);
