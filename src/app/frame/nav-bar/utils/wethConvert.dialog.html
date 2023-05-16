@@ -1,0 +1,42 @@
+<mat-card class="margins background" style="align-items: center; text-align: center;">
+   
+    <mat-dialog-content>
+        <h2>Swap Wrapped ETH</h2>
+    </mat-dialog-content>
+</mat-card>
+
+<div style="max-width: 380px; text-align: center;" [formGroup]="swapForm"> <!--490 -->
+    <mat-card-content>
+        <mat-form-field style="width: 100%;">
+            <mat-label>From ({{fromName}}) Balance: {{fromBalance}}</mat-label>
+            <input matInput formControlName="fromValue" type="number">
+            <mat-error *ngIf="swapForm.get('fromValue')?.hasError('required')">
+                This field is required.
+            </mat-error>
+            <mat-error *ngIf="swapForm.get('fromValue')?.hasError('pattern')">
+                Only numbers are allowed.
+            </mat-error>
+            <mat-error *ngIf="swapForm.get('fromValue')?.hasError('maxValue')">
+                The maximum value is {{fromBalance}}.
+            </mat-error>
+            <mat-error *ngIf="swapForm.get('fromValue')?.hasError('min')">
+                The value must be greater than 0.
+            </mat-error>
+            <button (click)="setMaxValue()" mat-button matSuffix>
+                Max
+            </button>
+        </mat-form-field>
+        
+        <button mat-button color="primary" (click)="toggleDirection()">
+            <mat-icon style="transform: scaleY(-1);">swap_vert</mat-icon>
+        </button> 
+        <br><br>
+        <mat-form-field style="width: 100%;">
+            <mat-label>To ({{toName}}) Balance: {{toBalance}}</mat-label>
+            <input matInput formControlName="toValue" readonly>
+        </mat-form-field>
+
+        <button [disabled]="swapForm.invalid" mat-button color="primary" (click)="swap()">Swap</button>
+    </mat-card-content>
+</div>
+

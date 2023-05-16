@@ -7,6 +7,7 @@ import { DialogComponent } from '../../components/my-trades/dialog/dialog.compon
 import { MatDialog } from '@angular/material/dialog';
 import { IntervalService } from '../../components/my-trades/dialogs/interval.service';
 import { TradeRole, TradeStatus } from '../../components/my-trades/my-trades.component';
+import { wethConvertDialog } from './utils/wethConvert.dialog';
 
 @Component({
   selector: 'app-nav-bar',
@@ -187,6 +188,16 @@ export class NavBarComponent implements OnDestroy {
     const [integerPart, decimalPart] = num.toString().split('.');
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+  }
+
+  openSwapDialog(_data: any): void {   
+    const dialogRef = this.dialog.open(wethConvertDialog, {
+      data: _data,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
   
 
