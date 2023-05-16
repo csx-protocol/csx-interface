@@ -120,6 +120,12 @@
               <mat-icon>search</mat-icon>
             </button>
           </a>
+          <span matTooltip="-{{recentlyListed.referralInfo.discountRatio / 2}}% OFF FEE APPLIED">
+            <button style="color: rgb(52 181 37);" disabled="true" *ngIf="recentlyListed.referralInfo.hasReferral" mat-button color="primary">
+              <mat-icon>local_offer</mat-icon>
+            </button>
+          </span>
+          
         </mat-card-actions>
 
       </mat-card>
