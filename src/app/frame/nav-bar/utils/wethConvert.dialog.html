@@ -1,12 +1,15 @@
 <mat-card class="margins background" style="align-items: center; text-align: center;">
    
     <mat-dialog-content>
-        <h2>Swap Wrapped ETH</h2>
+        <h2>Unwrap / Wrap ETH</h2>
     </mat-dialog-content>
 </mat-card>
 
 <div style="max-width: 380px; text-align: center;" [formGroup]="swapForm"> <!--490 -->
     <mat-card-content>
+        <p style="margin: 1rem;">
+            Unwrapping WETH turns it back into regular Ethereum. Wrapping (ETH to WETH) allows your Ethereum to act like any other ERC20 token.
+        </p> <br>
         <mat-form-field style="width: 100%;">
             <mat-label>From ({{fromName}}) Balance: {{fromBalance}}</mat-label>
             <input matInput formControlName="fromValue" type="number">
@@ -36,7 +39,19 @@
             <input matInput formControlName="toValue" readonly>
         </mat-form-field>
 
-        <button [disabled]="swapForm.invalid" mat-button color="primary" (click)="swap()">Swap</button>
+        <button *ngIf="!isSigninTX" [disabled]="swapForm.invalid" mat-button color="primary" (click)="swap()">
+            <span *ngIf="fromName == 'ETH'">Wrap</span>
+            <span *ngIf="fromName == 'WETH'">Unwrap</span>
+        </button>
+
+        <div class="centered-loading-spinner" *ngIf="isSigninTX">                
+            <span>Confirm <span *ngIf="fromName == 'ETH'">Wrap</span><span *ngIf="fromName == 'WETH'">Unwrap</span> in Wallet.. </span><mat-progress-spinner
+            class="example-margin"
+            color="primary"
+            mode="indeterminate"
+            [diameter]="25">
+          </mat-progress-spinner>
+          </div>
     </mat-card-content>
 </div>
 
