@@ -1107,7 +1107,7 @@ export class Web3Service implements OnDestroy {
   //get WETH allowance
   async allowenceWETH(owner: string, spender: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
       environment.CONTRACTS.Currencies.addresses.WETH,
       { from: this.webUser.address }
     );
@@ -1120,7 +1120,7 @@ export class Web3Service implements OnDestroy {
   //approve WETH
   async approveWETH(spenderAddress: string, tokenAmount: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
       environment.CONTRACTS.Currencies.addresses.WETH,
       { from: this.webUser.address }
     );
@@ -1133,7 +1133,7 @@ export class Web3Service implements OnDestroy {
   //unwrap WETH
   async unwrapWETH(amount: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
       environment.CONTRACTS.Currencies.addresses.WETH,
       { from: this.webUser.address }
     );
@@ -1146,7 +1146,7 @@ export class Web3Service implements OnDestroy {
   //wrap ETH
   async wrapETH(amount: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.abi as AbiItem[],
+      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
       environment.CONTRACTS.Currencies.addresses.WETH,
       { from: this.webUser.address }
     );
