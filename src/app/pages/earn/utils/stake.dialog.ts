@@ -77,26 +77,28 @@ export class StakeDialog {
     submitStake() {
         if (this.tokenAmountForm.valid) {
             const tokenValue = this.tokenAmountForm.get('tokenAmount')?.value;
-            const tokenValueInEther = this.web3.csxInstance.window.web3.utils.toWei(tokenValue.toString(), 'ether');
+            
+            const tokenValueInWeiString = this.web3.csxInstance.window.web3.utils.toWei(tokenValue.toString(), 'ether');
+
             this.web3.allowanceCSX(this.web3.webUser.address!, environment.CONTRACTS.StakedCSX.address).then((allowance) => {
                 //this.allowanceCSX = allowance;
                 console.log('allowance', allowance);
-                console.log('tokenValue', tokenValueInEther);
+                console.log('tokenValue', tokenValueInWeiString);
 
                 const allowanceBN = new this.web3.csxInstance.window.web3.utils.BN(allowance);
-                const tokenValueInWeiBN = new this.web3.csxInstance.window.web3.utils.BN(tokenValueInEther);
+                const tokenValueInWeiBN = new this.web3.csxInstance.window.web3.utils.BN(tokenValueInWeiString);
 
                 if (allowanceBN.lt(tokenValueInWeiBN)) {
                     this.isApproving = true;
-                    this.web3.approveCSX(environment.CONTRACTS.StakedCSX.address, tokenValueInEther).then(() => {
+                    this.web3.approveCSX(environment.CONTRACTS.StakedCSX.address, tokenValueInWeiString).then(() => {
                         this.isApproving = false;
-                        this._stakeCSX(tokenValueInEther);
+                        this._stakeCSX(tokenValueInWeiString);
                     }).catch((error) => {
                         this.notify.openSnackBar(error.message, 'OK');
                         this.isApproving = false;
                     });
                 } else if (allowanceBN.gte(tokenValueInWeiBN)) {
-                    this._stakeCSX(tokenValueInEther);
+                    this._stakeCSX(tokenValueInWeiString);
                 }
             }).catch(() => {
                 console.log('checking allowance failed');
