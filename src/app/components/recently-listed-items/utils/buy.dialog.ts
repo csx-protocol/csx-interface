@@ -50,7 +50,7 @@ export class BuyDialog {
     @Inject(MAT_DIALOG_DATA) public data: any, 
     private _formBuilder: FormBuilder, 
     private web3: Web3Service,
-    private referralService: ReferralService
+    public referralService: ReferralService
   ) {
 
     this.firstFormGroup = this._formBuilder.group({
@@ -80,17 +80,38 @@ export class BuyDialog {
   isBuyNowClicked: boolean = false;
   onBuyNowClick(): void {
     this.isBuyNowClicked = true;
-    const code = this.referralService.getLocalBytes32ReferralCode();
-    if(code == '0x'.padEnd(66, '0')){
-      console.log("no code");
-    }
-    console.log("refferal-code in bytes32", code);
   }
 
   //isCheckOutClicked: boolean = false;
   onCheckOutClick(): void {
     //this.isCheckOutClicked = true;
+    const referralInfo = this.referralService.referralInfo;
+    const netValues = this.web3.calculateNetValue(this.item.weiPrice, referralInfo.hasReferral, 2, referralInfo.discountRatio);
     
+    console.log(this.firstFormGroup.value.firstCtrl);
+
+    // this.firstFormGroup.value.firstCtrl = https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=lKCMUg5E
+    // take out the partner id and token
+
+    console.log('netValues', netValues);
+    
+    this.web3.BuyItemWithEthToWeth(this.item.contractAddress, this.firstFormGroup.value.firstCtrl, referralInfo.bytes32, netValues.buyerNetPrice).then((res) => {
+      console.log(res);
+      this.dialogRef.close(); // close the dialog
+    }).catch((err) => {
+      console.log(err);
+    });
+
+    
+    // this.web3.BuyItem(this.item.contractAddress, this.firstFormGroup.value.firstCtrl, netValues.buyerNetPrice, referralInfo.bytes32).then((res) => {
+    //   console.log(res);
+    //   this.dialogRef.close(); // close the dialog 
+    // }).catch((err) => {
+    //   console.log(err);
+    // });   
+      
+    
+    //  this.web3.BuyItem(this.item.contractAddress, this.firstFormGroup.value.firstCtrl, this.item.weiPrice, referralInfo.bytes32)
     
     //this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)"
   }
