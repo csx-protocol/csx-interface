@@ -9,4 +9,8 @@ import { MyTradeItem } from "../my-trade-item.interface";
 export class SellerCommittedDialog {
   @Input() item: MyTradeItem | undefined
   constructor() { }
+
+  confirmDelivery() {
+    
+  }
 }
