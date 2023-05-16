@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0x3Eed4205c0592B81Bc57395975eC45a9b5a4e4c9",
+      address: "0xF41501FD2e6F60439d4cF2206209156b704F68Dc",
       abi: [
         {
           "inputs": [],
@@ -337,7 +337,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x9AaAb5d343fc3Abe08dbf92D323733C814078Ecc",
+      address: "0x0b5252d7f33404E6E0DeCe7F0Ee3C36E49F01109",
       abi: [
         {
           "inputs": [
@@ -861,9 +861,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0xa99b0AEB99C555aEeC55fd1E168f191bE4D16701",
-        USDT: "0xbF98943E2F57F63f9f2C93220677781dCeC7776F",
-        WETH: "0x9B3bee6c1B3D7F1Ea057028653C1D2Eb100B8451",
+        USDC: "0x6029FAB4A518A6aEBA1Ffd7eC2F4255d2D81D822",
+        USDT: "0xD3fabEBB4289248EA16769E821E8f64413bc2889",
+        WETH: "0xCC24A0Ce1842FE70F1867C5D1D3A9f704B0ae04c",
       },
       abi: [
         {
@@ -1164,7 +1164,7 @@ export const environment = {
       ],
     },
     EscrowedCSX: {
-      address: "0x675c0EFB6f037bBb4Df51dfa4c106BcdAc578B7a",
+      address: "0x323778E3c6AA437539fE0b83017ad8C774E65D25",
       abi: [
         {
           "inputs": [
@@ -1571,7 +1571,7 @@ export const environment = {
       ]
     },
     VestedCSX: {
-      address: "0xee57eaB608d64f8263a421809DFC9E211A81f998",
+      address: "0x12888Da57A34EB270c127Db4Ae3db5e45904Ed6c",
       abi: [
         {
           "inputs": [
@@ -2036,7 +2036,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x5A13E651C8699433b050510FE3f763dF463fE63A',
+      address: '0x661Bf8B5eD303E3A1B7A2e59120d3548bE1EBA6e',
       abi: [
         {
           "inputs": [
@@ -2217,7 +2217,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0x86E718EB79AfaAF38a41B8b699e3992577c44B98',
+      address: '0xe7a655b8861C0DB63DD1a7FbD05ebB402B15b312',
       abi: [
         {
           "inputs": [
@@ -2930,7 +2930,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0x4BA37d4F9CB323F53E03Cf6d256f861215460Ff1",
+      address: "0xF90a5A1566C88e2eDc616c804Fe5622d9c7cFA0B",
       abi: [
         {
           "inputs": [
@@ -3127,7 +3127,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0x51536c69F324c20402dA7503B6d6bB5600121C8F",
+      address: "0x2082294e40d7e1C1Ac304B68a65f7fd231daE4D2",
       abi: [
         {
           "inputs": [],
@@ -3522,7 +3522,7 @@ export const environment = {
       ],
     },
     tradeFactory: {
-      address: "0x8740a60f2348Af0eF83fff64e32746AB79780055",
+      address: "0xE65792f7DC803f1ef1282AeE240642F8b1afBdc2",
       abi: [
         {
           "inputs": [
@@ -4367,6 +4367,70 @@ export const environment = {
           "type": "function"
         }
       ],
+    },    
+    BuyAssistoor: {
+      address: "0x1bC621e39A4Af2D2EA27Eefc46945cBcA97Baa4F",
+      abi: [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_weth",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "weth",
+          "outputs": [
+            {
+              "internalType": "contract IWETH",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "partner",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "string",
+                  "name": "token",
+                  "type": "string"
+                }
+              ],
+              "internalType": "struct TradeUrl",
+              "name": "_buyerTradeUrl",
+              "type": "tuple"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "_affLink",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "_tradeContract",
+              "type": "address"
+            }
+          ],
+          "name": "BuyWithEthToWeth",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        }
+      ]
     },
     tradeContract: {
       abi: [
