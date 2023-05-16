@@ -83,6 +83,7 @@ import { ReferralsComponent } from './pages/referrals/referrals.component';
 import { StakeDialog } from './pages/earn/utils/stake.dialog';
 import { AffiliateComponent } from './pages/referrals/affiliate/affiliate.component';
 import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
+import { wethConvertDialog } from './frame/nav-bar/utils/wethConvert.dialog';
 
 
 @NgModule({
@@ -111,6 +112,7 @@ import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
     CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
     StakeDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
+    wethConvertDialog, // NavBarComponent
   ],
   imports: [
     BrowserModule,
