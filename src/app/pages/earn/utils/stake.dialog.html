@@ -33,7 +33,7 @@
             </span>
           </div>
         </form>
-        <div  style="display: flex; align-items: center;">
+        <div style="display: flex; align-items: center;">
                    
         </div>
         <button *ngIf="!isApproving && !isStaking && mode == 'stake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitStake()">Stake</button>
@@ -48,8 +48,7 @@
           <p style="margin-left: 1rem;" *ngIf="isApproving">1/2 TXs, Approve CSX.</p>
           <p style="margin-left: 1rem;" *ngIf="isStaking">2/2 TXs, Stake CSX.</p>
           <p style="margin-left: 1rem;" *ngIf="isUnstaking">1/1 TXs, Unstake CSX.</p>
-        </div>
-        
+        </div>        
      
       </mat-card-content>
 </div>
