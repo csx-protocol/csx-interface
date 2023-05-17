@@ -90,12 +90,13 @@ export class NavBarComponent implements OnDestroy {
     averageSellerDeliveryTime: '',
     float: { max: 0, min: 0, value: 0 },
     status: '',
-    stickers: [], 
+    stickers: [],
     weaponType: '',
-    etherPrice: '', 
-    trimmedAddress: '', 
-    uiInfo: { contractAddress: '', role: '', status: '' }
-    };  
+    etherPrice: '',
+    trimmedAddress: '',
+    uiInfo: { contractAddress: '', role: '', status: '' },
+    skinInfo: undefined
+  };  
 
   async openDaDialog(_contractAddress:string): Promise<void> {
     
