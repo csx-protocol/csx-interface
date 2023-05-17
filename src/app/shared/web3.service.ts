@@ -1001,6 +1001,29 @@ export class Web3Service implements OnDestroy {
     return isTradeContract;
   }
 
+  async buyerConfirmReceived(_address: string): Promise<boolean> {
+    try {
+      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+        environment.CONTRACTS.tradeContract.abi as AbiItem[],
+        _address,
+        { from: this.webUser.address }
+      );
+
+      return contractInstance.methods
+        .buyerConfirmReceived()
+        .send({ from: this.webUser.address })
+        .then((receipt: any) => {
+          console.log('TX receipt', receipt);
+          return true;
+        });
+
+    } catch (error) {
+      console.error(error)
+      return false;
+    }
+  }
+
+
   /**
    * Level Circle
    */
