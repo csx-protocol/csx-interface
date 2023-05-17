@@ -1,135 +1,130 @@
 <span *ngIf="item">
-    <span *ngIf="item.uiInfo.role === 'Buyer'">
-      <span style="text-align: center;">
-        <div>
-          <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Buyer's Remorse</h1>           
-        </div>
-        <mat-dialog-content *ngIf="isLoading">
-          <p>{{item.itemMarketName}}</p>
-          <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your committed tokens will be refunded.</i>
-          <br>
-          <br>
-          <ngx-skeleton-loader
-              count="1"
-              appearance="line"
-              animation="progress"
-              [theme]="{
+  <span *ngIf="item.uiInfo.role === 'Buyer'">
+    <span style="text-align: center;">
+      <div>
+        <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Buyer's Remorse</h1>
+      </div>
+      <mat-dialog-content *ngIf="isLoading">
+        <p>{{item.itemMarketName}}</p>
+        <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your
+          committed tokens will be refunded.</i>
+        <br>
+        <br>
+        <ngx-skeleton-loader count="1" appearance="line" animation="progress" [theme]="{
                 'background-color': 'rgb(20 21 37)',
                 height: '32px',
                 'border-radius': 5
-              }" style="display: block; width: 100%;"
-          >
-          </ngx-skeleton-loader>
-          <ngx-skeleton-loader
-              count="1"
-              appearance="line"
-              animation="progress"
-              [theme]="{
+              }" style="display: block; width: 100%;">
+        </ngx-skeleton-loader>
+        <ngx-skeleton-loader count="1" appearance="line" animation="progress" [theme]="{
                 'background-color': 'rgb(20 21 37)',
                 height: '32px',
                 'border-radius': 5
-              }" style="display: block; width: 100%;"
-          >
-          </ngx-skeleton-loader>
+              }" style="display: block; width: 100%;">
+        </ngx-skeleton-loader>
 
-        </mat-dialog-content>
-        <mat-dialog-content *ngIf="hasTimeIntervalPassed && !isLoading">
-          <p>{{item.itemMarketName}}</p>
-          <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your committed tokens will be refunded.</i>
+      </mat-dialog-content>
+      <mat-dialog-content *ngIf="hasTimeIntervalPassed && !isLoading">
+        <p>{{item.itemMarketName}}</p>
+        <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your
+          committed tokens will be refunded.</i>
+        <br>
+        <br>
+        <span *ngIf="!isCancelling">
+          Are you sure you want to cancel {{item.itemMarketName}} buy order?
           <br>
           <br>
-          <span *ngIf="!isCancelling">
-            Are you sure you want to cancel {{item.itemMarketName}} buy order?
-            <br>
-            <br>
-            <button (click)="cancelTrade()" mat-button color="warn" style="color: rgb(255 49 67) !important;">Yes, Cancel Buy Order!</button>
-            <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep Buy Order!</button>
-          </span>
-          <span *ngIf="isCancelling">
-            <br>
-            <br>
-            <mat-spinner></mat-spinner>
-            <br>
-            <br>
-            <span *ngIf="isCancelling">Confirm in MetaMask...</span>
-          </span>
-          
-        </mat-dialog-content>
-        <mat-dialog-content *ngIf="!hasTimeIntervalPassed && !isLoading">
-          <p>{{item.itemMarketName}}</p>
-          <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your committed tokens will be refunded.</i>
-          <!-- <br>
+          <button (click)="cancelTrade()" mat-button color="warn" style="color: rgb(255 49 67) !important;">Yes, Cancel
+            Buy Order!</button>
+          <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep Buy Order!</button>
+        </span>
+        <span *ngIf="isCancelling">
+          <br>
+          <br>
+          <mat-spinner></mat-spinner>
+          <br>
+          <br>
+          <span *ngIf="isCancelling">Confirm in MetaMask...</span>
+        </span>
+
+      </mat-dialog-content>
+      <mat-dialog-content *ngIf="!hasTimeIntervalPassed && !isLoading">
+        <p>{{item.itemMarketName}}</p>
+        <i style="color: #7f94be !important;">You may cancel the order before the seller accepts the trade, and your
+          committed tokens will be refunded.</i>
+        <!-- <br>
           <br>
           At the moment, you are unable to cancel the trade. However, if the seller neither accepts nor denies the trade within 24 hours from the time you committed, you will gain the ability to cancel the trade. -->
-          <br>
-          <br>
-          If the seller has not accepted or rejected the trade in <span *ngIf="hours != 0"><b>{{hours}} hours</b>,</span><span *ngIf="minutes != 0"><b> {{minutes}} minutes</b>, and</span><b> {{seconds}} seconds</b>, then you will be able to cancel the trade.
-          <br>
-          <br>
-          <span matTooltip="{{timeLeft}} == (hh:mm:ss)">Time left: {{timeLeft}} ({{progressBarValue}}%).</span>
-          <br>
-          <br> 
-        </mat-dialog-content>
-      </span>
-      <mat-progress-bar *ngIf="!hasTimeIntervalPassed" [mode]="getUIMode(isLoading)" [value]="progressBarValue" matTooltip="{{progressBarValue}}%"></mat-progress-bar>          
-    </span>   
-
-    <span *ngIf="item.uiInfo.role === 'Seller'" style="text-align: center;">
-        <div>
-            <h1 mat-dialog-title>Someone has purchased your {{item.itemMarketName}}!</h1>
-            <img [src]="item.itemImageUrl" style="max-width: 150px; height: auto; border-radius: 5px;">
-        </div>
-        
-        
-            
-        <mat-dialog-content>
-          <div style="max-width: 100%;">
-            <app-float-bar [max]="item.float.max" [min]="item.float.min" [value]="item.float.value"></app-float-bar>
-          </div>
-          
-
-           <!-- A Buyer has purchased your {{item.itemMarketName}} with float value {{item.float.value}} and is waiting for you to accept the trade.  -->
-           <!-- <p>Details:</p>            -->
-           <p>Float Value: {{item.float.value}}</p>
-           <p>Paint Seed: {{item.skinInfo.paintSeed}}</p>
-           <p>Paint Index: {{item.skinInfo.paintIndex}}</p>
-            
-            <br>
-               <i style="color: #7f94be !important;">The delivery timer has started.
-            <br>
-            <br>
-            If you reject the order, it will negatively affect your sales stats and the delivery time will be ignored.</i>
-            <br>
-            <br>
-            <span *ngIf="!isVeridicting">
-                Do you accept the trade of your {{item.itemMarketName}} for {{item.etherPrice}} ETH?
-              <br>
-              <br>
-              <button mat-button (click)="sellerTradeVeridict(true)" cdkFocusInitial color="primary" style="color: #56a753 !important;">Accept and Deliver</button>
-              <button mat-button color="warn" (click)="sellerTradeVeridict(false)" style="color: rgb(244 67 54 / 98%) !important;">Reject and Get Lower Reputation</button>
-            </span>
-
-            <span *ngIf="hasRejected && !isVeridicting">
-              Are you sure you want to reject the trade?
-              <br>
-              <br>
-              <button mat-button (click)="sellerTradeVeridict(false)" cdkFocusInitial color="warn" style="color: rgb(244 67 54 / 98%) !important;">Yes, Reject Trade!</button>
-            </span>
-             
-            <span *ngIf="isVeridicting && hasConfirmed">
-              <br>
-              <br>
-              <mat-spinner style="display: inline-block !important;"></mat-spinner>
-              <br>
-              <br>
-              <span>Confirm in MetaMask...</span>
-            </span>
-        </mat-dialog-content>
+        <br>
+        <br>
+        If the seller has not accepted or rejected the trade in <span *ngIf="hours != 0"><b>{{hours}}
+            hours</b>,</span><span *ngIf="minutes != 0"><b> {{minutes}} minutes</b>, and</span><b> {{seconds}}
+          seconds</b>, then you will be able to cancel the trade.
+        <br>
+        <br>
+        <span matTooltip="{{timeLeft}} == (hh:mm:ss)">Time left: {{timeLeft}} ({{progressBarValue}}%).</span>
+        <br>
+        <br>
+      </mat-dialog-content>
     </span>
-
+    <mat-progress-bar *ngIf="!hasTimeIntervalPassed" [mode]="getUIMode(isLoading)" [value]="progressBarValue"
+      matTooltip="{{progressBarValue}}%"></mat-progress-bar>
   </span>
-  <span *ngIf="!item">
+
+  <span *ngIf="item.uiInfo.role === 'Seller'" style="text-align: center;">
+    <div>
+      <h1 mat-dialog-title>Someone has purchased your {{item.itemMarketName}}!</h1>
+      <img [src]="item.itemImageUrl" style="max-width: 150px; height: auto; border-radius: 5px;">
+    </div>
+
     <mat-dialog-content>
-      Error! Please try again later.
+      <div style="max-width: 100%;">
+        <app-float-bar [max]="item.float.max" [min]="item.float.min" [value]="item.float.value"></app-float-bar>
+      </div>
+
+      <p>Float Value: {{item.float.value}}</p>
+      <p>Paint Seed: {{item.skinInfo.paintSeed}}</p>
+      <p>Paint Index: {{item.skinInfo.paintIndex}}</p>
+
+      <br>
+      <i style="color: #7f94be !important;">The delivery timer has started.
+        <br>
+        <br>
+        If you reject the order, it will negatively affect your sales stats and the delivery time will be ignored.</i>
+      <br>
+      <br>
+      <span *ngIf="!isVeridicting">
+        Do you accept the trade of your {{item.itemMarketName}} for {{item.etherPrice}} ETH?
+        <br>
+        <br>
+        <button mat-button (click)="sellerTradeVeridict(true)" cdkFocusInitial color="primary"
+          style="color: #56a753 !important;">Accept and Deliver</button>
+        <button [disabled]="hasRejected" mat-button color="warn" (click)="sellerTradeVeridict(false)"
+          style="color: rgb(244 67 54 / 98%) !important;">Reject and Get Lower Reputation</button>
+      </span>
+
+      <span *ngIf="hasRejected && !isVeridicting">
+        Are you sure you want to reject the trade?
+        <br>
+        <br>
+        <button mat-button (click)="sellerTradeVeridict(false)" cdkFocusInitial color="warn"
+          style="color: rgb(244 67 54 / 98%) !important;">Yes, Reject Trade!</button>
+      </span>
+
+      <span *ngIf="isVeridicting && hasConfirmed">
+        <br>
+        <br>
+        <mat-spinner style="display: inline-block !important;"></mat-spinner>
+        <br>
+        <br>
+        <span>Confirm in MetaMask...</span>
+      </span>
     </mat-dialog-content>
   </span>
+
+</span>
+<span *ngIf="!item">
+  <mat-dialog-content>
+    Error! Please try again later.
+  </mat-dialog-content>
+</span>
