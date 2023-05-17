@@ -278,6 +278,7 @@ export class Web3Service implements OnDestroy {
     await this.___initContractInstances();
     await this.___initUserBalances();    
     await this.___notifyUserWalletConnected();
+    this.___subscribeToTradeFactoryEvents();
 
     this.csxInstance.accountSubject.next(this.webUser.address);
   }
@@ -361,9 +362,7 @@ export class Web3Service implements OnDestroy {
         environment.CONTRACTS.Currencies.abi as AbiItem[],
         environment.CONTRACTS.Currencies.addresses.USDC,
         { from: this.webUser.address }
-      );
-
-    this._subscribeToTradeFactoryEvents();
+      );    
   }
 
   private async ___notifyUserWalletConnected() {
@@ -1358,7 +1357,7 @@ export class Web3Service implements OnDestroy {
     return keeperOracleAddress;
   }
 
-  private _subscribeToTradeFactoryEvents() {
+  private ___subscribeToTradeFactoryEvents() {
     this.csxInstance.tradeFactory.events
       .TradeContractStatusChange()
       .on('data', (event: { returnValues: any }) => {
@@ -1455,7 +1454,12 @@ export class Web3Service implements OnDestroy {
         }
 
         if (role == TradeRole.SELLER) {
-          this.notificationsService.notify('Someone has purchased your AYJTEM', event.contractAddress, 'Check now!', true)
+          this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+            this.notificationsService.notify(`Someone has bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
+          }).catch((err) => {
+            console.log('getTradeContractitemMarketName error', err);
+            this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
+          });
         }
 
       }
@@ -1463,6 +1467,20 @@ export class Web3Service implements OnDestroy {
 
 
     });
+  }
+
+  async getTradeContractitemMarketName(_address: string) {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.tradeContract.abi as AbiItem[],
+      _address,
+      { from: this.webUser.address }
+    );
+
+    const res = await contractInstance.methods
+      .itemMarketName()
+      .call({ from: this.webUser.address });
+
+    return res;
   }
 
   ngOnDestroy(): void { }
