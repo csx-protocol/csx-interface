@@ -16,6 +16,7 @@ export interface MyTradeItem {
     etherPrice: string;
     trimmedAddress: string;
     uiInfo: UiInfo;
+    skinInfo: any;
   }
   
   interface Sticker {
