@@ -43,15 +43,24 @@
       <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
     <span *ngFor="let notice of this.notificationsService.notifications">
 
-      <br>
-      <mat-list-item>
-       <p style="font-size: 12px;" class="toolbarTextColor">{{notice.message}}</p>
-       <div *ngIf="notice.link">
-        <a *ngIf="!notice.isDialog" href="{{notice.link}}" target="_blank"><p style="font-size: 14px;">({{notice.linkText}}).</p></a>
-        <a *ngIf="notice.isDialog" (click)="openDaDialog(notice.link)"><p style="font-size: 14px;">({{notice.linkText}}).</p></a>
-       </div>
+      <span *ngIf="notice.isDialog && notice.link">
+        <mat-list-item style="height: auto;" (click)="openDaDialog(notice.link)">
+          <p style="font-size: .8rem; white-space: initial;" class="toolbarTextColor">{{notice.message}}</p>
+          <span *ngIf="notice.link">
+           <a><p style="font-size: 14px;">({{notice.linkText}})</p></a>
+          </span>
       </mat-list-item>
-      <br>
+      </span>
+
+      <a *ngIf="!notice.isDialog && notice.link" href="{{notice.link}}" target="_blank" style="text-decoration: none; color: inherit;">
+        <mat-list-item style="height: auto;">
+          <p style="font-size: .8rem; white-space: initial;" class="toolbarTextColor">{{notice.message}}</p>
+          <span *ngIf="notice.link">
+           <a><p style="font-size: 14px;">({{notice.linkText}})</p></a>
+          </span>
+         </mat-list-item>
+      </a>
+
       <mat-divider style="border-top-color: rgb(227 227 227 / 12%)"></mat-divider>
     </span>
     <span *ngIf="this.notificationsService.notifications.length == 0">
