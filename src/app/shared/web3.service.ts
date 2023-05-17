@@ -1455,7 +1455,7 @@ export class Web3Service implements OnDestroy {
 
         if (role == TradeRole.SELLER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`Someone has bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
+            this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
             this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
