@@ -8,6 +8,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { environment } from '../../../../environment/environment';
 import { Sort } from '@angular/material/sort';
 import { MatTabGroup } from '@angular/material/tabs';
+import Web3 from 'web3';
 
 interface Rebate {
   token: string;
@@ -216,6 +217,25 @@ export class AffiliateComponent {
       return (a - b) * (isAsc ? 1 : -1);
     }
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+  addCommas(_num: string, _decimals: number) {
+    // this.stakeInfo.weth.wei = res.wethAmount;
+    // this.stakeInfo.usdc.wei = res.usdcAmount;
+    // this.stakeInfo.usdt.wei = res.usdtAmount;
+
+    if(_decimals === 18){
+      // const num = parseFloat(_num).toFixed(4);
+      // return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return parseFloat(this.web3.csxInstance.window.web3.utils.fromWei(_num, 'ether')).toFixed(4);
+    }
+    
+    const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(_decimals));
+
+    const stableBalanceBN = Web3.utils.toBN(_num);
+    const stableBalanceInteger = stableBalanceBN.div(tenPowerDecimals).toString(10);
+    const stableBalanceFraction = stableBalanceBN.mod(tenPowerDecimals).toString(10).padStart(_decimals, '0');
+    return parseFloat(`${stableBalanceInteger}.${stableBalanceFraction}`).toFixed(2);
   }
 
 }
