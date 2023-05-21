@@ -206,6 +206,7 @@ export class BuyerCommittedDialog implements OnDestroy {
             await this.committedService.sellerTradeVeridict(this.item.contractAddress, isAccepting).then(() => {
                 if(isAccepting){
                     this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
+                    this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true)
                 } else {
                     this.notificationService.openSnackBar('Trade Successfully Rejected!', 'OK');
                 }                
