@@ -90,17 +90,17 @@
                     
                         <ng-container matColumnDef="rebateETH">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ETH Rebate" matTooltip="Total ETH received"> Rebate ETH </th>
-                        <td mat-cell *matCellDef="let element"> {{element.rebates[2].rebate}} </td>
+                        <td mat-cell *matCellDef="let element"> {{addCommas(element.rebates[2].rebate, 18)}} </td>
                         </ng-container>
                     
                         <ng-container matColumnDef="rebateUSDC">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by USDC Rebate" matTooltip="Total USDC received"> Rebate USDC </th>
-                        <td mat-cell *matCellDef="let element"> {{element.rebates[0].rebate}} </td>
+                        <td mat-cell *matCellDef="let element"> {{addCommas(element.rebates[0].rebate, 6)}} </td>
                         </ng-container>
                     
                         <ng-container matColumnDef="rebateUSDT">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by USDT Rebate" matTooltip="Total USDT received"> Rebate USDT </th>
-                        <td mat-cell *matCellDef="let element"> {{element.rebates[1].rebate}} </td>
+                        <td mat-cell *matCellDef="let element"> {{addCommas(element.rebates[1].rebate, 6)}} </td>
                         </ng-container> 
                         <ng-container matColumnDef="buyerRatio">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by Buyer Discount" matTooltip="The % of the fee, the buyer gets as discount from each buy."> Buyer Discount </th>
