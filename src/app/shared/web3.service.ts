@@ -1474,10 +1474,10 @@ export class Web3Service implements OnDestroy {
         //Notify
         if (role == TradeRole.BUYER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm or Open Dispute', true);
+            this.notificationsService.notify(`You're currently awaiting confirmation from seller ${res}.`, event.contractAddress, 'Cancel Trade', true);
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
-            this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
+            this.notificationsService.notify(`You're currently awaiting confirmation from seller`, event.contractAddress, 'Cancel Trade', true);
           });
         } else
         if (role == TradeRole.SELLER) {
