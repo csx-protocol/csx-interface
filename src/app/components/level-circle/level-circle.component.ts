@@ -93,11 +93,11 @@ export class LevelCircleComponent implements OnChanges {
 
         //If average delivery time is less than 1 hour, display in minutes
         if (epochTime < 3600) {
-          this.avgDeliveryTime = (epochTime / 60).toString();
+          this.avgDeliveryTime = (epochTime / 60).toFixed(1).toString();
           this.isInMinutes = true;
           return;
         }
-        this.avgDeliveryTime = (epochTime / 60 / 60).toString();
+        this.avgDeliveryTime = (epochTime / 60 / 60).toFixed(1).toString();
       });
     }
   }
