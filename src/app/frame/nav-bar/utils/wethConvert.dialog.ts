@@ -28,9 +28,11 @@ export class wethConvertDialog {
 
     fromName: string = 'WETH';
     fromBalance: number = 0;
+    fromImage: string = 'assets/utils/wrapped-eth.png';
 
     toName: string = 'ETH';
     toBalance: number = 0;
+    toImage: string = 'assets/utils/ethereum-eth.png';
 
     maxValueValidator(maxValue: number): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
@@ -88,7 +90,7 @@ export class wethConvertDialog {
         const balanceMap = this.getBalanceMap();
         
         // Swap the fromName and toName
-        [this.fromName, this.toName] = [this.toName, this.fromName];
+        [this.fromName, this.toName, this.toImage] = [this.toName, this.fromName, this.fromImage];
         
         // Update the balances according to the new fromName and toName
         this.fromBalance = parseFloat(balanceMap[this.fromName]);
