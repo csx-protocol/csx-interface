@@ -103,8 +103,8 @@ export class NavBarComponent implements OnDestroy {
     let details = await this._web3.getTradeDetailsByAddress(
       _contractAddress
     );
-
-    const role = this._web3.webUser.address == details.buyerAddress ? TradeRole.BUYER : TradeRole.SELLER;
+    
+    const role = this._web3.webUser.address?.toLowerCase() == details.buyer?.toLowerCase() ? TradeRole.BUYER : TradeRole.SELLER;
     const item = {contractAddress: _contractAddress, index: undefined, role: role, status: details.status};
     const [max, min, value] = this.getFloatValues(details.skinInfo);
     details = {
