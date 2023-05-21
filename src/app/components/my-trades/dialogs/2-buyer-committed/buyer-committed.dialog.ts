@@ -205,16 +205,20 @@ export class BuyerCommittedDialog implements OnDestroy {
 
             await this.committedService.sellerTradeVeridict(this.item.contractAddress, isAccepting).then(() => {
                 if(isAccepting){
-                    // this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
+                    this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
                 } else {
-                    // this.notificationService.openSnackBar('Trade Successfully Rejected!', 'OK');
+                    this.notificationService.openSnackBar('Trade Successfully Rejected!', 'OK');
                 }                
-                // this.hasSuccessfullyVeridicted = true;
-                // this.hasRejected = false;
-                // this.isVeridicting = false;
+                 this.hasSuccessfullyVeridicted = true;
+                 this.hasRejected = false;
+                 this.isVeridicting = false;
             }).catch((error) => {
                 console.log(error);
-                this.notificationService.openSnackBar(error.message, 'OK');
+                if(isAccepting){
+                    this.notificationService.openSnackBar('Error Accepting Trade!', 'OK');
+                } else {
+                    this.notificationService.openSnackBar('Error Rejecting Trade!', 'OK');
+                }
                 this.isVeridicting = false;
                 this.hasRejected = false;
             });
