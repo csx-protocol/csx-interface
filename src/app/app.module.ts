@@ -84,6 +84,7 @@ import { StakeDialog } from './pages/earn/utils/stake.dialog';
 import { AffiliateComponent } from './pages/referrals/affiliate/affiliate.component';
 import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
 import { wethConvertDialog } from './frame/nav-bar/utils/wethConvert.dialog';
+import { OpenDisputeDialog } from './components/my-trades/dialogs/10-open-dispute/open-dispute.dialog';
 
 
 @NgModule({
@@ -113,6 +114,7 @@ import { wethConvertDialog } from './frame/nav-bar/utils/wethConvert.dialog';
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
     StakeDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
     wethConvertDialog, // NavBarComponent
+    OpenDisputeDialog // SellerCommittedDialog
   ],
   imports: [
     BrowserModule,

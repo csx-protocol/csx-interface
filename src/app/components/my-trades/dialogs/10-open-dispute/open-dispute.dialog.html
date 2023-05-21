@@ -1,0 +1,45 @@
+<span *ngIf="item">
+    <span *ngIf="item.uiInfo.role === 'Buyer'">
+      <div>
+        <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Open Dispute</h1>
+      </div>
+      <mat-dialog-content>
+        <i style="color: #7f94be !important;">Has the trade gone wrong?</i>
+        <br>
+        <br>
+        <br>
+        <mat-form-field class="example-full-width">
+            <mat-label>Reason</mat-label>
+            <textarea matInput style="height: 2rem;"></textarea>
+          </mat-form-field>
+        <br>
+        <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
+        <button mat-button cdkFocusInitial [mat-dialog-close]="false">Dispute Trade</button>
+      </mat-dialog-content>
+    </span>
+  
+    <span *ngIf="item.uiInfo.role === 'Seller'">
+        <div>
+            <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Open Dispute</h1>
+        </div>
+        <mat-dialog-content>
+            <i style="color: #7f94be !important;">Has the trade gone wrong?</i>
+            <br>
+            <br>
+            <mat-form-field class="example-full-width">
+                <mat-label>Reason</mat-label>
+                <textarea style="height: 2rem;" matInput></textarea>
+              </mat-form-field>
+            <br>
+            <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
+            <button mat-button cdkFocusInitial [mat-dialog-close]="false">Dispute Trade</button>
+        </mat-dialog-content>
+    </span>
+    
+  </span>
+  
+  <span *ngIf="!item">
+    <mat-dialog-content>
+      Error! Please try again later.
+    </mat-dialog-content>
+  </span>
