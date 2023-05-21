@@ -11,7 +11,7 @@
             Unwrapping WETH turns it back into regular Ethereum. Wrapping (ETH to WETH) allows your Ethereum to act like any other ERC20 token.
         </p> <br>
         <mat-form-field style="width: 100%;">
-            <mat-label>From ({{fromName}}) New Balance: {{fromBalance - swapForm.get('fromValue')?.value}}</mat-label>
+            <mat-label>From ({{fromName}} <img [src]="fromImage" style="height: .9rem; ">) New Balance: {{fromBalance - swapForm.get('fromValue')?.value}}</mat-label>
             <input matInput formControlName="fromValue" type="number">
             <mat-error *ngIf="swapForm.get('fromValue')?.hasError('required')">
                 This field is required.
@@ -35,7 +35,7 @@
         </button> 
         <br><br>
         <mat-form-field style="width: 100%;">
-            <mat-label>To ({{toName}}) New Balance: {{toBalance + swapForm.get('fromValue')?.value}}</mat-label>
+            <mat-label>To ({{toName}} <img [src]="toImage" style="height: .9rem; ">) New Balance: {{toBalance + swapForm.get('fromValue')?.value}}</mat-label>
             <input matInput formControlName="toValue" readonly>
         </mat-form-field>
 
