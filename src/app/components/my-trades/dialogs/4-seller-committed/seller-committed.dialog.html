@@ -9,7 +9,7 @@
         
         <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           The Keeper-Oracle will automatically release funds to the seller when the item reaches your inventory.
-          <span><mat-progress-spinner
+          <span><mat-progress-spinner *ngIf="!isConfirming"
             class="example-margin"
             color="primary"
             mode="indeterminate"
@@ -19,14 +19,20 @@
 
         <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           Alternatively, you can manually confirm delivery of the item.
-          <span><button (click)="confirmDelivery()" mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial style="color: #56a753 !important;">Confirm Delivery</button></span>          
+          <span><button (click)="confirmDelivery()" [disabled]="isConfirming" mat-button color="primary" cdkFocusInitial style="color: #56a753 !important;">Confirm Delivery</button></span>
+          <span *ngIf="isConfirming"><mat-progress-spinner
+            class="example-margin"
+            color="primary"
+            mode="indeterminate"
+            [diameter]="25">
+          </mat-progress-spinner></span> 
         </p>
 
         <p style="color:red;">Caution: If your inventory is set to private, the trade may favor the seller regardless of item delivered to you or not, potentially risking loss of funds, item and, damaging your reputation.</p>
       
         <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           Or, if you encounter issues, something seems fishy; then you can lock the trade to disputed.
-          <span><button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial style="color: rgb(255 49 67) !important;">Open Dispute</button></span>          
+          <span><button mat-button color="primary" (click)="openDispute(item)" cdkFocusInitial style="color: rgb(255 49 67) !important;">Open Dispute</button></span>          
         </p>
         
 
