@@ -369,12 +369,12 @@ export class Web3Service implements OnDestroy {
     console.log('NOTIFYING', this.webUser.shortAddy);
 
     this.webUser.isUserWalletConnected = true;
-    const uri = 'https://arbiscan.io/address/' + this.webUser.address;
-    this.notificationsService.notify(
-      `Wallet Connected `,
-      uri,
-      this.webUser.shortAddy
-    );
+    // const uri = 'https://arbiscan.io/address/' + this.webUser.address;
+    // this.notificationsService.notify(
+    //   `Wallet Connected `,
+    //   uri,
+    //   this.webUser.shortAddy
+    // );
   }
 
   private async _requestAddOrChangeNetwork() {
@@ -1473,9 +1473,13 @@ export class Web3Service implements OnDestroy {
       if (event.status == TradeStatus.BuyerCommitted) {
         //Notify
         if (role == TradeRole.BUYER) {
-
-        }
-
+          this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+            this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm or Open Dispute', true);
+          }).catch((err) => {
+            console.log('getTradeContractitemMarketName error', err);
+            this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
+          });
+        } else
         if (role == TradeRole.SELLER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
             this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
@@ -1485,8 +1489,24 @@ export class Web3Service implements OnDestroy {
           });
         }
 
+      } else if(event.status == TradeStatus.SellerCommitted) {
+        if(role == TradeRole.BUYER){
+          this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+            this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm or Open Dispute', true);
+          }).catch((err) => {
+            console.log('getTradeContractitemMarketName error', err);
+            this.notificationsService.notify(`You're currently awaiting delivery of item`, event.contractAddress, 'Confirm or Open Dispute', true);
+          });
+        } else if(role == TradeRole.SELLER){
+          this.notificationsService.notify(`You're about to deliver ${event.data}.`, event.contractAddress, 'Confirm or Open Dispute', true);
+          this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+            this.notificationsService.notify(`You're about to deliver ${res}. It's time for you to deliver the trade`, event.contractAddress, 'More Info', true)
+          }).catch((err) => {
+            console.log('getTradeContractitemMarketName error', err);
+            this.notificationsService.notify(`You're about to deliver item. It's time for you to deliver the trade`, event.contractAddress, 'More Info', true)
+          });
+        }
       }
-      //If it is relevant, then notify.
 
 
     });
