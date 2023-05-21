@@ -89,10 +89,10 @@ export class DialogComponent implements OnDestroy {
       _contractAddress
     );
 
-      console.log('CHECK YO DETAILS');
-      console.log('webuser', this._web3.webUser.address);
-      console.log('buyer', details.buyer);
-      console.log('IR: seller', details.seller);
+    // console.log('CHECK YO DETAILS');
+    // console.log('webuser', this._web3.webUser.address);
+    // console.log('buyer', details.buyer);
+    // console.log('IR: seller', details.seller);
 
     const role = this._web3.webUser.address?.toLowerCase() == details.buyer.toLowerCase() ? TradeRole.BUYER : TradeRole.SELLER;
     const item = {contractAddress: _contractAddress, index: undefined, role: role, status: details.status};
