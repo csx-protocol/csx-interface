@@ -2,6 +2,7 @@ import { Component, Inject, Input } from "@angular/core";
 import { MyTradeItem } from "../my-trade-item.interface";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: 'trades-open-dispute-dialog',
@@ -22,8 +23,26 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 })
 export class OpenDisputeDialog {
   @Input() item: MyTradeItem | undefined;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  // reasonControl: FormControl;
+  // form: FormGroup;
+  firstFormGroup: FormBuilder | any;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder) {
     console.log(this.data);
     this.item = this.data;
+
+    this.firstFormGroup = this.fb.group({
+      firstCtrl: ['', Validators.required]
+    });
+  }
+
+  createDispute() {
+    console.log('this.firstFormGroup.invalid', this.firstFormGroup.invalid);
+    
+    if(this.firstFormGroup.invalid) {
+      console.log('invalid form');      
+      return;
+    }
+
+    console.log('valid form');
   }
 }

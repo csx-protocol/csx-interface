@@ -4,17 +4,19 @@
         <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Open Dispute</h1>
       </div>
       <mat-dialog-content>
-        <i style="color: #7f94be !important;">Has the trade gone wrong?</i>
+        <i style="color: #7f94be !important;">How has the trade gone wrong?</i>
         <br>
         <br>
         <br>
-        <mat-form-field class="example-full-width">
+        <form [formGroup]="firstFormGroup">
+          <mat-form-field class="example-full-width">
             <mat-label>Reason</mat-label>
-            <textarea matInput style="height: 2rem;"></textarea>
+            <textarea style="height: 2rem;" matInput formControlName="firstCtrl"></textarea>
+            <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('required')">Reason is required</mat-error>
           </mat-form-field>
-        <br>
+        </form>
         <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
-        <button mat-button cdkFocusInitial [mat-dialog-close]="false">Dispute Trade</button>
+        <button color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
       </mat-dialog-content>
     </span>
   
@@ -26,13 +28,15 @@
             <i style="color: #7f94be !important;">Has the trade gone wrong?</i>
             <br>
             <br>
-            <mat-form-field class="example-full-width">
+            <form [formGroup]="firstFormGroup">
+              <mat-form-field class="example-full-width">
                 <mat-label>Reason</mat-label>
-                <textarea style="height: 2rem;" matInput></textarea>
+                <textarea style="height: 2rem;" matInput formControlName="firstCtrl"></textarea>
+                <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('required')">Reason is required</mat-error>
               </mat-form-field>
-            <br>
+            </form>
             <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
-            <button mat-button cdkFocusInitial [mat-dialog-close]="false">Dispute Trade</button>
+            <button color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
         </mat-dialog-content>
     </span>
     
