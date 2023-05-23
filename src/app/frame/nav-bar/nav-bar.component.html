@@ -121,7 +121,7 @@
       </div>
   </div>
 
-  <div *ngIf="this._web3.webUser.balances!['WETH'].balanceEth != '0.0000'" style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
+  <div  style="display: flex; justify-content: space-between; max-width: 148px; padding: 10px; box-sizing: border-box; margin-top: -1rem;">
     <div style="flex: 1; padding: 0 1px;">
       <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">WETH <img src="assets/utils/wrapped-eth.png" style="height: .9rem; margin-bottom: -2px; margin-right: 5px;"><a href="javascript:void(0);" (click)="openSwapDialog(this._web3.webUser.balances)">(?)</a> </div>
       <div style="font-size: .9rem; color: #9295b3;">{{addCommas(this._web3.webUser.balances!['WETH'].balanceEth)}}</div>
