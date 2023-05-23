@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0xBf48658a6832dcF7f3F8Fd433943be573e371b41",
+      address: "0x06e11995417Cf0AA3073869FD9747672bc86592F",
       abi: [
         {
           "inputs": [],
@@ -337,7 +337,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x2eE67E8a15Aa2b9fe912D131C98Be1B48451F551",
+      address: "0x36F4338590E4a0005d30Bc4e42B66b51eC2934D4",
       abi: [
         {
           "inputs": [
@@ -861,9 +861,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0xFc02325CBAed549C2ec58DdBaF349fa7B0fe0669",
-        USDT: "0x6F85A3A0C339F8cc135780237f34ea35aF73926f",
-        WETH: "0xF3dD2F670Ce848196FcA4FCFB61695904452B82c",
+        USDC: "0x353a49f2ce715383B07A2e356D6EB7d530407D91",
+        USDT: "0x4Abc236DE439394ADee4960F025b5772a286eB69",
+        WETH: "0x7D26137deB60C947F48BcEEe61Bb5735e4C57166",
       },
       abi: [
         {
@@ -1450,7 +1450,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0x645109083b6c3516A8db1CC92D320fc2A887a104",
+      address: "0xb62d1329E9d806d2c8AE8e248b3f06B9B16AC605",
       abi: [
         {
           "inputs": [
@@ -1857,7 +1857,7 @@ export const environment = {
       ]
     },
     VestedCSX: {
-      address: "0x3e359708D083892BAE78208e2339431E757d687A",
+      address: "0xD6eFA9A98495381D25fD5342bc1001C9dc95676b",
       abi: [
         {
           "inputs": [
@@ -2322,7 +2322,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x96B4A8D6bA3AB43c43EdE58B949e402549826EAd',
+      address: '0x1B397E8fBa787356E60d5e73d4FEFfF23617a71e',
       abi: [
         {
           "inputs": [
@@ -2503,7 +2503,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0x7eeA5dA032bBCD43E2177873fb778ea32b9AA14b',
+      address: '0xB0BD145B746ce3bc50C83D8Aa034fd952761D447',
       abi: [
         {
           "inputs": [
@@ -3216,7 +3216,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0xC239b56cFB5530E0971D0a655EB7574C4F543344",
+      address: "0xD63F4ee4c1f78E25a0fc1197BEd30Af3399cF36D",
       abi: [
         {
           "inputs": [
@@ -3413,7 +3413,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0xCeD9f8263269d7eD9C48305397FD82866de28740",
+      address: "0xe6b15794CCaEe91c70dB6BF4388404C412a85E25",
       abi: [
         {
           "inputs": [],
@@ -3808,7 +3808,7 @@ export const environment = {
       ],
     },
     tradeFactory: {
-      address: "0xa50F13bA32529bAee4Bc1aa46E756f7578238faf",
+      address: "0xeEfd2bf5b4AA7d1D75bC602FA08F8576d2673aB6",
       abi: [
         {
           "inputs": [
@@ -3862,6 +3862,11 @@ export const environment = {
             {
               "internalType": "address",
               "name": "_sCSXTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_buyAssistoor",
               "type": "address"
             }
           ],
@@ -3937,6 +3942,19 @@ export const environment = {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "buyAssistoor",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -4655,7 +4673,7 @@ export const environment = {
       ],
     },    
     BuyAssistoor: {
-      address: "0x64F28cd1BDe92e02C4744dBc6b41EEe21cafBeEA",
+      address: "0x432C1DD3fe88108b9be8b9eb6034A99FBB7141d8",
       abi: [
         {
           "inputs": [
@@ -5318,6 +5336,11 @@ export const environment = {
               "internalType": "bytes32",
               "name": "_affLink",
               "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "_buyerAddress",
+              "type": "address"
             }
           ],
           "name": "commitBuy",
