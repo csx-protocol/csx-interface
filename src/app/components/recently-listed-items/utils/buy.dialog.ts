@@ -2,15 +2,10 @@ import { Component, Inject, Input } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Item } from "../../../shared/item.interface";
-import { Web3Service } from "src/app/shared/web3.service";
+import { Web3Service } from "../../../shared/web3.service";
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { ReferralService } from "src/app/shared/referral.service";
-
-// export interface FloatValues {
-//   min: number;
-//   max: number;
-//   float: number;
-// }
+import { ReferralService } from "../../../shared/referral.service";
+import { TradeLinkService } from "../../../shared/trade-link-url.service";
 
 @Component({
   selector: 'buy-dialog',
@@ -31,7 +26,6 @@ import { ReferralService } from "src/app/shared/referral.service";
 })
 export class BuyDialog {
   state = 'in'; // for animation
-  avgDeliveryTime: string;
   isInMinutes: boolean = false;
 
 
@@ -50,7 +44,8 @@ export class BuyDialog {
     @Inject(MAT_DIALOG_DATA) public data: any, 
     private _formBuilder: FormBuilder, 
     private web3: Web3Service,
-    public referralService: ReferralService
+    public referralService: ReferralService,
+    private tradeLinkService: TradeLinkService
   ) {
 
     this.firstFormGroup = this._formBuilder.group({
@@ -61,16 +56,12 @@ export class BuyDialog {
 
     this.item = data;
 
-    const epochTime: number = parseInt(this.item.averageSellerDeliveryTime);
+    const tradeLinkLS:string = this.tradeLinkService.getTradeLinkUrl();
 
-    //If average delivery time is less than 1 hour, display in minutes
-    if (epochTime < 3600) {
-      this.avgDeliveryTime = (epochTime / 60).toString();
-      this.isInMinutes = true;
-      return;
+    if(tradeLinkLS !== '') {
+      this.firstFormGroup.controls['firstCtrl'].setValue(tradeLinkLS);
     }
 
-    this.avgDeliveryTime = (epochTime / 60 / 60).toString();
   }
 
   onNoClick(): void {
@@ -87,15 +78,13 @@ export class BuyDialog {
     //this.isCheckOutClicked = true;
     const referralInfo = this.referralService.referralInfo;
     const netValues = this.web3.calculateNetValue(this.item.weiPrice, referralInfo.hasReferral, 2, referralInfo.discountRatio);
-    
-    console.log(this.firstFormGroup.value.firstCtrl);
+    const tradeLink = this.firstFormGroup.value.firstCtrl;
 
-    // this.firstFormGroup.value.firstCtrl = https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=lKCMUg5E
-    // take out the partner id and token
+    this.tradeLinkService.setTradeLinkUrl(tradeLink);
 
     console.log('netValues', netValues);
     
-    this.web3.BuyItemWithEthToWeth(this.item.contractAddress, this.firstFormGroup.value.firstCtrl, referralInfo.bytes32, netValues.buyerNetPrice).then((res) => {
+    this.web3.BuyItemWithEthToWeth(this.item.contractAddress, tradeLink, referralInfo.bytes32, netValues.buyerNetPrice).then((res) => {
       console.log(res);
       this.dialogRef.close(); // close the dialog
     }).catch((err) => {
