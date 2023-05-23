@@ -864,7 +864,7 @@ export class Web3Service implements OnDestroy {
           { from: this.webUser.address }
         );
 
-      contractInstance.methods
+      return contractInstance.methods
         .BuyWithEthToWeth(TradeUrl, refCode, itemAddress)
         .send({ from: this.webUser.address, value: weiPrice })
         .then((receipt: any) => {
