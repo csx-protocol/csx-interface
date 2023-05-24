@@ -80,7 +80,7 @@ export class StakeDialog {
             
             const tokenValueInWeiString = this.web3.csxInstance.window.web3.utils.toWei(tokenValue.toString(), 'ether');
 
-            this.web3.allowanceCSX(this.web3.webUser.address!, environment.CONTRACTS.StakedCSX.address).then((allowance) => {
+            this.web3.allowance('CSX', this.web3.webUser.address!, environment.CONTRACTS.StakedCSX.address).then((allowance) => {
                 //this.allowanceCSX = allowance;
                 console.log('allowance', allowance);
                 console.log('tokenValue', tokenValueInWeiString);
@@ -90,7 +90,7 @@ export class StakeDialog {
 
                 if (allowanceBN.lt(tokenValueInWeiBN)) {
                     this.isApproving = true;
-                    this.web3.approveCSX(environment.CONTRACTS.StakedCSX.address, tokenValueInWeiString).then(() => {
+                    this.web3.approve('CSX', environment.CONTRACTS.StakedCSX.address, tokenValueInWeiString).then(() => {
                         this.isApproving = false;
                         this._stakeCSX(tokenValueInWeiString);
                     }).catch((error) => {

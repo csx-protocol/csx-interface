@@ -114,7 +114,7 @@ export class LevelUpDialog {
             this.csxCost = cost;
         });
 
-        this.web3.allowanceCSX(this.web3.webUser.address!, environment.CONTRACTS.UserProfileLevel.address).then((allowance) => {
+        this.web3.allowance('CSX', this.web3.webUser.address!, environment.CONTRACTS.UserProfileLevel.address).then((allowance) => {
             //this.allowanceCSX = allowance;
             console.log('allowance', allowance);
             console.log('totalCostInWei', totalCostInWei);
@@ -124,7 +124,7 @@ export class LevelUpDialog {
 
             if (allowanceBN.lt(totalCostInWeiBN)) {
                 this.isApproving = true;
-                this.web3.approveCSX(environment.CONTRACTS.UserProfileLevel.address, totalCostInWei).then(() => {
+                this.web3.approve('CSX', environment.CONTRACTS.UserProfileLevel.address, totalCostInWei).then(() => {
                     this.isApproving = false;
                     this.levelUpProfileLevel();                    
                 }).catch(() => {
