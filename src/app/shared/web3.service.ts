@@ -276,7 +276,7 @@ export class Web3Service implements OnDestroy {
 
     await this.___getTrimmedAddress();
     await this.___initContractInstances();
-    await this.___initUserBalances();    
+    await this.___initUserBalances();
     await this.___notifyUserWalletConnected();
     this.___subscribeToTradeFactoryEvents();
 
@@ -353,7 +353,7 @@ export class Web3Service implements OnDestroy {
         environment.CONTRACTS.Currencies.abi as AbiItem[],
         environment.CONTRACTS.Currencies.addresses.USDC,
         { from: this.webUser.address }
-      );    
+      );
   }
 
   private async ___notifyUserWalletConnected() {
@@ -472,24 +472,24 @@ export class Web3Service implements OnDestroy {
       .balanceOf(this.webUser.address)
       .call();
 
-      const decimals = 6;
-      const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+    const decimals = 6;
+    const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
 
-      const usdtBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDT'].balanceWei);
-      const usdtBalanceInteger = usdtBalanceBN.div(tenPowerDecimals).toString(10);
-      const usdtBalanceFraction = usdtBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+    const usdtBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDT'].balanceWei);
+    const usdtBalanceInteger = usdtBalanceBN.div(tenPowerDecimals).toString(10);
+    const usdtBalanceFraction = usdtBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
 
-      this.webUser.balances!['USDT'].balanceEth = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toFixed(2);
+    this.webUser.balances!['USDT'].balanceEth = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toFixed(2);
 
     this.webUser.balances!['USDC'].balanceWei = await this.csxInstance.USDCToken.methods
       .balanceOf(this.webUser.address)
       .call();
 
-      const usdcBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDC'].balanceWei);
-      const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
-      const usdcBalanceFraction = usdcBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+    const usdcBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDC'].balanceWei);
+    const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
+    const usdcBalanceFraction = usdcBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
 
-      this.webUser.balances!['USDC'].balanceEth = parseFloat(`${usdcBalanceInteger}.${usdcBalanceFraction}`).toFixed(2);
+    this.webUser.balances!['USDC'].balanceEth = parseFloat(`${usdcBalanceInteger}.${usdcBalanceFraction}`).toFixed(2);
   }
 
   /**
@@ -521,16 +521,16 @@ export class Web3Service implements OnDestroy {
     const currentBalanceBN = Web3.utils.toBN(this.webUser.balances![token].balanceWei);
     const decreaseAmountBN = Web3.utils.toBN(Web3.utils.toWei(decreaseAmount, 'ether'));
     const newBalanceBN = currentBalanceBN.sub(decreaseAmountBN);
-  
+
     if (newBalanceBN.isNeg()) {
       throw new Error('Insufficient local balance');
     }
-  
+
     this.webUser.balances![token].balanceWei = newBalanceBN.toString();
 
     const fixedValue = decimals === 18 ? 4 : 2;
 
-    this.webUser.balances![token].balanceEth = 
+    this.webUser.balances![token].balanceEth =
       parseFloat(
         this._fromWeiWithDecimals(this.webUser.balances![token].balanceWei, decimals)
       ).toFixed(fixedValue);
@@ -556,38 +556,38 @@ export class Web3Service implements OnDestroy {
 
   // ERC20 functions
 
-  async allowance(token: string, owner: string, spender: string) {    
+  async allowance(token: string, owner: string, spender: string) {
     const [tokenAbi, tokenAddress] = this._getTokenMap(token);
 
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-        tokenAbi,
-        tokenAddress,
-        { from: this.webUser.address }
+      tokenAbi,
+      tokenAddress,
+      { from: this.webUser.address }
     );
 
     return await contractInstance.methods
-        .allowance(owner, spender)
-        .call({ from: this.webUser.address });
+      .allowance(owner, spender)
+      .call({ from: this.webUser.address });
   }
 
   async approve(token: string, spender: string, amount: string) {
     const [tokenAbi, tokenAddress] = this._getTokenMap(token);
 
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-        tokenAbi,
-        tokenAddress,
-        { from: this.webUser.address }
+      tokenAbi,
+      tokenAddress,
+      { from: this.webUser.address }
     );
 
     return await contractInstance.methods
-        .approve(spender, amount)
-        .send({ from: this.webUser.address });
+      .approve(spender, amount)
+      .send({ from: this.webUser.address });
   }
 
   private _getTokenMap(token: string): [AbiItem[], string] {
     let tokenAbi: AbiItem[];
     let tokenAddress: string;
-  
+
     switch (token) {
       case 'WETH':
         tokenAbi = environment.CONTRACTS.Currencies.wAbi as AbiItem[];
@@ -620,7 +620,7 @@ export class Web3Service implements OnDestroy {
       default:
         throw new Error(`Invalid token: ${token}`);
     }
-  
+
     return [tokenAbi, tokenAddress];
   }
 
@@ -754,7 +754,7 @@ export class Web3Service implements OnDestroy {
         .call({ from: this.webUser.address });
 
       //const etherPrice = this.fromWei(tradeDetails.weiPrice);
-      const decimals = tradeDetails.priceType == 1 || tradeDetails.priceType == 2 ? 6 : 18; 
+      const decimals = tradeDetails.priceType == 1 || tradeDetails.priceType == 2 ? 6 : 18;
 
       const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, 2, discountRatio);
 
@@ -783,47 +783,47 @@ export class Web3Service implements OnDestroy {
   }
 
   public calculateNetValue(
-      fullItemPriceWei: string,
-      isBuyerAffiliated: boolean,
-      baseFeePercent: number,
-      discountRatio: number
+    fullItemPriceWei: string,
+    isBuyerAffiliated: boolean,
+    baseFeePercent: number,
+    discountRatio: number
   ) {
-      //console.log("calculateNetValue", fullItemPriceWei, isBuyerAffiliated, baseFeePercent, discountRatio);
-      discountRatio = discountRatio / 2;
+    //console.log("calculateNetValue", fullItemPriceWei, isBuyerAffiliated, baseFeePercent, discountRatio);
+    discountRatio = discountRatio / 2;
 
-      if (discountRatio > 50) {
-        throw new Error("Invalid discount ratio");
-      }
+    if (discountRatio > 50) {
+      throw new Error("Invalid discount ratio");
+    }
 
-      // Calculate the base fee
-      let baseFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercent).divn(100);
+    // Calculate the base fee
+    let baseFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercent).divn(100);
 
-      let discountedFeeWei = Web3.utils.toBN(0);
-      let affiliatorNetRewardWei = Web3.utils.toBN(0);
+    let discountedFeeWei = Web3.utils.toBN(0);
+    let affiliatorNetRewardWei = Web3.utils.toBN(0);
 
-      // Calculate the discounted fee and affiliator reward if the buyer is affiliated
-      if (isBuyerAffiliated) {
-        discountedFeeWei = baseFeeWei.muln(discountRatio).divn(100);
-        affiliatorNetRewardWei = baseFeeWei.muln(50 - discountRatio).divn(100);
-      }
+    // Calculate the discounted fee and affiliator reward if the buyer is affiliated
+    if (isBuyerAffiliated) {
+      discountedFeeWei = baseFeeWei.muln(discountRatio).divn(100);
+      affiliatorNetRewardWei = baseFeeWei.muln(50 - discountRatio).divn(100);
+    }
 
-      // Calculate the buyer net price
-      let buyerNetPriceWei = Web3.utils.toBN(fullItemPriceWei).sub(discountedFeeWei);
+    // Calculate the buyer net price
+    let buyerNetPriceWei = Web3.utils.toBN(fullItemPriceWei).sub(discountedFeeWei);
 
-      // Calculate the seller net proceeds
-      let sellerNetProceedsWei = Web3.utils.toBN(fullItemPriceWei).sub(baseFeeWei);
+    // Calculate the seller net proceeds
+    let sellerNetProceedsWei = Web3.utils.toBN(fullItemPriceWei).sub(baseFeeWei);
 
-      // Calculate the token holders net reward
-      let tokenHoldersNetRewardWei = baseFeeWei.sub(discountedFeeWei).sub(affiliatorNetRewardWei);
+    // Calculate the token holders net reward
+    let tokenHoldersNetRewardWei = baseFeeWei.sub(discountedFeeWei).sub(affiliatorNetRewardWei);
 
-      //console.log("buyerNetPriceWei", buyerNetPriceWei.toString());
+    //console.log("buyerNetPriceWei", buyerNetPriceWei.toString());
 
-      return {
-        buyerNetPrice: buyerNetPriceWei.toString(),
-        sellerNetProceeds: sellerNetProceedsWei.toString(),
-        affiliatorNetReward: affiliatorNetRewardWei.toString(),
-        tokenHoldersNetReward: tokenHoldersNetRewardWei.toString()
-      };
+    return {
+      buyerNetPrice: buyerNetPriceWei.toString(),
+      sellerNetProceeds: sellerNetProceedsWei.toString(),
+      affiliatorNetReward: affiliatorNetRewardWei.toString(),
+      tokenHoldersNetReward: tokenHoldersNetRewardWei.toString()
+    };
   }
 
   async getTradeIndexesByStatus(
@@ -847,11 +847,11 @@ export class Web3Service implements OnDestroy {
       // Create a new object with the original element's properties and the extra variables
 
       console.log('weiPrajce', element.weiPrice, discountRatio);
-      
+
       const netValues = this.calculateNetValue(element.weiPrice, hasDiscount, 2, discountRatio);
 
       // decimals if priceType 1 or 2 then its 6 otherwise 18
-      const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18; 
+      const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18;
 
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
       const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice);
@@ -918,7 +918,7 @@ export class Web3Service implements OnDestroy {
       };
 
       console.log('BuyItemWithEthToWeth', TradeUrl, refCode, itemAddress, weiPrice);
-      
+
 
       const contractInstance =
         await new this.csxInstance.window.web3.eth.Contract(
@@ -1149,7 +1149,7 @@ export class Web3Service implements OnDestroy {
 
   async levelUpProfileLevel(newLevels: string) {
     console.log('THIS WEB USER', this.webUser.address);
-    
+
     // Figure out how much CSX is needed
     const CSXTokenWeiAmount = await this.getCostForNextLevels(
       this.webUser.address!,
@@ -1163,7 +1163,7 @@ export class Web3Service implements OnDestroy {
     );
 
     // Assuming it's already approved
-      
+
     return await contractInstance.methods
       .levelUp(CSXTokenWeiAmount, newLevels)
       .send({ from: this.webUser.address });
@@ -1214,7 +1214,7 @@ export class Web3Service implements OnDestroy {
       .getReferralInfo(refCode32)
       .call({ from: this.webUser.address });
   }
-  
+
   async getReferralCode(address: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
@@ -1250,7 +1250,7 @@ export class Web3Service implements OnDestroy {
       .getReferralCodesByUser(address)
       .call({ from: this.webUser.address });
   }
-  
+
   async getRebatePerCodePerPaymentToken(referralCode: string, paymentToken: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
@@ -1263,7 +1263,7 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
-  async setReferralCodeAsUser(referralCode: string){
+  async setReferralCodeAsUser(referralCode: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
       environment.CONTRACTS.ReferralRegistry.address,
@@ -1334,7 +1334,7 @@ export class Web3Service implements OnDestroy {
 
     function sellerConfirmsTrade() 
    */
-  
+
 
   /**
    * Utils
@@ -1355,7 +1355,7 @@ export class Web3Service implements OnDestroy {
     const BalanceInteger = BalanceBN.div(tenPowerDecimals).toString(10);
     const BalanceFraction = BalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
     return `${BalanceInteger}.${BalanceFraction}`;
-}
+  }
 
   public isValidUrl(url: string): boolean {
     try {
@@ -1501,24 +1501,24 @@ export class Web3Service implements OnDestroy {
             this.notificationsService.notify(`You're currently awaiting confirmation from seller`, event.contractAddress, 'Cancel Trade', true);
           });
         } else
-        if (role == TradeRole.SELLER) {
-          this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
-          }).catch((err) => {
-            console.log('getTradeContractitemMarketName error', err);
-            this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
-          });
-        }
+          if (role == TradeRole.SELLER) {
+            this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+              this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
+            }).catch((err) => {
+              console.log('getTradeContractitemMarketName error', err);
+              this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
+            });
+          }
 
-      } else if(event.status == TradeStatus.SellerCommitted) {
-        if(role == TradeRole.BUYER){
+      } else if (event.status == TradeStatus.SellerCommitted) {
+        if (role == TradeRole.BUYER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
             this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm Trade', true);
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
             this.notificationsService.notify(`You're currently awaiting delivery of item`, event.contractAddress, 'Confirm Trade', true);
           });
-        } else if(role == TradeRole.SELLER){
+        } else if (role == TradeRole.SELLER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
             this.notificationsService.notify(`You're about to deliver ${res}. It's time for you to deliver the trade`, event.contractAddress, 'Confirm Trade', true)
           }).catch((err) => {
