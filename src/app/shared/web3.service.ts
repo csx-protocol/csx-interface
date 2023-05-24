@@ -291,15 +291,6 @@ export class Web3Service implements OnDestroy {
     this.webUser.shortAddy = first6 + '...' + last4;
   }
 
-  // private async ___requestUserEthBalance() {
-  //   this.webUser.balances!['ETH'].balanceEth = parseFloat(
-  //     Web3.utils.fromWei(
-  //       await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
-  //       'ether'
-  //     )
-  //   ).toFixed(4);
-  // }
-
   private async ___initContractInstances() {
     this.csxInstance.tradeFactory =
       await new this.csxInstance.window.web3.eth.Contract(
@@ -502,8 +493,10 @@ export class Web3Service implements OnDestroy {
   }
 
   /**
-   * Generic function to modify balance locally
+   * Generic functions
    */
+
+  // Modify balance locally
 
   //this.increaseBalance('ETH', '1');
   public increaseBalance(token: string, increaseAmount: string) {
@@ -561,6 +554,76 @@ export class Web3Service implements OnDestroy {
     return `${integerPart}.${fractionalPart}`;
   }
 
+  // ERC20 functions
+
+  async allowance(token: string, owner: string, spender: string) {    
+    const [tokenAbi, tokenAddress] = this._getTokenMap(token);
+
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+        tokenAbi,
+        tokenAddress,
+        { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+        .allowance(owner, spender)
+        .call({ from: this.webUser.address });
+  }
+
+  async approve(token: string, spender: string, amount: string) {
+    const [tokenAbi, tokenAddress] = this._getTokenMap(token);
+
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+        tokenAbi,
+        tokenAddress,
+        { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+        .approve(spender, amount)
+        .send({ from: this.webUser.address });
+  }
+
+  private _getTokenMap(token: string): [AbiItem[], string] {
+    let tokenAbi: AbiItem[];
+    let tokenAddress: string;
+  
+    switch (token) {
+      case 'WETH':
+        tokenAbi = environment.CONTRACTS.Currencies.wAbi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.Currencies.addresses.WETH;
+        break;
+      case 'USDT':
+        tokenAbi = environment.CONTRACTS.Currencies.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.Currencies.addresses.USDT;
+        break;
+      case 'USDC':
+        tokenAbi = environment.CONTRACTS.Currencies.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.Currencies.addresses.USDC;
+        break;
+      case 'CSX':
+        tokenAbi = environment.CONTRACTS.CSXToken.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.CSXToken.address;
+        break;
+      case 'eCSX':
+        tokenAbi = environment.CONTRACTS.EscrowedCSX.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.EscrowedCSX.address;
+        break;
+      case 'sCSX':
+        tokenAbi = environment.CONTRACTS.StakedCSX.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.StakedCSX.address;
+        break;
+      case 'vCSX':
+        tokenAbi = environment.CONTRACTS.VestedCSX.abi as AbiItem[];
+        tokenAddress = environment.CONTRACTS.VestedCSX.address;
+        break;
+      default:
+        throw new Error(`Invalid token: ${token}`);
+    }
+  
+    return [tokenAbi, tokenAddress];
+  }
+
   /**
    * Used in frame/nav-bar
    */
@@ -586,7 +649,6 @@ export class Web3Service implements OnDestroy {
 
   /**
    * Used in components/list-item
-   * this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice
    */
   public listItem(
     //   _itemHashName: string,
@@ -668,7 +730,7 @@ export class Web3Service implements OnDestroy {
    * Used in components/recently-listed-items
    */
 
-  handleError(error: any) {
+  private handleError(error: any) {
     switch (error.code) {
       case -32000:
         this.notificationsService.openSnackBar(
@@ -720,7 +782,7 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
-  calculateNetValue(
+  public calculateNetValue(
       fullItemPriceWei: string,
       isBuyerAffiliated: boolean,
       baseFeePercent: number,
@@ -812,7 +874,7 @@ export class Web3Service implements OnDestroy {
     buyerTradeUrl: string,
     refCode: string,
     weiPrice: string
-  ) {
+  ): Promise<boolean> {
     if (this.isValidUrl(buyerTradeUrl)) {
       const params = new URLSearchParams(new URL(buyerTradeUrl).search);
       const partnerId = params.get('partner');
@@ -829,22 +891,23 @@ export class Web3Service implements OnDestroy {
           { from: this.webUser.address }
         );
 
-      contractInstance.methods
-        .commitBuy(TradeUrl, refCode)
-        .send({ from: this.webUser.address, value: weiPrice })
+      return contractInstance.methods
+        .commitBuy(TradeUrl, refCode, '0x0000000000000000000000000000000000000000')
+        .send({ from: this.webUser.address })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
-          //return false;
+          return true;
         })
         .catch((error: any) => {
           console.log('TX error', error);
-          //return false;
+          this.notificationsService.openSnackBar(error.message, 'OK');
+          return false;
         });
     }
+    return false;
   }
 
-  //function BuyWithEthToWeth(TradeUrl memory _buyerTradeUrl, bytes32 _affLink, address _tradeContract) public payable 
-  public async BuyItemWithEthToWeth(itemAddress: string, buyerTradeUrl: string, refCode: string, weiPrice: string) {
+  public async BuyItemWithEthToWeth(itemAddress: string, buyerTradeUrl: string, refCode: string, weiPrice: string): Promise<boolean> {
     if (this.isValidUrl(buyerTradeUrl)) {
       const params = new URLSearchParams(new URL(buyerTradeUrl).search);
       const partnerId = params.get('partner');
@@ -869,13 +932,15 @@ export class Web3Service implements OnDestroy {
         .send({ from: this.webUser.address, value: weiPrice })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
-          //return false;
+          return true;
         })
         .catch((error: any) => {
           console.log('TX error', error);
-          //return false;
+          this.notificationsService.openSnackBar(error.message, 'OK');
+          return false;
         });
     }
+    return false;
   }
 
   /**
@@ -1070,24 +1135,6 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
   }
 
-  async approveCSX(spenderAddress: string, tokenAmount: string) {
-  const tokenContractInstance = await new this.csxInstance.window.web3.eth.Contract(
-    environment.CONTRACTS.CSXToken.abi as AbiItem[],
-    environment.CONTRACTS.CSXToken.address,
-    { from: this.webUser.address }
-  );
-
-  return await tokenContractInstance.methods
-    .approve(spenderAddress, tokenAmount)
-    .send({ from: this.webUser.address });
- }
-
-  async allowanceCSX(owner: string, spender: string) {
-    return await this.csxInstance.CSXToken.methods
-      .allowance(owner, spender)
-      .call({ from: this.webUser.address });
-  }
-
   async levelUp(CSXTokenWeiAmount: string, newLevels: string) {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
@@ -1125,32 +1172,6 @@ export class Web3Service implements OnDestroy {
   /**
    * Wrapped ETH Swap Dialog
    */
-
-  //get WETH allowance
-  async allowenceWETH(owner: string, spender: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-      environment.CONTRACTS.Currencies.addresses.WETH,
-      { from: this.webUser.address }
-    );
-
-    return await contractInstance.methods
-      .allowance(owner, spender)
-      .call({ from: this.webUser.address });
-  }
-
-  //approve WETH
-  async approveWETH(spenderAddress: string, tokenAmount: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-      environment.CONTRACTS.Currencies.addresses.WETH,
-      { from: this.webUser.address }
-    );
-
-    return await contractInstance.methods
-      .approve(spenderAddress, tokenAmount)
-      .send({ from: this.webUser.address });
-  }
 
   //unwrap WETH
   async unwrapWETH(amount: string) {
