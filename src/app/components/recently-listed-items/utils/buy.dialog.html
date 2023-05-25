@@ -2,7 +2,7 @@
 <!-- <h1 mat-dialog-title>Buy Item</h1> -->
 
 
-<mat-dialog-content >
+<mat-dialog-content style="max-width: 600px;">
   <button mat-icon-button mat-dialog-close style="position: absolute; top: 5px; right: 5px;">
     <mat-icon>close</mat-icon>
   </button>
@@ -26,7 +26,7 @@
 
     <div style="height: 10px;"></div>
   
-  <mat-grid-list *ngIf="!isBuyNowClicked" cols="2" rowHeight="3:1">
+  <mat-grid-list *ngIf="!isBuyNowClicked" cols="2" rowHeight="2:1">
     <mat-grid-tile>
       <div>
         <p><b>Price</b></p>
@@ -78,7 +78,17 @@
       </mat-form-field>
       <div>
         <br>
-        <button mat-button color="primary" style="font-size: large; color: green !important; min-width: 250px;" matStepperNext cdkFocusInitial (click)="onCheckOutClick()">Checkout</button>
+        <span *ngIf="this.item.priceType == '0' && this.web3.webUser.balances!['WETH'].balanceEth != '0.0000'">Pay In
+        <mat-radio-group aria-label="Select an option" (change)="onOptionSelected($event)">
+          <mat-radio-button value="ETH" color="primary" checked>ETH <img src="assets/utils/ethereum-eth.png" style="height: .9rem; margin-bottom: -2px; margin-right: 5px;"></mat-radio-button>
+          <mat-radio-button value="WETH" color="primary">WETH <img src="assets/utils/wrapped-eth.png" style="height: .9rem; margin-bottom: -2px; margin-right: 5px;"></mat-radio-button>
+        </mat-radio-group></span>
+        <br>
+        <br>
+        <span *ngIf="this.web3.webUser.balances!['WETH'].balanceEth == '0.0000' && this.web3.webUser.balances!['ETH'].balanceEth == '0.0000'">
+          No funds available for purchase!
+        </span>
+        <button *ngIf="this.web3.webUser.balances!['WETH'].balanceEth != '0.0000' || this.web3.webUser.balances!['ETH'].balanceEth != '0.0000'" mat-button color="primary" style="font-size: large; color: green !important; min-width: 250px;" matStepperNext cdkFocusInitial (click)="onCheckOutClick()">Checkout</button>
       </div>
     </form>
   </mat-step>
@@ -89,15 +99,25 @@
       color="primary"
       mode="indeterminate">
     </mat-progress-spinner>
-    <p class="example-margin" style="margin: 1rem;">Open MetaMask and Sign TX.</p>
+    <p class="example-margin" style="margin: 1rem;">Open MetaMask and Sign TX <span *ngIf="isApproving">(1/2)</span> <span *ngIf="!isApproving">to buy</span>.</p>
     </div>
   </mat-step>
   <mat-step>
     <ng-template matStepLabel>Done</ng-template>
-    <p>You are now done.</p>
+    <h3>Congratulations on your new purchase!</h3>
+
+    <p>Whats Next:</p>
+
+    <p>Waiting for the Seller to Accept and send you a steam trade-offer with the item!</p>
+      
+    <p>In the event that they decline, expect a refund of your payment into your wallet.</p>
+      
+    <p>If the seller takes no action, you'll have the opportunity to retract your purchase after a period of 24 hours starting from this moment.</p>
+    
+    <p>You can follow updates as they come along in the notification bell in the upper-right corner or via 'My Trades' under the 'Dealings' tab.</p>
+
     <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
+      <button mat-button mat-dialog-close>Thanks</button>
     </div>
   </mat-step>
 </mat-stepper>
