@@ -15,12 +15,6 @@ export class ChainEventsService {
     return this.eventSubject.asObservable().subscribe(callback);
   }
 
-  subscribeToContractEvents2(callback: (event: any) => void, contractAddressFilter: string): Subscription {
-    return this.eventSubject.asObservable()
-      .pipe(filter(event => event.contractAddress === contractAddressFilter))
-      .subscribe(callback);
-  }
-
   subscribeToContractEvents(callback: (event: any) => void, contractAddressFilter: string[]): Subscription {
     return this.eventSubject.asObservable()
       .pipe(filter(event => contractAddressFilter.includes(event.contractAddress)))
