@@ -35,7 +35,7 @@ export class MyTradesService implements OnDestroy{
 
   constructor(public web3: Web3Service, private subscriptionService: SubscriptionService) {
     console.log('MyTradesService constructor, initialized?', this.initialized);
-    this.init();
+    //this.init();
   }
 
   ngOnDestroy(): void {

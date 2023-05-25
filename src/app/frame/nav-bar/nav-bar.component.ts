@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { IntervalService } from '../../components/my-trades/dialogs/interval.service';
 import { TradeRole, TradeStatus } from '../../components/my-trades/my-trades.component';
 import { wethConvertDialog } from './utils/wethConvert.dialog';
+import { MyTradesService } from '../../components/my-trades/my-trades.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -25,7 +26,8 @@ export class NavBarComponent implements OnDestroy {
     public _web3: Web3Service, 
     public notificationsService: NotificationService,
     private dialog: MatDialog,
-    private intervalService: IntervalService
+    private intervalService: IntervalService,
+    private myTradesService: MyTradesService
     ){
     this.web3AccSub = _web3.webUser.myAccount$?.subscribe(async (_account: any) => { this.account = _account; await this.runAfterWallet(); });
     this.notificationCountSub = notificationsService.newNotification$.subscribe((_noticeCount: any) => {
@@ -48,16 +50,9 @@ export class NavBarComponent implements OnDestroy {
     this.trimmedAddress = this.getTrimmedAccount();
 
     if(this.account){
-      if(!this.firstTime){
-        if(this.isProcessing == false){
-          this.isProcessing = true;
-          await this._web3.updateBalance();
-          this.isProcessing = false;
-        }
-      } else {
-        this.firstTime = false;
-      }
-
+      await this._web3.updateBalance();
+      this.myTradesService.initialized = false;
+      this.myTradesService.init();
     } else {
       // Couldnt connect popup.
     }
