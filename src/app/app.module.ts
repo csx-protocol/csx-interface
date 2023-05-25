@@ -41,6 +41,7 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatTableModule} from '@angular/material/table';
 import {ClipboardModule} from '@angular/cdk/clipboard';
+import {MatRadioModule} from '@angular/material/radio';
 
 /**
  * Custom Modules
@@ -166,7 +167,8 @@ import { OpenDisputeDialog } from './components/my-trades/dialogs/10-open-disput
     MatSortModule,
     MatProgressBarModule,
     MatSliderModule,
-    MatTableModule
+    MatTableModule,
+    MatRadioModule
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
   providers: [],
