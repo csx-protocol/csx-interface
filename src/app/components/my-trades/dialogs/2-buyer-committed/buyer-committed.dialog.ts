@@ -23,17 +23,17 @@ export class BuyerCommittedDialog implements OnDestroy {
     role: Role | undefined;
     isLoading: boolean = true;
     constructor(
-        public committedService: BuyerCommittedService, 
-        private intervalService: IntervalService, 
-        private notificationService: NotificationService, 
+        public committedService: BuyerCommittedService,
+        private intervalService: IntervalService,
+        private notificationService: NotificationService,
         // private myTradesService: MyTradesService,
         private subscriptionService: SubscriptionService,
-        ) { 
+    ) {
         this.isLoading = true;
     }
 
     // Listen on item changes
-    ngOnChanges() {        
+    ngOnChanges() {
         this.isLoading = true;
         if (this.item) {
             this.role = this.item.uiInfo.role === "Seller" ? Role.Seller : Role.Buyer;
@@ -41,17 +41,17 @@ export class BuyerCommittedDialog implements OnDestroy {
             return;
         }
         this.isLoading = false;
-    } 
-
-    ngOnDestroy() {
-        console.log("ngOnDestroy: ", this.item?.contractAddress);        
-        //this.subscriptionService.unsubscribe(this.item?.contractAddress, 'BuyerCommittedDialog');
-        this.subscriptionService.unsubscribeAllWithOrigin('BuyerCommittedDialog');
-        if(this.item?.contractAddress)
-        this.intervalService.stopInterval(this.item.contractAddress);
     }
 
-    public getUIMode(_isLoading: boolean){
+    ngOnDestroy() {
+        console.log("ngOnDestroy: ", this.item?.contractAddress);
+        //this.subscriptionService.unsubscribe(this.item?.contractAddress, 'BuyerCommittedDialog');
+        this.subscriptionService.unsubscribeAllWithOrigin('BuyerCommittedDialog');
+        if (this.item?.contractAddress)
+            this.intervalService.stopInterval(this.item.contractAddress);
+    }
+
+    public getUIMode(_isLoading: boolean) {
         // return 'query' or 'determinate'.
         return _isLoading ? 'query' : 'determinate';
     }
@@ -70,7 +70,7 @@ export class BuyerCommittedDialog implements OnDestroy {
     hasAccepted: boolean = false;
     private async validation() {
         if (this.item) {
-          if (this.role === Role.Buyer) {
+            if (this.role === Role.Buyer) {
                 console.log("Buyer");
                 [this.hasTimeIntervalPassed, this.buyerCommittTimestamp] = await this._hasTimeIntervalPassedSinceBuyerCommittedToTrade();
                 if (this.hasTimeIntervalPassed) {
@@ -80,12 +80,12 @@ export class BuyerCommittedDialog implements OnDestroy {
                     const updateProgressBarAndTimeLeft = async () => {
                         this._updateProgressBarAndTimeLeft();
                     }
-                    this.intervalService.createInterval(this.item.contractAddress, updateProgressBarAndTimeLeft);                    
+                    this.intervalService.createInterval(this.item.contractAddress, updateProgressBarAndTimeLeft);
                 }
-                
+
             } else {
                 //console.log("Seller")
-            }            
+            }
         }
     }
 
@@ -174,7 +174,7 @@ export class BuyerCommittedDialog implements OnDestroy {
             await this.committedService.cancelTrade(this.item.contractAddress, isBuyer).then(() => {
                 this.notificationService.openSnackBar('Trade Successfully Cancelled!', 'OK');
                 // this.hasSuccessfullyCancelled = true;
-                this.isCancelling = false;                
+                this.isCancelling = false;
                 //update my trades & map-ui + item if in map.
                 const tradeStatus = isBuyer ? TradeStatus.BuyerCancelled : TradeStatus.SellerCancelled;
                 //v---check if this is needed
@@ -183,19 +183,20 @@ export class BuyerCommittedDialog implements OnDestroy {
                 console.log(error);
                 this.notificationService.openSnackBar(error.message, 'OK');
                 this.isCancelling = false;
-            });            
+            });
         }
     }
 
     isVeridicting: boolean = false;
     hasRejected: boolean = false;
     hasConfirmed: boolean = false;
-    hasSuccessfullyVeridicted: boolean = false;
+    hasSuccessfullyVeridictedAccept: boolean = false;
+    hasSuccessfullyVeridictedReject: boolean = false;
     async sellerTradeVeridict(isAccepting: boolean) {
         if (this.item) {
             this.isVeridicting = true;
 
-            if(!isAccepting && !this.hasRejected){
+            if (!isAccepting && !this.hasRejected) {
                 this.hasRejected = true;
                 this.isVeridicting = false;
                 return;
@@ -204,18 +205,19 @@ export class BuyerCommittedDialog implements OnDestroy {
             }
 
             await this.committedService.sellerTradeVeridict(this.item.contractAddress, isAccepting).then(() => {
-                if(isAccepting){
+                if (isAccepting) {
                     this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
-                    this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true)
+                    this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true);
+                    this.hasSuccessfullyVeridictedAccept = true;
                 } else {
                     this.notificationService.openSnackBar('Trade Successfully Rejected!', 'OK');
-                }                
-                 this.hasSuccessfullyVeridicted = true;
-                 this.hasRejected = false;
-                 this.isVeridicting = false;
+                    this.hasSuccessfullyVeridictedReject = true;
+                }
+                this.hasRejected = false;
+                this.isVeridicting = false;
             }).catch((error) => {
                 console.log(error);
-                if(isAccepting){
+                if (isAccepting) {
                     this.notificationService.openSnackBar('Error Accepting Trade!', 'OK');
                 } else {
                     this.notificationService.openSnackBar('Error Rejecting Trade!', 'OK');
@@ -225,5 +227,5 @@ export class BuyerCommittedDialog implements OnDestroy {
             });
         }
     }
-     
+
 }
