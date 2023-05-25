@@ -14,11 +14,14 @@ export class SellerCommittedDialog {
   constructor(private web3: Web3Service, private dialog: MatDialog) { }
 
   isConfirming: boolean = false;
+  hasConfirmedDelivery: boolean = false;
+  hasOpenDispute: boolean = false;
   confirmDelivery() {
     this.isConfirming = true;
     this.web3.buyerConfirmReceived(this.item!.contractAddress).then((result) => {
       console.log('result', result);
       this.isConfirming = false;
+      this.hasConfirmedDelivery = true;
     }
     ).catch((error) => {
       console.log('error', error);
