@@ -1289,6 +1289,21 @@ export class Web3Service implements OnDestroy {
   }
 
   /**
+   * Completed Dialog
+   */
+  repAfterTrade(tradeAddrs: string, isPositive: boolean) {
+    return this.csxInstance.usersContract.methods
+      .repAfterTrade(tradeAddrs, isPositive)
+      .send({ from: this.webUser.address });
+  }
+
+  hasMadeRepOnTrade(tradeAddrs: string) {
+    return this.csxInstance.usersContract.methods
+      .hasMadeRepOnTrade(tradeAddrs)
+      .call({ from: this.webUser.address });
+  }
+  
+  /**
    * Seller Committed Dialog
    * 
    * function openDispute(
