@@ -208,24 +208,7 @@ export class Web3Service implements OnDestroy {
         console.log('acc changed!', __accounts[0]);
 
         this.webUser.address = __accounts[0];
-
-        Web3.utils.toChecksumAddress(this.webUser.address!);
-
-        this.webUser.balances!['ETH'].balanceWei =
-          await this.csxInstance.window.web3.eth.getBalance(
-            this.webUser.address
-          );
-
-        this.webUser.balances!['ETH'].balanceEth = parseFloat(
-          Web3.utils.fromWei(
-            await this.csxInstance.window.web3.eth.getBalance(this.webUser.address),
-            'ether'
-          )
-        ).toFixed(3);
-
         this.csxInstance.accountSubject.next(__accounts[0]);
-
-        //document.location.reload();
       }
     );
   }
@@ -233,7 +216,10 @@ export class Web3Service implements OnDestroy {
   private async _attemptMetamaskHandshake() {
     if (!this.webUser.isWrongChain) {
       try {
-        await this.__requestAddressAndBalance();
+        const _accounts = await this.csxInstance.window.ethereum.request({
+          method: 'eth_requestAccounts',
+        });
+        this.csxInstance.accountSubject.next(_accounts[0]);
       } catch (error) {
         this.notificationsService.notify(
           'Error, you might need to refresh site or change RPC endpoint in wallet.'
@@ -243,26 +229,6 @@ export class Web3Service implements OnDestroy {
       }
     } else if (this.webUser.isWrongChain) {
       console.log('Wr0ng chain!');
-      //this._requestAddOrChangeNetwork();
-      // Post message to user popap.
-      /**
-       * this._instance.window.ethereum
-          .request({
-            method: 'wallet_addEthereumChain',
-            params: [
-              {
-                chainId: environment.NETWORK.chainId,
-                chainName: environment.NETWORK.chainName,
-                nativeCurrency: environment.NETWORK.nativeCurrency,
-                rpcUrls: environment.NETWORK.rpcUrls,
-                blockExplorerUrls: environment.NETWORK.blockExplorerUrls,
-              },
-            ],
-          })
-          .catch((error: any) => {
-            console.log(error);
-          });
-       */
     }
   }
 
@@ -271,8 +237,7 @@ export class Web3Service implements OnDestroy {
       method: 'eth_requestAccounts',
     });
     this.webUser.address = _accounts[0];
-
-    console.log('gg?');
+    console.log('__requestAddressAndBalance: ', this.webUser.address);
 
     await this.___getTrimmedAddress();
     await this.___initContractInstances();
@@ -280,7 +245,7 @@ export class Web3Service implements OnDestroy {
     await this.___notifyUserWalletConnected();
     this.___subscribeToTradeFactoryEvents();
 
-    this.csxInstance.accountSubject.next(this.webUser.address);
+    //this.csxInstance.accountSubject.next(this.webUser.address);
   }
 
   private async ___getTrimmedAddress() {
@@ -1410,10 +1375,10 @@ export class Web3Service implements OnDestroy {
       .on('error', (error: any) => {
         this.chainEvents.onError(error);
       });
-    this._checkForNewNotifications();
+    this._checkForPastNotifications();
   }
 
-  private async _checkForNewNotifications() {
+  private async _checkForPastNotifications() {
     const currentBlock = await this.csxInstance.window.web3.eth.getBlockNumber();
 
     const fromBlock = currentBlock - 50; // Replace 1000 with the desired range
@@ -1450,7 +1415,6 @@ export class Web3Service implements OnDestroy {
     );
   }
 
-  //pastEvents array
   pastEvents: any[] = [];
   collectPastEvent(event: any) {
     // get the event data
@@ -1495,7 +1459,7 @@ export class Web3Service implements OnDestroy {
         //Notify
         if (role == TradeRole.BUYER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`You're currently awaiting confirmation from seller ${res}.`, event.contractAddress, 'Cancel Trade', true);
+            this.notificationsService.notify(`You're currently awaiting confirmation from seller for ${res}.`, event.contractAddress, 'Cancel Trade', true);
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
             this.notificationsService.notify(`You're currently awaiting confirmation from seller`, event.contractAddress, 'Cancel Trade', true);
