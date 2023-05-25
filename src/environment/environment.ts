@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0x06e11995417Cf0AA3073869FD9747672bc86592F",
+      address: "0xe2feFf7Bd8b51cF228E1691ba9F03A9c0Cf0E890",
       abi: [
         {
           "inputs": [],
@@ -337,7 +337,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x36F4338590E4a0005d30Bc4e42B66b51eC2934D4",
+      address: "0x4E6Ee3266246f2476d01639A08fA49909e5AeB44",
       abi: [
         {
           "inputs": [
@@ -861,9 +861,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0x353a49f2ce715383B07A2e356D6EB7d530407D91",
-        USDT: "0x4Abc236DE439394ADee4960F025b5772a286eB69",
-        WETH: "0x7D26137deB60C947F48BcEEe61Bb5735e4C57166",
+        USDC: "0xE8166872201869daf3a6A7b14cCfecEd455bc63b",
+        USDT: "0xD10ec3976F6143B6D2a5a2eE7457bCe4842d52c4",
+        WETH: "0x942ec0961f0Ff9fcB732Eefcf53Ad78E9b754eb7",
       },
       abi: [
         {
@@ -1450,7 +1450,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0xb62d1329E9d806d2c8AE8e248b3f06B9B16AC605",
+      address: "0x344941CA631841b3228609064a7036474e13f937",
       abi: [
         {
           "inputs": [
@@ -1857,7 +1857,7 @@ export const environment = {
       ]
     },
     VestedCSX: {
-      address: "0xD6eFA9A98495381D25fD5342bc1001C9dc95676b",
+      address: "0xB7A1D1BC14Bd3080c1E8985117d2f216a4663CD4",
       abi: [
         {
           "inputs": [
@@ -2322,7 +2322,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x1B397E8fBa787356E60d5e73d4FEFfF23617a71e',
+      address: '0x1c8E24271c1f77d8B832389f99837b565C36b361',
       abi: [
         {
           "inputs": [
@@ -2503,7 +2503,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0xB0BD145B746ce3bc50C83D8Aa034fd952761D447',
+      address: '0xE5D4133DFf0856f6E057ecCA1D810302E78e71A7',
       abi: [
         {
           "inputs": [
@@ -3216,7 +3216,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0xD63F4ee4c1f78E25a0fc1197BEd30Af3399cF36D",
+      address: "0xb7FF451D7fd58230BE2e640b955145fD10B63158",
       abi: [
         {
           "inputs": [
@@ -3413,7 +3413,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0xe6b15794CCaEe91c70dB6BF4388404C412a85E25",
+      address: "0xC98812ec28698D25Df4bEA9c0e250F5642FB656e",
       abi: [
         {
           "inputs": [],
@@ -3808,7 +3808,7 @@ export const environment = {
       ],
     },
     tradeFactory: {
-      address: "0xeEfd2bf5b4AA7d1D75bC602FA08F8576d2673aB6",
+      address: "0x66D009C55Ad71C7fb62F6CECE1E22DD42ec7C733",
       abi: [
         {
           "inputs": [
@@ -4673,7 +4673,7 @@ export const environment = {
       ],
     },    
     BuyAssistoor: {
-      address: "0x432C1DD3fe88108b9be8b9eb6034A99FBB7141d8",
+      address: "0x3549674B3497EBef60544c6D3dF216CC51080b2D",
       abi: [
         {
           "inputs": [
