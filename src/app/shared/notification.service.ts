@@ -23,11 +23,6 @@ export class NotificationService implements OnDestroy {
   }
 
   notify(_notice: string, _link?: string, _linkText?: string, isDialog?: boolean) {
-    // const _notify: Notification = {
-    //   message: _notice,
-    //   link: _link,
-    //   linkText: _linkText,
-    // }
     let _notify: Notification;
     if (isDialog) {
       _notify = {
@@ -44,6 +39,14 @@ export class NotificationService implements OnDestroy {
         isDialog: false,
       }
     }
+
+    if(isDialog) {
+      const index = this.notifications.findIndex((notification) => notification.link === _link);
+      if (index > -1) {
+        this.notifications.splice(index, 1);
+      }
+    }
+
     this.notifications.unshift(_notify);
     this.notificationSubject.next(1);
   }
