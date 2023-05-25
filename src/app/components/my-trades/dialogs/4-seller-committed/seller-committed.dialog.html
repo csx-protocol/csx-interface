@@ -1,75 +1,53 @@
+<span *ngIf="item">
 
-
-  <span *ngIf="item">
+  <span *ngIf="!hasConfirmedDelivery && !hasOpenDispute">
     <span *ngIf="item.uiInfo.role === 'Buyer'">
       <h1 mat-dialog-title>You have purchased {{item.itemMarketName}} for {{item.etherPrice}} ETH!</h1>
       <mat-dialog-content>
-        <h4>It's time to accept the trade offer on Steam from the seller or wait for the seller to accept your trade offer if you've already sent one.</h4>
-        
-        
-        <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+        <h4>It's time to accept the trade offer on Steam from the seller or wait for the seller to accept your trade
+          offer if you've already sent one.</h4>
+
+
+        <p
+          style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           The Keeper-Oracle will automatically release funds to the seller when the item reaches your inventory.
-          <span><mat-progress-spinner *ngIf="!isConfirming"
-            class="example-margin"
-            color="primary"
-            mode="indeterminate"
-            [diameter]="25">
-          </mat-progress-spinner></span>          
+          <span><mat-progress-spinner *ngIf="!isConfirming" class="example-margin" color="primary" mode="indeterminate"
+              [diameter]="25">
+            </mat-progress-spinner></span>
         </p>
 
-        <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+        <p
+          style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           Alternatively, you can manually confirm delivery of the item.
-          <span><button (click)="confirmDelivery()" [disabled]="isConfirming" mat-button color="primary" cdkFocusInitial style="color: #56a753 !important;">Confirm Delivery</button></span>
-          <span *ngIf="isConfirming"><mat-progress-spinner
-            class="example-margin"
-            color="primary"
-            mode="indeterminate"
-            [diameter]="25">
-          </mat-progress-spinner></span> 
+          <span><button (click)="confirmDelivery()" [disabled]="isConfirming" mat-button color="primary" cdkFocusInitial
+              style="color: #56a753 !important;">Confirm Delivery</button></span>
+          <span *ngIf="isConfirming"><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+              [diameter]="25">
+            </mat-progress-spinner></span>
         </p>
 
-        <p style="color:red;">Caution: If your inventory is set to private, the trade may favor the seller regardless of item delivered to you or not, potentially risking loss of funds, item and, damaging your reputation.</p>
-      
-        <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+        <p style="color:red;">Caution: If your inventory is set to private, the trade may favor the seller regardless of
+          item delivered to you or not, potentially risking loss of funds, item and, damaging your reputation.</p>
+
+        <p
+          style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           Or, if you encounter issues, something seems fishy; then you can lock the trade to disputed.
-          <span><button mat-button color="primary" (click)="openDispute(item)" cdkFocusInitial style="color: rgb(255 49 67) !important;">Open Dispute</button></span>          
+          <span><button mat-button color="primary" (click)="openDispute(item)" cdkFocusInitial
+              style="color: rgb(255 49 67) !important;">Open Dispute</button></span>
         </p>
-        
-
-       
-
-        <!-- <h4>SSG 08 | Mainframe 001 (Well-Worn)</h4> -->
-        <!-- <app-float-bar></app-float-bar> -->
-        <!-- <h4>It's time to accept the trade-offer the seller has sent you.</h4>
-        <h4>Or if you have already sent an trade-offer to the seller, you can wait for the seller to accept the trade-offer.</h4>
-        
-        <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
-          Once the item has arrived to your inventory, the funds will be automatically released to the seller by the Keeper-Oracle.          
-          <span><mat-progress-spinner
-            class="example-margin"
-            color="primary"
-            mode="indeterminate"
-            [diameter]="25">
-          </mat-progress-spinner></span>
-        </p>
-
-        <span style="color:red;">Warning: If you have your inventory set to private, the trade may deem in favour of the seller even if you have not received the item and risk of lowered reputation.</span> 
-
-        <p>Or you can manually confirm you have received the item.</p> -->
-
-        <!-- <button mat-button cdkFocusInitial [mat-dialog-close]="false">OK!</button> -->
-
 
       </mat-dialog-content>
     </span>
 
-    <span *ngIf="item.uiInfo.role === 'Seller'">      
+    <span *ngIf="item.uiInfo.role === 'Seller'">
       <h1 mat-dialog-title>SSG 08 | Mainframe 001 (Well-Worn) has been purchased for 0.0000025 ETH!</h1>
       <mat-dialog-content>
         <!-- <h4>SSG 08 | Mainframe 001 (Well-Worn)</h4> -->
         <app-float-bar></app-float-bar>
         <h4 style="color: #f14d42;">1&rpar; It's time to accept the trade-offer the buyer has sent you.</h4>
-        <h4 style="color: #f14d42;">2&rpar; Make sure the SSG 08 | Mainframe 001 (Well-Worn) is arriving to the <a href="https://google.com" target="_blank">correct inventory</a> or the funds won't be released to you, here is the <a href="https://google.com" target="_blank">buyer's steam profile</a>.</h4>
+        <h4 style="color: #f14d42;">2&rpar; Make sure the SSG 08 | Mainframe 001 (Well-Worn) is arriving to the <a
+            href="https://google.com" target="_blank">correct inventory</a> or the funds won't be released to you, here
+          is the <a href="https://google.com" target="_blank">buyer's steam profile</a>.</h4>
 
 
         <mat-accordion>
@@ -83,7 +61,8 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
             <div style="margin: 3%;">
-              <p>If the buyer has not sent an offer to you on Steam regarding the correct item, you may send one to <a href="https://google.com" target="_blank">them</a>.</p>
+              <p>If the buyer has not sent an offer to you on Steam regarding the correct item, you may send one to <a
+                  href="https://google.com" target="_blank">them</a>.</p>
             </div>
           </mat-expansion-panel>
         </mat-accordion>
@@ -103,29 +82,36 @@
             <div style="margin: 3%;">
               <p>If you sent the item to the incorrect inventory, then you're out of luck!</p>
               <p>You can cancel the trade and the funds will be sent back to the buyer.</p>
-              <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> If you don't deliver the item and <u>not</u> cancelling the trade below, the Keeper Oracle will punish on non-delivered committed trades.</p>
-              <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Cancel Trade</button>
+              <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> If you don't deliver the item and
+                <u>not</u> cancelling the trade below, the Keeper Oracle will punish on non-delivered committed trades.
+              </p>
+              <button mat-button color="warn" [mat-dialog-close]="true"
+                style="color: rgb(244 67 54 / 38%) !important;">Cancel Trade</button>
             </div>
           </mat-expansion-panel>
         </mat-accordion>
 
-        <p><i>The delivery timer has been started, and are awaiting to measure until the item has arrived to the buyer.</i></p>
+        <p><i>The delivery timer has been started, and are awaiting to measure until the item has arrived to the
+            buyer.</i></p>
 
-        <p style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
-          Once the item has arrived at buyer's inventory, the funds will be automatically released to you by the Keeper-Oracle.
-          <span><mat-progress-spinner
-            class="example-margin"
-            color="primary"
-            mode="indeterminate"
-            [diameter]="25">
-          </mat-progress-spinner></span>
+        <p
+          style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+          Once the item has arrived at buyer's inventory, the funds will be automatically released to you by the
+          Keeper-Oracle.
+          <span><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
+            </mat-progress-spinner></span>
         </p>
 
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Open Dispute</button>
+        <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Open
+          Dispute</button>
         <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Close</button>
       </mat-dialog-actions>
-    </span> 
+    </span>
   </span>
-  
+
+  <trades-completed-dialog *ngIf="hasConfirmedDelivery" [item]="item"></trades-completed-dialog>
+  <trades-disputed-dialog *ngIf="hasOpenDispute" [item]="item"></trades-disputed-dialog>
+
+</span>
