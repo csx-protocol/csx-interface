@@ -122,4 +122,8 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.scrollSubscription.unsubscribe();
   }
+  
+  partnerIdToSteamId64(partnerId: string): string {
+    return (BigInt(partnerId) + BigInt(76561197960265728n)).toString();
+  }
 }

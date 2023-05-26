@@ -110,21 +110,36 @@
             {{item.itemMarketName}}
           </p>
           <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar>
-          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD"><img *ngIf="item.priceType == '0'" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"><img *ngIf="item.priceType == '1'" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"><img *ngIf="item.priceType == '2'" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"> <span *ngIf="item.priceType == '0'">{{item.etherPrice}} </span> <span *ngIf="item.priceType != '0'">{{item.indexInfo.priceInUSD.toFixed(2)}} </span> <span *ngIf="item.priceType == '0'">ETH</span><span *ngIf="item.priceType == '1'">USDC</span><span *ngIf="item.priceType == '2'">USDT</span></p>
+          <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">
+            <img *ngIf="item.priceType == '0'" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+            <img *ngIf="item.priceType == '1'" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+            <img *ngIf="item.priceType == '2'" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"> 
+            <span *ngIf="item.priceType == '0'">{{item.etherPrice}} </span> <span *ngIf="item.priceType != '0'">{{item.indexInfo.priceInUSD.toFixed(2)}} </span> 
+            <span *ngIf="item.priceType == '0'">ETH</span>
+            <span *ngIf="item.priceType == '1'">USDC</span>
+            <span *ngIf="item.priceType == '2'">USDT</span>
+            <span matTooltipPosition="above" matTooltip="-{{recentlyListed.referralInfo.discountRatio / 2}}% OFF FEE APPLIED" style="margin-left: -23px; width: 10px; display: -webkit-inline-box;">
+              <button style="color: rgb(181, 37, 37);" disabled="true" *ngIf="recentlyListed.referralInfo.hasReferral" mat-button color="primary">
+                <mat-icon>local_offer</mat-icon>
+              </button>
+            </span>
+          </p>
         </mat-card-content>
-        <mat-card-actions>
-          <button (click)="openDialog(item)" mat-button color="primary">BUY</button>
-          <!-- <button (click)="this.web3.BuyItem(item.contractAddress, 'https://steamcommunity.com/tradeoffer/new/?partner=225482466&token=TESTTOKEN', item.weiPrice)" mat-button color="primary">DETAILS</button> -->
-          <a matTooltip="Inspect In-Game" style="text-decoration: none;" [href]="sanitizer.bypassSecurityTrustUrl(item.inspectLink)">
-            <button style="width: 10px;" mat-button color="primary">
-              <mat-icon>search</mat-icon>
+        <mat-card-actions style="align-self: center;">
+          <a matTooltip="Inspect In-Game" style="text-decoration: none; z-index: 16;" [href]="sanitizer.bypassSecurityTrustUrl(item.inspectLink)">
+            <button style="width: 10px;" mat-button color="primary" style="color: #afb2d6 !important;" >
+              <mat-icon>search</mat-icon>INSP..
             </button>
           </a>
-          <span matTooltip="-{{recentlyListed.referralInfo.discountRatio / 2}}% OFF FEE APPLIED">
-            <button style="color: rgb(52 181 37);" disabled="true" *ngIf="recentlyListed.referralInfo.hasReferral" mat-button color="primary">
-              <mat-icon>local_offer</mat-icon>
+          <a matTooltip="Check Item In Inventory" href="https://steamcommunity.com/profiles/{{partnerIdToSteamId64(item.sellerTradeUrl.partner)}}/inventory/#730_2_{{item.assetId}}" target="_blank">           
+            <button mat-button color="primary">
+              <mat-icon><img src="https://steamcommunity.com/favicon.ico" style="height: 100%; filter: brightness(75%);"></mat-icon><span style="margin-top: 5px; color: #1280bd !important;">  FIND</span>
             </button>
-          </span>
+          </a> 
+          <button matTooltip="Buy Item" (click)="openDialog(item)" style="color: #10b819 !important; z-index: 16;" mat-button color="primary">
+            <mat-icon>add_shopping_cart</mat-icon>BUY
+          </button>
+          
           
         </mat-card-actions>
 
