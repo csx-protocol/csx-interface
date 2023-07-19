@@ -616,23 +616,6 @@ export class Web3Service implements OnDestroy {
    * Used in components/list-item
    */
   public listItem(
-    //   _itemHashName: string,
-    //   _tradeUrl: string,
-    //   _assetId: string,
-    //   _inspectLink: string,
-    //   _itemImageUrl: string,
-    //   _weiPrice: string,
-    //   _floatVal: string,
-    //   _floatMin: string,
-    //   _floatMax: string,
-    //   _stickers: any[],
-    //   _weaponType: string
-    // ) {
-    //   const FloatInfo = {
-    //     value: _floatVal,
-    //     min: _floatMin,
-    //     max: _floatMax,
-    //   };
     _itemHashName: string,
     _tradeUrl: string,
     _assetId: string,
@@ -645,11 +628,12 @@ export class Web3Service implements OnDestroy {
     _paintSeed: string,
     _paintIndex: string,
     _stickers: any[],
-    _weaponType: string
+    _weaponType: string,
+    _priceType: string
   ) {
     const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
 
-    const SkinInfo = {
+    const skinInfo = {
       floatValues: floatInfoString,
       paintSeed: _paintSeed,
       paintIndex: _paintIndex,
@@ -657,28 +641,29 @@ export class Web3Service implements OnDestroy {
 
     const url = _tradeUrl;
     if (this.isValidUrl(url)) {
-      const params = new URLSearchParams(new URL(url).search);
-      const partnerId = params.get('partner');
-      const token = params.get('token');
+      const tradeUrlParams = new URLSearchParams(new URL(url).search);
+      const partnerId = tradeUrlParams.get('partner');
+      const token = tradeUrlParams.get('token');
       const TradeUrl = {
         partner: partnerId,
         token: token,
       };
 
-      console.log('TRADE', TradeUrl);
+      const listingParams = {
+        itemMarketName: _itemHashName,
+        tradeUrl: TradeUrl,
+        assetId: _assetId,
+        inspectLink: _inspectLink,
+        itemImageUrl: _itemImageUrl,  
+        weiPrice: _weiPrice,
+        skinInfo: skinInfo,
+        stickers: _stickers,
+        weaponType: _weaponType,
+        priceType: _priceType,
+    };
 
       this.csxInstance.tradeFactory.methods
-        .createListingContract(
-          _itemHashName,
-          TradeUrl,
-          _assetId,
-          _inspectLink,
-          _itemImageUrl,
-          _weiPrice,
-          SkinInfo,
-          _stickers,
-          _weaponType
-        )
+        .createListingContract(listingParams)
         .send({ from: this.webUser.address })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
@@ -1336,6 +1321,20 @@ export class Web3Service implements OnDestroy {
     const BalanceFraction = BalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
     return `${BalanceInteger}.${BalanceFraction}`;
   }
+
+  public fromBaseUnitToSmallestUnit(baseUnitVal: string): string {
+    const decimals = 6;
+    const [integerPart, fractionalPart] = baseUnitVal.split('.');
+    const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+    const BalanceBN = Web3.utils.toBN(integerPart);
+    
+    // Handle case when fractionalPart is undefined
+    const fractionalString = fractionalPart ? fractionalPart.padEnd(decimals, '0') : '0'.repeat(decimals);
+    const BalanceFractionBN = Web3.utils.toBN(fractionalString);
+    
+    const smallestUnitVal = BalanceBN.mul(tenPowerDecimals).add(BalanceFractionBN).toString(10);
+    return smallestUnitVal;
+  }  
 
   public isValidUrl(url: string): boolean {
     try {
