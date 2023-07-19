@@ -225,7 +225,7 @@
 
           <div class="form-row">
             <mat-form-field style="width: -webkit-fill-available;">
-              <mat-label>Price in {{selected}}</mat-label>
+              <mat-label>Price in {{selectedPriceType}}</mat-label>
               <input matInput formControlName="priceControl" type="number" step="0.025">
               <mat-error *ngIf="selectStepTwo.get('priceControl').hasError('required')">
                 Price is <strong>required</strong>
@@ -240,7 +240,7 @@
 
             <mat-form-field  style="width: -webkit-fill-available;" appearance="fill">
               <!-- <mat-label>Currency</mat-label> -->
-              <mat-select [(value)]="selected">
+              <mat-select [(value)]="selectedPriceType">
                 <mat-option value="ETH">Ether (ETH)</mat-option>
                 <mat-option value="USDC">USD Coin (USDC)</mat-option>
                 <mat-option value="USDT">Tether (USDT)</mat-option>
@@ -250,7 +250,7 @@
 
 
           <mat-form-field>
-            <mat-label>Trade Link</mat-label>
+            <mat-label><a [href]="tradeLinkDestinationLink" target="_blank" rel="noopener noreferrer">Trade Link?</a>:</mat-label>
             <input type="text" formControlName="tradeLinkControl"  matInput>
             <mat-error *ngIf="selectStepTwo.get('tradeLinkControl').hasError('required')">
               Trade link is <strong>required</strong>
