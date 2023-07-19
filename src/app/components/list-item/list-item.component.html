@@ -248,7 +248,6 @@
             </mat-form-field>
           </div>
 
-
           <mat-form-field>
             <mat-label><a [href]="tradeLinkDestinationLink" target="_blank" rel="noopener noreferrer">Trade Link?</a>:</mat-label>
             <input type="text" formControlName="tradeLinkControl"  matInput>
@@ -274,11 +273,37 @@
 
   <mat-step>
     <ng-template matStepLabel>Success</ng-template>
-    <p>You are now done.</p>
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+      <!-- <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div> -->
+  
+      <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+        <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+          <div *ngIf="loadingMetaMask" class="centered-loading-spinner" >
+            Confirm listing action in Wallet  
+            <mat-progress-spinner
+              class="example-margin"
+              color="primary"
+              mode="indeterminate"
+              [diameter]="25">
+            </mat-progress-spinner>
+          </div>
+          <div *ngIf="successMetaMask" style="text-align: center;">
+            <h2 style="color: #c0c2ea;">Item successfully listed!</h2>
+            <button 
+              mat-button 
+              (click)="stepper.reset(); this.successMetaMask = false" 
+              style="padding: 9px 23px; font-size: 18px; color: #a4a6ca !important; background-color: #17193d !important;">
+              List more items for sale
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </mat-step>
+  
 
 </mat-stepper>

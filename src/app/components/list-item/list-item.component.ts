@@ -97,11 +97,11 @@ export class ListItemComponent implements OnDestroy {
       // Tradelink's
       const SteamID64InspectUrl = this._itemInspectUrlToSteamID64(this.itemInspectLink);
 
-      console.log("TRADE:",SteamID64TradeUrl);
-      console.log("INSPECT:", SteamID64InspectUrl);
+      // console.log("TRADE:", SteamID64TradeUrl);
+      // console.log("INSPECT:", SteamID64InspectUrl);
 
       const res = SteamID64TradeUrl !== SteamID64InspectUrl ? { matchingFields: true } : null;
-      console.log("RESASa",res);
+      // console.log("RESASa", res);
 
 
       return SteamID64TradeUrl !== SteamID64InspectUrl ? { matchingFields: true } : null;
@@ -126,11 +126,11 @@ export class ListItemComponent implements OnDestroy {
 
 
   private _tradeUrlToSteamID64(_tradeUrl: string): string | null {
-    if(this.web3.isValidUrl(_tradeUrl)){
+    if (this.web3.isValidUrl(_tradeUrl)) {
       const url = _tradeUrl;
       const params = new URLSearchParams(new URL(url).search);
       const partnerId = params.get('partner');
-      if(partnerId){
+      if (partnerId) {
         const partnerIdInt = parseInt(partnerId);
         return `7656119${partnerIdInt + 7960265728}`;
       }
@@ -224,28 +224,28 @@ export class ListItemComponent implements OnDestroy {
                 this.exactImage = res.link;
                 break;
               case 'Graffiti':
-                this.notiServ.openSnackBar(data.iteminfo.weapon_type+' is not marketable yet.', 'gg, okay🤦');
+                this.notiServ.openSnackBar(data.iteminfo.weapon_type + ' is not marketable yet.', 'gg, okay🤦');
                 break;
               default:
-                if(data.iteminfo.floatvalue > data.iteminfo.min){
-                  if(data.iteminfo.imageurl){
+                if (data.iteminfo.floatvalue > data.iteminfo.min) {
+                  if (data.iteminfo.imageurl) {
                     this.exactImage = data.iteminfo.imageurl;
                   }
 
-                  if(data.iteminfo.stickers && data.iteminfo.stickers.length > 0){
+                  if (data.iteminfo.stickers && data.iteminfo.stickers.length > 0) {
                     let stickers: any = [];
                     for (const _sticker of data.iteminfo.stickers) {
                       const full_market_name = "Sticker | " + _sticker.name;
                       const imageRes = this.csgoItems.getRegularItemImage(full_market_name);
-                      stickers.push({name: _sticker.name, material: _sticker.material, slot: _sticker.slot, imageLink: imageRes.link});
+                      stickers.push({ name: _sticker.name, material: _sticker.material, slot: _sticker.slot, imageLink: imageRes.link });
                     }
-                    this.itemData = {...this.itemData, stickers: stickers}
+                    this.itemData = { ...this.itemData, stickers: stickers }
                   }
-                  console.log("whats hood",this.itemData);
+                  console.log("whats hood", this.itemData);
 
                   this.isStickerAsItem = false;
                 } else {
-                  this.notiServ.openSnackBar(data.iteminfo.weapon_type+' is not marketable yet.', 'gg, okay🤦');
+                  this.notiServ.openSnackBar(data.iteminfo.weapon_type + ' is not marketable yet.', 'gg, okay🤦');
                   this.stepper!.selectedIndex = 0;
                 }
                 break;
@@ -277,28 +277,55 @@ export class ListItemComponent implements OnDestroy {
     }
   }
 
+  loadingMetaMask: boolean = false;
+  successMetaMask: boolean = false;
   confirmApprove(): void {
     console.log(this.selectStepTwo.valid, this.selectStepTwo);
 
     if (this.selectStepTwo.valid) {
+      this.loadingMetaMask = true;
       const ethPrice = this.selectStepTwo.get('priceControl').value;
       const tradeLink = this.selectStepTwo.get('tradeLinkControl').value;
-      
+
       const weaponType = this.itemData.weapon_type;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
       const priceType = this.selectedPriceType == 'WETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
 
-      const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString()) : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());      
+      const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString()) : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());
 
-      if(!this.isStickerAsItem){
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, this.itemData.stickers, weaponType, priceType);
-      } else {
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, [], weaponType, priceType);
-      }
+      const _stickers = !this.isStickerAsItem ? this.itemData.stickers : [];
+
+      this.web3.listItem(
+        this.itemData.full_item_name, 
+        tradeLink, 
+        this.tempAssetId, 
+        itemInspectLink, 
+        this.exactImage, 
+        weiPrice, 
+        this.float_val.toString(), 
+        this.minFloat.toString(), 
+        this.maxFloat.toString(), 
+        this.itemData.paintseed, 
+        this.itemData.paintindex, 
+        _stickers, 
+        weaponType, 
+        priceType
+        ).then((res: any) => {
+        console.log("res", res);
+        if (res[0] == true) {
+          // this.notiServ.openSnackBar('Item listed successfully!', 'gg, okay🤦');
+          this.loadingMetaMask = false;
+          this.successMetaMask = true;
+        } else {
+          this.notiServ.openSnackBar(res[1].message, 'gg, okay🤦');
+          this.loadingMetaMask = false;
+          this.stepper!.selectedIndex = 1;
+        }
+      });
 
     } else {
       const itemNameInspectionValue = this.selectStepTwo.get('itemNameControl').value;
-      if(this.regExPattern.test(itemNameInspectionValue) == false){
+      if (this.regExPattern.test(itemNameInspectionValue) == false) {
         this.notiServ.openSnackBar(`${itemNameInspectionValue} is not an recognized item.`, 'gg, okay🤦');
       }
     }
@@ -331,10 +358,6 @@ export class ListItemComponent implements OnDestroy {
     return null;
   }
 
-  _getEthPrice() {}
-
-  //fgry
-
 }
 
 interface Order {
@@ -343,8 +366,3 @@ interface Order {
   tradeLink: string;
   inspectLink: string;
 }
-
-/**
- *
- * show tradeUrl on specific contract/listing page before buy, can report if item not seen in inventory.
- */
