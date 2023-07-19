@@ -615,7 +615,7 @@ export class Web3Service implements OnDestroy {
   /**
    * Used in components/list-item
    */
-  public listItem(
+  public async listItem(
     _itemHashName: string,
     _tradeUrl: string,
     _assetId: string,
@@ -630,7 +630,7 @@ export class Web3Service implements OnDestroy {
     _stickers: any[],
     _weaponType: string,
     _priceType: string
-  ) {
+  ): Promise<[boolean, string]> {
     const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
 
     const skinInfo = {
@@ -662,18 +662,19 @@ export class Web3Service implements OnDestroy {
         priceType: _priceType,
     };
 
-      this.csxInstance.tradeFactory.methods
+      return this.csxInstance.tradeFactory.methods
         .createListingContract(listingParams)
         .send({ from: this.webUser.address })
         .then((receipt: any) => {
           console.log('TX receipt', receipt);
-          //return false;
+          return [true, receipt];
         })
         .catch((error: any) => {
           console.log('TX error', error);
-          //return false;
+          return [false, error];
         });
     }
+    return [false, 'Invalid trade url'];
   }
 
   /**
