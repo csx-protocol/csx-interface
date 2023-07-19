@@ -968,7 +968,8 @@ export class Web3Service implements OnDestroy {
         .getTradeDetailsByAddress(_address)
         .call({ from: this.webUser.address });
 
-      const etherPrice = this.fromWei(tradeDetails.weiPrice);
+      const etherPrice = tradeDetails.priceType == '0' ? this.fromWei(tradeDetails.weiPrice) : this.fromSmallestUnitToSixthDecimalBaseUnit(tradeDetails.weiPrice);
+
       const trimmedAddress = this.getTrimmedAddress(
         tradeDetails.contractAddress
       );
