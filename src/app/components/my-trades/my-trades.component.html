@@ -43,10 +43,14 @@
         <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg> {{userInteraction.itemMarketName}}</td>
         <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
         <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
-        <td class="tdColor">{{userInteraction.etherPrice}} ETH</td>
-        <!-- <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
-          <button (click)="myTradesService.cancelTrade(userInteraction.contractAddress)" style="color: #a75353 !important;" mat-button>Cancel</button>
-        </td> -->
+        <td class="tdColor">
+          <img *ngIf="userInteraction.priceType == '0'" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+          <img *ngIf="userInteraction.priceType == '1'" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+          <img *ngIf="userInteraction.priceType == '2'" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">   
+          {{userInteraction.etherPrice}}
+          <span *ngIf="userInteraction.priceType == '0'">ETH</span>
+          <span *ngIf="userInteraction.priceType == '1'">USDC</span>
+          <span *ngIf="userInteraction.priceType == '2'">USDT</span></td>
         <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
           <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Sell</button>
         </td>
