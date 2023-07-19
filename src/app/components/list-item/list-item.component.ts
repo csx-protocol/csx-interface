@@ -18,7 +18,7 @@ import { MatStepper } from '@angular/material/stepper';
   ],
 })
 export class ListItemComponent implements OnDestroy {
-  selected = 'USDC';
+  selectedPriceType = 'USDC';
   @ViewChild('stepper') stepper: MatStepper | undefined;
 
   regExPattern: RegExp;
@@ -173,7 +173,7 @@ export class ListItemComponent implements OnDestroy {
     'Battle-Scarred',
   ];
 
-  //cmmImage: any = '';
+  tradeLinkDestinationLink: string = '';
   minFloat: number = 0;
   maxFloat: number = 0;
   float_val: number = 0;
@@ -203,7 +203,9 @@ export class ListItemComponent implements OnDestroy {
       this.itemInspectLink = itemInspectLink;
       console.log('itemInspectLink', itemInspectLink);
 
-      //this.csgoItems.getItemInfo(itemInspectLink);
+      const SteamIDInspectUrl = this._itemInspectUrlToSteamID64(this.itemInspectLink);
+      //https://steamcommunity.com/profiles/76561198185748194/tradeoffers/privacy#trade_offer_access_url
+      this.tradeLinkDestinationLink = `https://steamcommunity.com/profiles/${SteamIDInspectUrl}/tradeoffers/privacy#trade_offer_access_url`;
 
       this.csgoItems.getItemInfo(itemInspectLink).subscribe(
         (data: any) => {
@@ -270,44 +272,6 @@ export class ListItemComponent implements OnDestroy {
         }
       );
 
-      //const sellerTradeLink = this.selectItem.get('tradeLinkControl').value;
-
-      // if(!isNaN(price) || price != null){
-      //   price = price.toString().replace(",", ".");
-      // }
-      // this.csgoItems.getData(itemInspectLink).pipe(
-      //   tap({
-      //     subscribe: ()=> {
-      //       console.log("Loading item details");
-
-      //     },
-      //     finalize: ()=> {
-      //       console.log("item details loaded!½");
-      //     }
-      //   })
-      // )
-      //console.log("gg??no",gg);
-
-      // const isItem: boolean = this.csgoItems.itemsObject.hasOwnProperty(itemNameValueGiven);
-      // if(isItem){
-      //   console.log("Validated items:");
-      //   const myOrder: Order = {
-      //     itemName: itemNameValueGiven,
-      //     priceInEther: price,
-      //     tradeLink: sellerTradeLink,
-      //     inspectLink: itemInspectLink
-      //   }
-      //   console.log(myOrder);
-
-      //   this.csgoItems.getData(myOrder.inspectLink).subscribe({
-      //     next: value => console.log(value),
-      //     error: error => console.log(error),
-      //     complete: () => console.log('completed')
-      //   });
-
-      // } else {
-      //   this.notiServ.openSnackBar("Item name does not exist!", "gg, okay🤦")
-      // }
     } else {
       console.log('not valid!!');
     }
@@ -319,13 +283,17 @@ export class ListItemComponent implements OnDestroy {
     if (this.selectStepTwo.valid) {
       const ethPrice = this.selectStepTwo.get('priceControl').value;
       const tradeLink = this.selectStepTwo.get('tradeLinkControl').value;
-      const weiPrice = this.web3.toWei(ethPrice.toString());
+      
       const weaponType = this.itemData.weapon_type;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
+      const priceType = this.selectedPriceType == 'WETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
+
+      const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString()) : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());      
+
       if(!this.isStickerAsItem){
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, this.itemData.stickers, weaponType);
+        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, this.itemData.stickers, weaponType, priceType);
       } else {
-        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, [], weaponType);
+        this.web3.listItem(this.itemData.full_item_name, tradeLink, this.tempAssetId, itemInspectLink, this.exactImage, weiPrice, this.float_val.toString(), this.minFloat.toString(), this.maxFloat.toString(), this.itemData.paintseed, this.itemData.paintindex, [], weaponType, priceType);
       }
 
     } else {
