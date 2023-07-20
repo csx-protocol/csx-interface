@@ -1,0 +1,40 @@
+<mat-card class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+    <mat-card-content>  
+      <h1>Mint Escrowed CSX</h1>
+      <p>Turn CSX tokens into eCSX tokens</p>
+      <p></p>
+    </mat-card-content>
+</mat-card>
+
+<mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+
+<div *ngIf="!this.web3.webUser.isUserWalletConnected">
+    <mat-card class="margins background" >
+        <mat-card-content>
+        <h2>Wallet not connected.</h2>
+        <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
+        <p></p>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div *ngIf="this.web3.webUser.isUserWalletConnected">
+    <mat-card class="margins background" style="align-items: center;">
+        <mat-card-content style="align-items: center; text-align: center;">
+          <h2>CSX tokens to Escrowed CSX</h2>
+          <p style="max-width: 35rem;">
+            CSX tokens can be escrowed and converted into eCSX. 
+            These tokens are held for a 24-month period once Vested
+            and during this time they will be staked to earn 
+            a share of the network's revenue. 
+            After the 24-month vesting period, 
+            the full amount of escrowed eCSX tokens 
+            can be converted back into regular CSX tokens.
+          </p>
+          <button mat-button (click)="openEscrowDialog()" style="font-size: medium;">Escrow CSX</button>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+
+
