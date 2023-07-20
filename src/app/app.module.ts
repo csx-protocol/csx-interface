@@ -78,7 +78,7 @@ import { ClawbackedDialog } from './components/my-trades/dialogs/9-clawbacked/cl
 import { LevelCircleComponent } from './components/level-circle/level-circle.component';
 import { CustomTooltipDirective } from './shared/custom-tooltip.directive';
 import { LevelUpDialog } from './components/level-circle/utils/level-up.dialog';
-import {MatSliderModule} from '@angular/material/slider';
+import { MatSliderModule } from '@angular/material/slider';
 import { EarnComponent } from './pages/earn/earn.component';
 import { ReferralsComponent } from './pages/referrals/referrals.component';
 import { StakeDialog } from './pages/earn/utils/stake.dialog';
@@ -86,6 +86,8 @@ import { AffiliateComponent } from './pages/referrals/affiliate/affiliate.compon
 import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
 import { wethConvertDialog } from './frame/nav-bar/utils/wethConvert.dialog';
 import { OpenDisputeDialog } from './components/my-trades/dialogs/10-open-dispute/open-dispute.dialog';
+import { MintEscrowComponent } from './pages/mint-escrow/mint-escrow.component';
+import { EscrowDialog } from './pages/mint-escrow/utils/escrow.dialog';
 
 
 @NgModule({
@@ -114,6 +116,7 @@ import { OpenDisputeDialog } from './components/my-trades/dialogs/10-open-disput
     CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
     StakeDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
+    EscrowDialog, MintEscrowComponent, // MintEscrowComponent
     wethConvertDialog, // NavBarComponent
     OpenDisputeDialog // SellerCommittedDialog
   ],
