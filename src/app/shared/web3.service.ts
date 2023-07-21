@@ -219,7 +219,10 @@ export class Web3Service implements OnDestroy {
         const _accounts = await this.csxInstance.window.ethereum.request({
           method: 'eth_requestAccounts',
         });
-        this.csxInstance.accountSubject.next(_accounts[0]);
+        this.webUser.address = _accounts[0];
+        await this.___initContractInstances();
+        this.___subscribeToTradeFactoryEvents();
+        this.csxInstance.accountSubject.next(this.webUser.address);
       } catch (error) {
         this.notificationsService.notify(
           'Error, you might need to refresh site or change RPC endpoint in wallet.'
@@ -230,22 +233,6 @@ export class Web3Service implements OnDestroy {
     } else if (this.webUser.isWrongChain) {
       console.log('Wr0ng chain!');
     }
-  }
-
-  private async __requestAddressAndBalance() {
-    const _accounts = await this.csxInstance.window.ethereum.request({
-      method: 'eth_requestAccounts',
-    });
-    this.webUser.address = _accounts[0];
-    console.log('__requestAddressAndBalance: ', this.webUser.address);
-
-    await this.___getTrimmedAddress();
-    await this.___initContractInstances();
-    await this.___initUserBalances();
-    await this.___notifyUserWalletConnected();
-    this.___subscribeToTradeFactoryEvents();
-
-    //this.csxInstance.accountSubject.next(this.webUser.address);
   }
 
   private async ___getTrimmedAddress() {
@@ -606,7 +593,10 @@ export class Web3Service implements OnDestroy {
 
   public async updateBalance() {
     try {
-      await this.__requestAddressAndBalance();
+      await this.___getTrimmedAddress();
+      await this.___initUserBalances();
+      await this.___notifyUserWalletConnected();
+      this._checkForPastNotifications();
     } catch (error) {
       console.log('updateBalance error!', error);
     }
@@ -1248,6 +1238,62 @@ export class Web3Service implements OnDestroy {
     return await this.csxInstance.sCSXToken.methods.getClaimableAmount(this.webUser.address).call({ from: this.webUser.address });
   }
 
+  // eCSXToken
+
+  async vest(amount: string): Promise<string> {
+    return await this.csxInstance.vCSXToken.methods.vest(amount).send({ from: this.webUser.address });
+  }
+
+  async getVestedStakingContractAddress(): Promise<string> {
+    return await this.csxInstance.vCSXToken.methods.getVestedStakingContractAddress(this.webUser.address).call({ from: this.webUser.address });
+  }
+
+  // VestedStaking Contract Calls
+  
+  async getClaimableVestedAmount(_address: string): Promise<any> {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+      _address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .getClaimableAmount()
+      .call({ from: this.webUser.address });
+  }
+
+  async claimVestedRewards(_address: string, claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+      _address,
+      { from: this.webUser.address }
+    );
+
+    return await contractInstance.methods
+      .claimRewards(claimUsdc, claimUsdt, claimWeth, convertWethToEth)
+      .send({ from: this.webUser.address });
+  }
+
+  /**
+   *     // return contractInstance.methods
+    //   .getClaimableAmount()
+    //   .send({ from: this.webUser.address })
+    //   .then((receipt: any) => {
+    //     console.log('TX receipt', receipt);
+    //     return true;
+    //   });
+   */
+
+
+  /**
+   * Escrow Component
+   */
+
+  // Approve CSXToken first
+  async mintEscrow(amount: string): Promise<string> {
+    return await this.csxInstance.eCSXToken.methods.mintEscrow(amount).send({ from: this.webUser.address });
+  }
+
   /**
    * Committed Dialog
    */
@@ -1391,7 +1437,6 @@ export class Web3Service implements OnDestroy {
       .on('error', (error: any) => {
         this.chainEvents.onError(error);
       });
-    this._checkForPastNotifications();
   }
 
   private async _checkForPastNotifications() {
