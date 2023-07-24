@@ -23,6 +23,7 @@ interface CSXInstance {
   eCSXToken: any;
   vCSXToken: any;
   accountSubject: Subject<any>;
+  afterSubject: Subject<any>;
 }
 
 interface Balance {
@@ -38,6 +39,7 @@ interface WebUser {
   address?: string;
   shortAddy?: string;
   myAccount$?: Observable<any>;
+  afterAccount$?: Observable<any>;
   // balanceWei?: string;
   // balanceEth?: string;
   balances: Balances;
@@ -57,6 +59,7 @@ export class Web3Service implements OnDestroy {
     tradeFactory: undefined,
     usersContract: undefined,
     accountSubject: new Subject<any>(),
+    afterSubject: new Subject<any>(),
     CSXToken: undefined,
     sCSXToken: undefined,
     eCSXToken: undefined,
@@ -113,6 +116,7 @@ export class Web3Service implements OnDestroy {
     private chainEvents: ChainEventsService
   ) {
     this.webUser.myAccount$ = this.csxInstance.accountSubject.asObservable();
+    this.webUser.afterAccount$ = this.csxInstance.afterSubject.asObservable();
     this.preCheck();
   }
 
@@ -597,6 +601,7 @@ export class Web3Service implements OnDestroy {
       await this.___initUserBalances();
       await this.___notifyUserWalletConnected();
       this._checkForPastNotifications();
+      this.csxInstance.afterSubject.next(true);
     } catch (error) {
       console.log('updateBalance error!', error);
     }
@@ -1250,7 +1255,7 @@ export class Web3Service implements OnDestroy {
 
   // VestedStaking Contract Calls
   
-  async getClaimableVestedAmount(_address: string): Promise<any> {
+  async getClaimableVestedAmountAndVestTimeLeft(_address: string): Promise<any> {
     const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
       environment.CONTRACTS.VestedStaking.abi as AbiItem[],
       _address,
@@ -1258,7 +1263,7 @@ export class Web3Service implements OnDestroy {
     );
 
     return await contractInstance.methods
-      .getClaimableAmount()
+      .getClaimableAmountAndVestTimeLeft()
       .call({ from: this.webUser.address });
   }
 
