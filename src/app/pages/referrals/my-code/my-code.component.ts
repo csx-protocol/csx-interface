@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ReferralService } from '../../../shared/referral.service';
 import { Web3Service } from '../../../shared/web3.service';
 import { NotificationService } from '../../../shared/notification.service';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './my-code.component.html',
   styleUrls: ['./my-code.component.scss']
 })
-export class MyCodeComponent {
+export class MyCodeComponent implements OnDestroy {
   myReferralCode: string = 'none';
   refferalCodeFromLocalStorage: string;
   isValidRefCode: boolean = false;
@@ -26,7 +26,7 @@ export class MyCodeComponent {
     } else {
       this.refferalCodeFromLocalStorage = '';
     }
-    this.web3AccSub = web3.webUser.myAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
+    this.web3AccSub = web3.webUser.afterAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
     if(this.web3.webUser.address){
       this.runAfterWeb3Init();
     }
@@ -99,5 +99,9 @@ export class MyCodeComponent {
       this.notify.openSnackBar('Error applying referral code', 'OK');
       this.isApplyingCode = false;
     });
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    this.web3AccSub?.unsubscribe();
   }
 }
