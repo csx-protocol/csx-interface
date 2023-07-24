@@ -1279,16 +1279,17 @@ export class Web3Service implements OnDestroy {
       .send({ from: this.webUser.address });
   }
 
-  /**
-   *     // return contractInstance.methods
-    //   .getClaimableAmount()
-    //   .send({ from: this.webUser.address })
-    //   .then((receipt: any) => {
-    //     console.log('TX receipt', receipt);
-    //     return true;
-    //   });
-   */
+  async unvest(address: string, amount: string): Promise<string> {
+    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+      address,
+      { from: this.webUser.address }
+    );
 
+    return await contractInstance.methods
+      .withdraw(amount)
+      .send({ from: this.webUser.address });
+  }
 
   /**
    * Escrow Component
