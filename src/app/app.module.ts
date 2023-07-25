@@ -42,6 +42,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatTableModule} from '@angular/material/table';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 
 /**
  * Custom Modules
@@ -81,7 +83,8 @@ import { LevelUpDialog } from './components/level-circle/utils/level-up.dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { EarnComponent } from './pages/earn/earn.component';
 import { ReferralsComponent } from './pages/referrals/referrals.component';
-import { StakeDialog } from './pages/earn/utils/stake.dialog';
+import { StakeDialog } from './pages/earn/utils/stake/stake.dialog';
+import { ClaimDialog } from './pages/earn/utils/claim/claim.dialog';
 import { AffiliateComponent } from './pages/referrals/affiliate/affiliate.component';
 import { MyCodeComponent } from './pages/referrals/my-code/my-code.component';
 import { wethConvertDialog } from './frame/nav-bar/utils/wethConvert.dialog';
@@ -115,7 +118,7 @@ import { EscrowDialog } from './pages/mint-escrow/utils/escrow.dialog';
     ClawbackedDialog, LevelCircleComponent, // my trades comp
     CustomTooltipDirective, // LevelCircleComponent & my trades comp & recently listed items comp
     LevelUpDialog, EarnComponent, ReferralsComponent, // LevelCircleComponent
-    StakeDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
+    StakeDialog, ClaimDialog, AffiliateComponent, MyCodeComponent, // EarnComponent
     EscrowDialog, MintEscrowComponent, // MintEscrowComponent
     wethConvertDialog, // NavBarComponent
     OpenDisputeDialog // SellerCommittedDialog
@@ -171,7 +174,8 @@ import { EscrowDialog } from './pages/mint-escrow/utils/escrow.dialog';
     MatProgressBarModule,
     MatSliderModule,
     MatTableModule,
-    MatRadioModule
+    MatRadioModule,
+    MatCheckboxModule // ClaimDialog
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
   providers: [],

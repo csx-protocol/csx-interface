@@ -1,0 +1,39 @@
+<mat-card class="margins background" style="align-items: center; text-align: center;">
+   
+    <mat-dialog-content>
+        <h2>Claim Rewards</h2>
+    </mat-dialog-content>
+</mat-card>
+
+<div style="max-width: 380px; text-align: center;"> <!--490 -->
+
+    <mat-card-content >
+        
+        <section class="example-section">
+            <span class="example-list-section">
+              <mat-checkbox class="example-margin"
+                            [checked]="allComplete"
+                            [color]="task.color"
+                            [indeterminate]="someComplete()"
+                            (change)="setAll($event.checked)">
+                <span style="color: #b9bce5 !important;">{{task.name}}</span>
+              </mat-checkbox>
+            </span>
+            <span class="example-list-section">
+              <ul>
+                <li *ngFor="let subtask of task.subtasks">
+                  <mat-checkbox [(ngModel)]="subtask.completed"
+                                [color]="subtask.color"
+                                [disabled]="subtask.disabled != undefined && subtask.disabled"
+                                (ngModelChange)="updateAllComplete()">
+                    <span style="color: #b9bce5 !important;">{{subtask.name}}</span>
+                  </mat-checkbox>
+                </li>
+              </ul>
+            </span>
+          </section>
+
+          <button mat-button (click)="claimRewards()">Claim</button>
+
+    </mat-card-content>
+</div>
