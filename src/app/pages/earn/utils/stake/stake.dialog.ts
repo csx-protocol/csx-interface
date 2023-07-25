@@ -1,10 +1,10 @@
 import { Component, Inject, Input } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Web3Service } from "../../../shared/web3.service";
+import { Web3Service } from "../../../../shared/web3.service";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { environment } from "../../../../environment/environment";
-import { NotificationService } from "../../../shared/notification.service";
+import { environment } from "../../../../../environment/environment";
+import { NotificationService } from "../../../../shared/notification.service";
 
 enum StakeMode {
     STAKE = 'stake',
@@ -69,10 +69,6 @@ export class StakeDialog {
             this.tokenAmountForm.get('tokenAmount')?.setValue(0);
         }
     }
-
-    // onNoClick(): void {
-    //     this.dialogRef.close();
-    // }
 
     setMaxValue() {
         this.tokenAmountForm.get('tokenAmount')?.setValue(this.maxValue);
