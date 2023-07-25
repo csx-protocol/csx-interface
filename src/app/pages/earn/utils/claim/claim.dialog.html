@@ -16,24 +16,23 @@
                             [color]="task.color"
                             [indeterminate]="someComplete()"
                             (change)="setAll($event.checked)">
-                <span style="color: #b9bce5 !important;">{{task.name}}</span>
+                <span style="color: #b9bce5 !important; font-size: .89rem;">{{task.name}}</span>
               </mat-checkbox>
             </span>
             <span class="example-list-section">
               <ul>
                 <li *ngFor="let subtask of task.subtasks">
                   <mat-checkbox [(ngModel)]="subtask.completed"
-                                [color]="subtask.color"
-                                [disabled]="subtask.disabled != undefined && subtask.disabled"
+                                [color]="subtask.color"                
                                 (ngModelChange)="updateAllComplete()">
-                    <span style="color: #b9bce5 !important;">{{subtask.name}}</span>
+                    <span style="color: #b9bce5 !important; font-size: .89rem;">{{subtask.name}}</span>
                   </mat-checkbox>
                 </li>
               </ul>
             </span>
           </section>
 
-          <button mat-button (click)="claimRewards()">Claim</button>
+          <button mat-button (click)="claimRewards()" style="color: #3c48ec  !important; font-size: 1.2rem;">Claim</button>
 
     </mat-card-content>
 </div>
