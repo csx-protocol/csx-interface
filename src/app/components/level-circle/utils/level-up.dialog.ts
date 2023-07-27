@@ -56,7 +56,7 @@ export class LevelUpDialog {
     selectedLevels: number = 0;
 
     calculateCost() {
-        const web3Utils = this.web3.csxInstance.window.web3.utils;
+        const web3Utils = this.web3.csxInstance.web3.utils;
         const BASE_COST = web3Utils.toBN('1000000000000000000'); // 1e18
         
         const currentLevel = this.currentLevel;
@@ -95,12 +95,12 @@ export class LevelUpDialog {
     levelUp() {
         this.isLevelingUp = true;
         const csxBalance = this.web3.webUser.balances!['CSX'].balanceWei;
-        const totalCostInWei =  this.web3.csxInstance.window.web3.utils.toWei(this.totalCost.toString(), 'ether');
+        const totalCostInWei =  this.web3.csxInstance.web3.utils.toWei(this.totalCost.toString(), 'ether');
         console.log('csxBalance', csxBalance);
         console.log('totalCostInWei', totalCostInWei);
         
-        const csxBalanceBN = new this.web3.csxInstance.window.web3.utils.BN(csxBalance);
-        const totalCostInWeiBN = new this.web3.csxInstance.window.web3.utils.BN(totalCostInWei);
+        const csxBalanceBN = new this.web3.csxInstance.web3.utils.BN(csxBalance);
+        const totalCostInWeiBN = new this.web3.csxInstance.web3.utils.BN(totalCostInWei);
     
         if (csxBalanceBN.lt(totalCostInWeiBN)) {
             this.isLevelingUp = false;
@@ -119,8 +119,8 @@ export class LevelUpDialog {
             console.log('allowance', allowance);
             console.log('totalCostInWei', totalCostInWei);
             
-            const allowanceBN = new this.web3.csxInstance.window.web3.utils.BN(allowance);
-            const totalCostInWeiBN = new this.web3.csxInstance.window.web3.utils.BN(totalCostInWei);
+            const allowanceBN = new this.web3.csxInstance.web3.utils.BN(allowance);
+            const totalCostInWeiBN = new this.web3.csxInstance.web3.utils.BN(totalCostInWei);
 
             if (allowanceBN.lt(totalCostInWeiBN)) {
                 this.isApproving = true;
@@ -159,7 +159,7 @@ export class LevelUpDialog {
             this.newLevelsMade += (this.selectedLevels-this.currentLevel)
             this.currentLevel += (this.selectedLevels-this.currentLevel);
             this.selectedLevels = this.currentLevel;
-            const csxCostInEther = this.web3.csxInstance.window.web3.utils.fromWei(this.csxCost, 'ether');
+            const csxCostInEther = this.web3.csxInstance.web3.utils.fromWei(this.csxCost, 'ether');
             this.web3.decreaseBalance('CSX', csxCostInEther);     
         }).catch((error) => {
             this.isLevelingUp = false;
