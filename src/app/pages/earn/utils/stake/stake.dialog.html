@@ -46,8 +46,8 @@
             [diameter]="25">
           </mat-progress-spinner>
           <p style="margin-left: 1rem;" *ngIf="isApproving">1/2 TXs, Approve CSX.</p>
-          <p style="margin-left: 1rem;" *ngIf="isStaking">2/2 TXs, Stake CSX.</p>
-          <p style="margin-left: 1rem;" *ngIf="isUnstaking">1/1 TXs, Unstake CSX.</p>
+          <p style="margin-left: 1rem;" *ngIf="isStaking">2/2 TXs, Stake {{type}}.</p>
+          <p style="margin-left: 1rem;" *ngIf="isUnstaking">1/1 TXs, Unstake {{type}}.</p>
         </div>        
      
       </mat-card-content>
