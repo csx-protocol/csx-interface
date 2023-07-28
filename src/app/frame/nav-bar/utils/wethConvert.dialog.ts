@@ -117,7 +117,7 @@ export class wethConvertDialog {
             const isUnwrap: boolean = this.fromName === 'WETH';
             const value: number = this.swapForm.get('fromValue')?.value;
 
-            const valueInWeiString = this.web3.csxInstance.window.web3.utils.toWei(value.toString(), 'ether');
+            const valueInWeiString = this.web3.toWei(value.toString(), 'ether');
 
             if (isUnwrap) {
                 this.isSigninTX = true;

@@ -88,7 +88,7 @@ export class ReferralService {
       return '0x'.padEnd(66, '0');
     }
     const referralCode = this.getLocalReferralCode();
-    const bytes32Code = this.web3.csxInstance.window.web3.utils.utf8ToHex(referralCode).padEnd(66, '0');
+    const bytes32Code = this.web3.csxInstance.web3.utils.utf8ToHex(referralCode).padEnd(66, '0');
     return bytes32Code;
   }
 
@@ -98,12 +98,12 @@ export class ReferralService {
    */
 
   stringToBytes32(referralCode: string): string {
-    const bytes32Code = this.web3.csxInstance.window.web3.utils.utf8ToHex(referralCode).padEnd(66, '0');
+    const bytes32Code = this.web3.csxInstance.web3.utils.utf8ToHex(referralCode).padEnd(66, '0');
     return bytes32Code;
   }
 
   bytes32ToString(bytes32: string): string {
-    return this.web3.csxInstance.window.web3.utils.hexToUtf8(bytes32);
+    return this.web3.csxInstance.web3.utils.hexToUtf8(bytes32);
   }
 
 

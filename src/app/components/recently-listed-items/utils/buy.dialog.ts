@@ -111,8 +111,8 @@ export class BuyDialog {
   }
 
   allowanceLowerThanValue(allowanceString: string, valueString: string): boolean {
-    const allowanceBN = new this.web3.csxInstance.window.web3.utils.BN(allowanceString);
-    const valueBN = new this.web3.csxInstance.window.web3.utils.BN(valueString);
+    const allowanceBN = this.web3.toBN(allowanceString);
+    const valueBN = this.web3.toBN(valueString);
 
     return allowanceBN.lt(valueBN);
   }
@@ -127,8 +127,8 @@ export class BuyDialog {
       console.log('allowance', allowance);
       console.log('tokenValue', tokenValueInWeiString);
 
-      const allowanceBN = new this.web3.csxInstance.window.web3.utils.BN(allowance);
-      const tokenValueInWeiBN = new this.web3.csxInstance.window.web3.utils.BN(tokenValueInWeiString);
+      const allowanceBN = this.web3.toBN(allowance);
+      const tokenValueInWeiBN = this.web3.toBN(tokenValueInWeiString);
 
       if (allowanceBN.lt(tokenValueInWeiBN)) {
         this.isApproving = true;
@@ -161,7 +161,7 @@ export class BuyDialog {
       this.isBuying = false;
       this.stepper!.selectedIndex = 2;
       console.log('buy item success');
-      const _valueInEther = this.web3.csxInstance.window.web3.utils.fromWei(_weiValue, 'ether');
+      const _valueInEther = this.web3.csxInstance.web3.utils.fromWei(_weiValue, 'ether');
       this.web3.decreaseBalance(_token, _valueInEther);
     }
     ).catch((error) => {
