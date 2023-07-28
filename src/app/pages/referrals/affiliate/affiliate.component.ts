@@ -227,7 +227,7 @@ export class AffiliateComponent {
     if(_decimals === 18){
       // const num = parseFloat(_num).toFixed(4);
       // return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return parseFloat(this.web3.csxInstance.window.web3.utils.fromWei(_num, 'ether')).toFixed(4);
+      return parseFloat(this.web3.csxInstance.web3.utils.fromWei(_num, 'ether')).toFixed(4);
     }
     
     const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(_decimals));
