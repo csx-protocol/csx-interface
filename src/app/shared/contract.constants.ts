@@ -35,6 +35,10 @@ export const CONTRACTS: { [key: string]: ContractInfo } = {
         address: environment.CONTRACTS.UserProfileLevel.address,
         abi: environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
     },
+    'ReferralRegistry': {
+        address: environment.CONTRACTS.ReferralRegistry.address,
+        abi: environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+    },
     'TradeFactory': {
         address: environment.CONTRACTS.TradeFactory.address,
         abi: environment.CONTRACTS.TradeFactory.abi as AbiItem[],
