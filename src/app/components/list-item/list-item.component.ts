@@ -291,7 +291,7 @@ export class ListItemComponent implements OnDestroy {
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
       const priceType = this.selectedPriceType == 'WETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
 
-      const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString()) : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());
+      const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString(), 'ether') : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());
 
       const _stickers = !this.isStickerAsItem ? this.itemData.stickers : [];
 
@@ -312,15 +312,14 @@ export class ListItemComponent implements OnDestroy {
         priceType
         ).then((res: any) => {
         console.log("res", res);
-        if (res[0] == true) {
-          // this.notiServ.openSnackBar('Item listed successfully!', 'gg, okay🤦');
-          this.loadingMetaMask = false;
-          this.successMetaMask = true;
-        } else {
-          this.notiServ.openSnackBar(res[1].message, 'gg, okay🤦');
-          this.loadingMetaMask = false;
-          this.stepper!.selectedIndex = 1;
-        }
+        //this.notiServ.openSnackBar('Item listed successfully!', 'gg, okay🤦');
+        this.loadingMetaMask = false;
+        this.successMetaMask = true;        
+      }).catch((err: any) => {
+        console.log("err", err);
+        this.notiServ.openSnackBar(err, 'gg, okay🤦');
+        this.loadingMetaMask = false;
+        this.stepper!.selectedIndex = 1;
       });
 
     } else {
