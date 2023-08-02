@@ -1,16 +1,17 @@
 <span *ngIf="item">
   <div>
-    <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Trade has been disputed</h1>
+    <h1 mat-dialog-title style="color: rgb(172, 134, 0) !important;">Trade has been disputed</h1>
   </div>
   <mat-dialog-content>
-    <i *ngIf="isDisputeer" style="color: #7f94be !important;">You have disputed the trade.</i>
-    <i *ngIf="!isDisputeer" style="color: #7f94be !important;">The {{oppositeRole}} has disputed the order.</i>
+    <span *ngIf="isDisputeer">You have disputed the trade.</span>
+    <span *ngIf="!isDisputeer">The {{oppositeRole}} has disputed the order.</span>
     <br>
     <br>
-    Reason: {{disputeComplaint}}
+    <i style="color: #7f94be !important;">Reason: "{{disputeComplaint}}"</i> 
     <br>
     <br>
-    The Keeper-Oracle and the designated Keepers will now review the trade and decide on the outcome.
+    <span *ngIf="!isDisputeer">The Keeper-Oracle and the designated Keepers are reviewing the trade to see if the reported reason is accurate. The trade status will change once the validation has been verified.</span>
+    <span *ngIf="isDisputeer">The Keeper-Oracle and the designated Keepers are currently reviewing the trade, investigating based on the details you provided in the dispute. The trade status will change once the validation has been verified.</span>
   </mat-dialog-content>
 </span>
 <span *ngIf="!item">
