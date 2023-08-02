@@ -40,17 +40,19 @@
     </span>
 
     <span *ngIf="item.uiInfo.role === 'Seller'">
-      <h1 mat-dialog-title>SSG 08 | Mainframe 001 (Well-Worn) has been purchased for 0.0000025 ETH!</h1>
+      <h1 style="margin-bottom: 1rem;" mat-dialog-title>{{item.itemMarketName}} has been purchased for {{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span> <span *ngIf="item.priceType == '1'">USDC</span> <span *ngIf="item.priceType == '2'">USDT</span>!</h1>
       <mat-dialog-content>
         <!-- <h4>SSG 08 | Mainframe 001 (Well-Worn)</h4> -->
         <app-float-bar></app-float-bar>
-        <h4 style="color: #f14d42;">1&rpar; It's time to accept the trade-offer the buyer has sent you.</h4>
-        <h4 style="color: #f14d42;">2&rpar; Make sure the SSG 08 | Mainframe 001 (Well-Worn) is arriving to the <a
-            href="https://google.com" target="_blank">correct inventory</a> or the funds won't be released to you, here
-          is the <a href="https://google.com" target="_blank">buyer's steam profile</a>.</h4>
+        <h4>Paint Index: {{item.skinInfo.paintIndex}} Paint Seed: {{item.skinInfo.paintSeed}}</h4>
+        <h4 style="color: #f14d42;">1&rpar; It's time to send the trade-offer to the buyer.</h4>
+        <h4 style="color: #f14d42;">2&rpar; Make sure the {{item.itemMarketName}} is arriving to the <a
+            [href]="getSteamId64(this.item!.buyerTradeUrl[0])+'/inventory'" target="_blank">correct inventory</a> or the funds won't be released to you, here
+          is the <a [href]="getSteamId64(this.item!.buyerTradeUrl[0])" target="_blank">buyer's steam profile</a>.</h4>
+        <a [href]="getTradeOfferLink()" target="_blank"><button mat-button color="primary" style="color: #c6c3df !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
 
 
-        <mat-accordion>
+        <!-- <mat-accordion>
           <mat-expansion-panel hideToggle>
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -65,7 +67,7 @@
                   href="https://google.com" target="_blank">them</a>.</p>
             </div>
           </mat-expansion-panel>
-        </mat-accordion>
+        </mat-accordion> -->
 
         <br>
 
