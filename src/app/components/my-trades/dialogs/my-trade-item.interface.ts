@@ -17,6 +17,7 @@ export interface MyTradeItem {
     trimmedAddress: string;
     uiInfo: UiInfo;
     skinInfo: any;
+    priceType: string;
   }
   
   interface Sticker {
