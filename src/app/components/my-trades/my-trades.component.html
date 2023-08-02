@@ -93,6 +93,15 @@
         <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Completed'">
           <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
         </td>
+
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Disputed'">
+          <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+        </td>
+        <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Buyer' && userInteraction.uiInfo.status === 'Disputed'">
+          <button (click)="openDialog(userInteraction)" style="color: #539aa7 !important;" mat-button>Info</button>
+        </td>
+
+       
       
       </tr>
 
