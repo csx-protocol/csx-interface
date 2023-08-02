@@ -53,7 +53,7 @@ export class NotificationService implements OnDestroy {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 10000,
+      duration: 100000,
       // here specify the position
       verticalPosition: 'bottom',
       horizontalPosition: 'center',
