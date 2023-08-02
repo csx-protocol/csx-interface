@@ -10,10 +10,12 @@ import { AbiItem } from 'web3-utils';
 import { NotificationService } from './notification.service';
 import { TradeRole, TradeStatus } from '../components/my-trades/my-trades.component';
 import { ChainEventsService } from './chain-events.service';
+import { CONTRACTS } from './contract.constants';
 
 interface CSXInstance {
   window: Document | any;
-  tradeFactory: any;
+  web3: any;
+  // tradeFactory: any;
   usersContract: any;
   WETHToken: any;
   USDCToken: any;
@@ -55,8 +57,9 @@ interface WebUser {
 })
 export class Web3Service implements OnDestroy {
   public csxInstance: CSXInstance = {
-    window: undefined,
-    tradeFactory: undefined,
+    window: undefined, // legacy csx
+    web3: undefined, // new csx
+    // tradeFactory: undefined,
     usersContract: undefined,
     accountSubject: new Subject<any>(),
     afterSubject: new Subject<any>(),
@@ -117,10 +120,11 @@ export class Web3Service implements OnDestroy {
   ) {
     this.webUser.myAccount$ = this.csxInstance.accountSubject.asObservable();
     this.webUser.afterAccount$ = this.csxInstance.afterSubject.asObservable();
-    this.preCheck();
+    this.walletValidation();
+    //this.initWallet(); made by user in the nav-bar.component.ts
   }
 
-  preCheck() {
+  private walletValidation() {
     this.csxInstance.window = this.document.defaultView;
     if (this.csxInstance.window.ethereum != undefined) {
       this.webUser.hasEthWallet = true;
@@ -128,39 +132,6 @@ export class Web3Service implements OnDestroy {
     } else {
       this.webUser.hasEthWallet = false;
     }
-  }
-
-  async initWallet() {
-    // Init Metamask & fetch for webUser.
-    await this._initMetaMaskAndFetchWebUser();
-  }
-
-  private async _initMetaMaskAndFetchWebUser() {
-    this.csxInstance.window = this.document.defaultView;
-
-    switch (true) {
-      case this.csxInstance.window.ethereum != undefined:
-        this.webUser.hasEthWallet = true;
-        this._initWeb3Module();
-        await this._validateCorrectChain().then(() => {
-          this._onChainChangedListener();
-          this._onAccountChangedListener();
-          this._attemptMetamaskHandshake();
-        });
-
-        break;
-      case this.csxInstance.window.ethereum == undefined:
-        console.log('NO ETH');
-        this.webUser.hasEthWallet = false;
-        break;
-      default:
-        console.log('DEFAULTED');
-        break;
-    }
-  }
-
-  private _initWeb3Module() {
-    this.csxInstance.window.web3 = new Web3(this.csxInstance.window.ethereum);
   }
 
   private async _validateCorrectChain() {
@@ -176,6 +147,53 @@ export class Web3Service implements OnDestroy {
       );
     } else {
       this.webUser.isWrongChain = false;
+    }
+  }
+
+  async initWallet() {
+    // Init Web3Module & fetch for webUser.
+    await this._initWeb3ModuleAndFetchWebUser();
+  }
+
+  private async _initWeb3ModuleAndFetchWebUser() {
+    this.csxInstance.window = this.document.defaultView;
+
+    if (this.csxInstance.window) {
+      this.csxInstance.web3 = new Web3(this.csxInstance.window.ethereum);
+      try {
+        // Request account access if needed
+        await this.csxInstance.window.ethereum.enable();
+      } catch (error) {
+        // User denied account access...
+        console.log('User denied account access');
+        return;
+      }
+    } else if (this.csxInstance.web3) {
+      // Legacy dapp browsers...
+      this.csxInstance.web3 = new Web3(this.csxInstance.web3.currentProvider);
+    } else {
+      // Non-dapp browsers...
+      console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+      return;
+    }
+
+    switch (true) {
+      case this.csxInstance.web3 != undefined:
+        this.webUser.hasEthWallet = true;
+        await this._validateCorrectChain().then(() => {
+          this._onChainChangedListener();
+          this._onAccountChangedListener();
+          this._attemptMetamaskHandshake();
+        });
+
+        break;
+      case this.csxInstance.web3 == undefined:
+        console.log('NO ETH');
+        this.webUser.hasEthWallet = false;
+        break;
+      default:
+        console.log('DEFAULTED');
+        break;
     }
   }
 
@@ -248,68 +266,13 @@ export class Web3Service implements OnDestroy {
   }
 
   private async ___initContractInstances() {
-    this.csxInstance.tradeFactory =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.tradeFactory.abi as AbiItem[],
-        environment.CONTRACTS.tradeFactory.address,
+    for (const name in CONTRACTS) {
+      this.contracts[name] = new this.csxInstance.web3.eth.Contract(
+        CONTRACTS[name].abi,
+        CONTRACTS[name].address,
         { from: this.webUser.address }
       );
-
-    this.csxInstance.usersContract =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.Users.abi as AbiItem[],
-        environment.CONTRACTS.Users.address,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.CSXToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.CSXToken.abi as AbiItem[],
-        environment.CONTRACTS.CSXToken.address,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.sCSXToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.StakedCSX.abi as AbiItem[],
-        environment.CONTRACTS.StakedCSX.address,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.eCSXToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.EscrowedCSX.abi as AbiItem[],
-        environment.CONTRACTS.EscrowedCSX.address,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.vCSXToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.VestedCSX.abi as AbiItem[],
-        environment.CONTRACTS.VestedCSX.address,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.WETHToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.Currencies.abi as AbiItem[],
-        environment.CONTRACTS.Currencies.addresses.WETH,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.USDTToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.Currencies.abi as AbiItem[],
-        environment.CONTRACTS.Currencies.addresses.USDT,
-        { from: this.webUser.address }
-      );
-
-    this.csxInstance.USDCToken =
-      await new this.csxInstance.window.web3.eth.Contract(
-        environment.CONTRACTS.Currencies.abi as AbiItem[],
-        environment.CONTRACTS.Currencies.addresses.USDC,
-        { from: this.webUser.address }
-      );
+    }
   }
 
   private async ___notifyUserWalletConnected() {
@@ -358,7 +321,7 @@ export class Web3Service implements OnDestroy {
 
   private async ___initUserBalances() {
 
-    this.webUser.balances!['ETH'].balanceWei = await this.csxInstance.window.web3.eth.getBalance(
+    this.webUser.balances!['ETH'].balanceWei = await this.csxInstance.web3.eth.getBalance(
       this.webUser.address
     );
 
@@ -369,9 +332,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['CSX'].balanceWei = await this.csxInstance.CSXToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['CSX'].balanceWei =
+      await this.callContractMethod('CSXToken', 'balanceOf', [this.webUser.address], 'call');
 
     this.webUser.balances!['CSX'].balanceEth = parseFloat(
       Web3.utils.fromWei(
@@ -380,9 +342,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['sCSX'].balanceWei = await this.csxInstance.sCSXToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['sCSX'].balanceWei =
+      await this.callContractMethod('StakedCSX', 'balanceOf', [this.webUser.address], 'call');
 
     this.webUser.balances!['sCSX'].balanceEth = parseFloat(
       Web3.utils.fromWei(
@@ -391,9 +352,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['eCSX'].balanceWei = await this.csxInstance.eCSXToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['eCSX'].balanceWei =
+      await this.callContractMethod('EscrowedCSX', 'balanceOf', [this.webUser.address], 'call');
 
     this.webUser.balances!['eCSX'].balanceEth = parseFloat(
       Web3.utils.fromWei(
@@ -402,9 +362,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['vCSX'].balanceWei = await this.csxInstance.vCSXToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['vCSX'].balanceWei =
+      await this.callContractMethod('VestedCSX', 'balanceOf', [this.webUser.address], 'call');
 
     this.webUser.balances!['vCSX'].balanceEth = parseFloat(
       Web3.utils.fromWei(
@@ -413,9 +372,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['WETH'].balanceWei = await this.csxInstance.WETHToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['WETH'].balanceWei =
+      await this.callContractMethod('WETH', 'balanceOf', [this.webUser.address], 'call');
 
     this.webUser.balances!['WETH'].balanceEth = parseFloat(
       Web3.utils.fromWei(
@@ -424,9 +382,8 @@ export class Web3Service implements OnDestroy {
       )
     ).toFixed(4);
 
-    this.webUser.balances!['USDT'].balanceWei = await this.csxInstance.USDTToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['USDT'].balanceWei =
+      await this.callContractMethod('USDT', 'balanceOf', [this.webUser.address], 'call');
 
     const decimals = 6;
     const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
@@ -437,9 +394,8 @@ export class Web3Service implements OnDestroy {
 
     this.webUser.balances!['USDT'].balanceEth = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toFixed(2);
 
-    this.webUser.balances!['USDC'].balanceWei = await this.csxInstance.USDCToken.methods
-      .balanceOf(this.webUser.address)
-      .call();
+    this.webUser.balances!['USDC'].balanceWei =
+      await this.callContractMethod('USDC', 'balanceOf', [this.webUser.address], 'call');
 
     const usdcBalanceBN = Web3.utils.toBN(this.webUser.balances!['USDC'].balanceWei);
     const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
@@ -513,9 +469,14 @@ export class Web3Service implements OnDestroy {
   // ERC20 functions
 
   async allowance(token: string, owner: string, spender: string) {
-    const [tokenAbi, tokenAddress] = this._getTokenMap(token);
+    const [tokenAbi, tokenAddress] = [
+      this.contracts[token].options.jsonInterface, 
+      this.contracts[token].options.address
+    ];
 
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    this._getTokenMap(token);
+
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       tokenAbi,
       tokenAddress,
       { from: this.webUser.address }
@@ -529,7 +490,7 @@ export class Web3Service implements OnDestroy {
   async approve(token: string, spender: string, amount: string) {
     const [tokenAbi, tokenAddress] = this._getTokenMap(token);
 
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       tokenAbi,
       tokenAddress,
       { from: this.webUser.address }
@@ -595,7 +556,7 @@ export class Web3Service implements OnDestroy {
     return first6 + '...' + last4;
   }
 
-  public async updateBalance() {
+  public async updateUser() {
     try {
       await this.___getTrimmedAddress();
       await this.___initUserBalances();
@@ -625,7 +586,7 @@ export class Web3Service implements OnDestroy {
     _stickers: any[],
     _weaponType: string,
     _priceType: string
-  ): Promise<[boolean, string]> {
+  ): Promise<any> {
     const floatInfoString = `[${_floatMax}, ${_floatMin}, ${_floatVal}]`;
 
     const skinInfo = {
@@ -649,29 +610,30 @@ export class Web3Service implements OnDestroy {
         tradeUrl: TradeUrl,
         assetId: _assetId,
         inspectLink: _inspectLink,
-        itemImageUrl: _itemImageUrl,  
+        itemImageUrl: _itemImageUrl,
         weiPrice: _weiPrice,
         skinInfo: skinInfo,
         stickers: _stickers,
         weaponType: _weaponType,
         priceType: _priceType,
-    };
+      };
 
-      return this.csxInstance.tradeFactory.methods
-        .createListingContract(listingParams)
-        .send({ from: this.webUser.address })
-        .then((receipt: any) => {
-          console.log('TX receipt', receipt);
-          return [true, receipt];
-        })
-        .catch((error: any) => {
-          console.log('TX error', error);
-          return [false, error];
-        });
+      //   return this.contracts['TradeFactory'].methods
+      //     .createListingContract(listingParams)
+      //     .send({ from: this.webUser.address })
+      //     .then((receipt: any) => {
+      //       console.log('TX receipt', receipt);
+      //       return [true, receipt];
+      //     })
+      //     .catch((error: any) => {
+      //       console.log('TX error', error);
+      //       return [false, error];
+      //     });
+      // }
+
+      return this.callContractMethod('TradeFactory', 'createListingContract', [listingParams], 'send');
     }
-    return [false, 'Invalid trade url'];
   }
-
   /**
    * Used in components/recently-listed-items
    */
@@ -695,7 +657,7 @@ export class Web3Service implements OnDestroy {
 
   async getTradeDetailsByIndex(_index: number, hasDiscount: boolean, discountRatio: number): Promise<any> {
     try {
-      let tradeDetails = await this.csxInstance.tradeFactory.methods
+      let tradeDetails = await this.contracts['TradeFactory'].methods
         .getTradeDetailsByIndex(_index)
         .call({ from: this.webUser.address });
 
@@ -705,7 +667,7 @@ export class Web3Service implements OnDestroy {
       const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, 2, discountRatio);
 
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
-      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice);
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice, 'ether');
 
       const trimmedAddress = this.getTrimmedAddress(
         tradeDetails.contractAddress
@@ -723,7 +685,7 @@ export class Web3Service implements OnDestroy {
   }
 
   async getTradeCountByStatus(status: TradeStatus): Promise<number> {
-    return await this.csxInstance.tradeFactory.methods
+    return await this.contracts['TradeFactory'].methods
       .getTradeCountByStatus(status)
       .call({ from: this.webUser.address });
   }
@@ -783,7 +745,7 @@ export class Web3Service implements OnDestroy {
       //_maxResults = await this.getTotalContracts();
       _maxResults = await this.getTradeCountByStatus(_status);
     }
-    let tradeIndexes = await this.csxInstance.tradeFactory.methods
+    let tradeIndexes = await this.contracts['TradeFactory'].methods
       .getTradeIndexesByStatus(_status, _from, _maxResults)
       .call({ from: this.webUser.address });
 
@@ -800,7 +762,7 @@ export class Web3Service implements OnDestroy {
       const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18;
 
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
-      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice);
+      const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice, 'ether');
 
       // if 6 then etherPrice otherwise etherPrice * ETHUSD
       const priceInUSD = decimals == 6 ? parseFloat(etherPrice) : ETHUSD * parseFloat(etherPrice);
@@ -831,7 +793,7 @@ export class Web3Service implements OnDestroy {
       };
 
       const contractInstance =
-        await new this.csxInstance.window.web3.eth.Contract(
+        await new this.csxInstance.web3.eth.Contract(
           environment.CONTRACTS.tradeContract.abi as AbiItem[],
           itemAddress,
           { from: this.webUser.address }
@@ -867,7 +829,7 @@ export class Web3Service implements OnDestroy {
 
 
       const contractInstance =
-        await new this.csxInstance.window.web3.eth.Contract(
+        await new this.csxInstance.web3.eth.Contract(
           environment.CONTRACTS.BuyAssistoor.abi as AbiItem[],
           environment.CONTRACTS.BuyAssistoor.address,
           { from: this.webUser.address }
@@ -896,7 +858,7 @@ export class Web3Service implements OnDestroy {
 
   public async cancelTrade(contractAddress: string, isBuyer: boolean): Promise<boolean> {
     try {
-      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      const contractInstance = await new this.csxInstance.web3.eth.Contract(
         environment.CONTRACTS.tradeContract.abi as AbiItem[],
         contractAddress,
         { from: this.webUser.address }
@@ -928,7 +890,7 @@ export class Web3Service implements OnDestroy {
 
   public async sellerTradeVeridict(contractAddress: string, sellerCommited: boolean): Promise<boolean> {
     try {
-      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      const contractInstance = await new this.csxInstance.web3.eth.Contract(
         environment.CONTRACTS.tradeContract.abi as AbiItem[],
         contractAddress,
         { from: this.webUser.address }
@@ -949,22 +911,22 @@ export class Web3Service implements OnDestroy {
   }
 
   public async getVariableFromTradeContract(address: string, variable: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.tradeContract.abi as AbiItem[],
-      address,
-      { from: this.webUser.address }
-    );
+    // const contractInstance = await new this.csxInstance.web3.eth.Contract(
+    //   environment.CONTRACTS.tradeContract.abi as AbiItem[],
+    //   address,
+    //   { from: this.webUser.address }
+    // );
 
-    return await contractInstance.methods[variable]().call();
+    // return await contractInstance.methods[variable]().call();
   }
 
   async getTradeDetailsByAddress(_address: string): Promise<any> {
     try {
-      let tradeDetails = await this.csxInstance.tradeFactory.methods
+      let tradeDetails = await this.contracts['TradeFactory'].methods
         .getTradeDetailsByAddress(_address)
         .call({ from: this.webUser.address });
 
-      const etherPrice = tradeDetails.priceType == '0' ? this.fromWei(tradeDetails.weiPrice) : this.fromSmallestUnitToSixthDecimalBaseUnit(tradeDetails.weiPrice);
+      const etherPrice = tradeDetails.priceType == '0' ? this.fromWei(tradeDetails.weiPrice, 'ether') : this.fromSmallestUnitToSixthDecimalBaseUnit(tradeDetails.weiPrice);
 
       const trimmedAddress = this.getTrimmedAddress(
         tradeDetails.contractAddress
@@ -990,24 +952,24 @@ export class Web3Service implements OnDestroy {
     }
   }
 
-  async getUserTotalTradeUIs(): Promise<number> {
-    const total = await this.csxInstance.usersContract.methods
-      .getUserTotalTradeUIs(this.webUser.address)
-      .call({ from: this.webUser.address });
-    console.log('getUserTotalTradeUIs', total);
+  // async getUserTotalTradeUIs(): Promise<number> {
+  //   const total = await this.csxInstance.usersContract.methods
+  //     .getUserTotalTradeUIs(this.webUser.address)
+  //     .call({ from: this.webUser.address });
+  //   console.log('getUserTotalTradeUIs', total);
 
-    return total;
-  }
+  //   return total;
+  // }
 
-  async getUserTradeUIByIndex(_index: number) {
-    const tradeUI = await this.csxInstance.usersContract.methods
-      .getUserTradeUIByIndex(this.webUser.address, _index)
-      .call({ from: this.webUser.address });
-    return tradeUI;
-  }
+  // async getUserTradeUIByIndex(_index: number) {
+  //   // const tradeUI = await this.csxInstance.usersContract.methods
+  //   //   .getUserTradeUIByIndex(this.webUser.address, _index)
+  //   //   .call({ from: this.webUser.address });
+  //   // return tradeUI;
+  // }
 
   async isThisTradeContract(_address: string): Promise<boolean> {
-    const isTradeContract = await this.csxInstance.tradeFactory.methods
+    const isTradeContract = await this.contracts['TradeFactory'].methods
       .isThisTradeContract(_address)
       .call({ from: this.webUser.address });
     return isTradeContract;
@@ -1015,7 +977,7 @@ export class Web3Service implements OnDestroy {
 
   async buyerConfirmReceived(_address: string): Promise<boolean> {
     try {
-      const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+      const contractInstance = await new this.csxInstance.web3.eth.Contract(
         environment.CONTRACTS.tradeContract.abi as AbiItem[],
         _address,
         { from: this.webUser.address }
@@ -1040,7 +1002,7 @@ export class Web3Service implements OnDestroy {
    * Level Circle
    */
   public async getProfileLevel(address: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
       { from: this.webUser.address }
@@ -1049,15 +1011,15 @@ export class Web3Service implements OnDestroy {
     return await contractInstance.methods.getUserLevel(address).call();
   }
 
-  async getUserDataFromUsers(address: string) {
-    const tradeUI = await this.csxInstance.usersContract.methods
-      .getUserData(address)
-      .call({ from: this.webUser.address });
-    return tradeUI;
-  }
+  // async getUserDataFromUsers(address: string) {
+  //   const tradeUI = await this.csxInstance.usersContract.methods
+  //     .getUserData(address)
+  //     .call({ from: this.webUser.address });
+  //   return tradeUI;
+  // }
 
   async getUserDataFromProfileLevel(address: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
       { from: this.webUser.address }
@@ -1071,7 +1033,7 @@ export class Web3Service implements OnDestroy {
   }
 
   async getCostForNextLevels(address: string, newLevels: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
       { from: this.webUser.address }
@@ -1083,7 +1045,7 @@ export class Web3Service implements OnDestroy {
   }
 
   async levelUp(CSXTokenWeiAmount: string, newLevels: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
       { from: this.webUser.address }
@@ -1103,7 +1065,7 @@ export class Web3Service implements OnDestroy {
       newLevels
     );
 
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.UserProfileLevel.abi as AbiItem[],
       environment.CONTRACTS.UserProfileLevel.address,
       { from: this.webUser.address }
@@ -1121,184 +1083,193 @@ export class Web3Service implements OnDestroy {
    */
 
   //unwrap WETH
-  async unwrapWETH(amount: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-      environment.CONTRACTS.Currencies.addresses.WETH,
-      { from: this.webUser.address }
-    );
+  // async unwrapWETH(amount: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.Currencies.wAbi as AbiItem[],
+  //     environment.CONTRACTS.Currencies.addresses.WETH,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .withdraw(amount)
-      .send({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .withdraw(amount)
+  //     .send({ from: this.webUser.address });
+  // }
 
   //wrap ETH
-  async wrapETH(amount: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-      environment.CONTRACTS.Currencies.addresses.WETH,
-      { from: this.webUser.address }
-    );
+  // async wrapETH(amount: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.Currencies.wAbi as AbiItem[],
+  //     environment.CONTRACTS.Currencies.addresses.WETH,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .deposit()
-      .send({ from: this.webUser.address, value: amount });
-  }
+  //   return await contractInstance.methods
+  //     .deposit()
+  //     .send({ from: this.webUser.address, value: amount });
+  // }
 
   /**
    * Referral Component
    */
 
-  async getReferralInfo(refCode32: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async getReferralInfo(refCode32: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .getReferralInfo(refCode32)
-      .call({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .getReferralInfo(refCode32)
+  //     .call({ from: this.webUser.address });
+  // }
 
-  async getReferralCode(address: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async getReferralCode(address: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .getReferralCode(address)
-      .call({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .getReferralCode(address)
+  //     .call({ from: this.webUser.address });
+  // }
 
-  async registerReferralCode(referralCode: string, ownerRatio: string, buyerRatio: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async registerReferralCode(referralCode: string, ownerRatio: string, buyerRatio: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .registerReferralCode(referralCode, ownerRatio, buyerRatio)
-      .send({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .registerReferralCode(referralCode, ownerRatio, buyerRatio)
+  //     .send({ from: this.webUser.address });
+  // }
 
-  async getReferralCodesByUser(address: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async getReferralCodesByUser(address: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .getReferralCodesByUser(address)
-      .call({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .getReferralCodesByUser(address)
+  //     .call({ from: this.webUser.address });
+  // }
 
-  async getRebatePerCodePerPaymentToken(referralCode: string, paymentToken: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async getRebatePerCodePerPaymentToken(referralCode: string, paymentToken: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .getRebatePerCodePerPaymentToken(referralCode, paymentToken)
-      .call({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .getRebatePerCodePerPaymentToken(referralCode, paymentToken)
+  //     .call({ from: this.webUser.address });
+  // }
 
-  async setReferralCodeAsUser(referralCode: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-      environment.CONTRACTS.ReferralRegistry.address,
-      { from: this.webUser.address }
-    );
+  // async setReferralCodeAsUser(referralCode: string) {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
+  //     environment.CONTRACTS.ReferralRegistry.address,
+  //     { from: this.webUser.address }
+  //   );
 
-    return await contractInstance.methods
-      .setReferralCodeAsUser(referralCode)
-      .send({ from: this.webUser.address });
-  }
+  //   return await contractInstance.methods
+  //     .setReferralCodeAsUser(referralCode)
+  //     .send({ from: this.webUser.address });
+  // }
 
   /**
    * Stake Component
    */
 
   // Approve CSXToken first
-  async stake(amount: string): Promise<string> {
-    return await this.csxInstance.sCSXToken.methods.stake(amount).send({ from: this.webUser.address });
-  }
+  // async stake(amount: string): Promise<string> {
+  //   return await this.csxInstance.sCSXToken.methods.stake(amount).send({ from: this.webUser.address });
+  // }
 
-  async unstake(amount: string): Promise<string> {
-    return await this.csxInstance.sCSXToken.methods.unStake(amount).send({ from: this.webUser.address });
-  }
+  // async unstake(amount: string): Promise<string> {
+  //   return await this.csxInstance.sCSXToken.methods.unStake(amount).send({ from: this.webUser.address });
+  // }
 
-  async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
-    return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address });
-  }
+  // async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
+  //   //const gasAmount = await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).estimateGas({ from: this.webUser.address });
 
-  async getClaimableAmount(): Promise<any> {
-    return await this.csxInstance.sCSXToken.methods.getClaimableAmount(this.webUser.address).call({ from: this.webUser.address });
-  }
+  //   //console.log("Estimated gas: ", gasAmount);
+
+  //   return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address/*, gas: gasAmount*/ });
+  // }
+
+
+  // async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
+  //   return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address });
+  // }
+
+  // async getClaimableAmount(): Promise<any> {
+  //   return await this.csxInstance.sCSXToken.methods.getClaimableAmount(this.webUser.address).call({ from: this.webUser.address });
+  // }
 
   // eCSXToken
 
-  async vest(amount: string): Promise<string> {
-    return await this.csxInstance.vCSXToken.methods.vest(amount).send({ from: this.webUser.address });
-  }
+  // async vest(amount: string): Promise<string> {
+  //   return await this.csxInstance.vCSXToken.methods.vest(amount).send({ from: this.webUser.address });
+  // }
 
-  async getVestedStakingContractAddress(): Promise<string> {
-    return await this.csxInstance.vCSXToken.methods.getVestedStakingContractAddress(this.webUser.address).call({ from: this.webUser.address });
-  }
+  // async getVestedStakingContractAddress(): Promise<string> {
+  //   return await this.csxInstance.vCSXToken.methods.getVestedStakingContractAddress(this.webUser.address).call({ from: this.webUser.address });
+  // }
 
   // VestedStaking Contract Calls
-  
-  async getClaimableVestedAmountAndVestTimeLeft(_address: string): Promise<any> {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-      _address,
-      { from: this.webUser.address }
-    );
 
-    return await contractInstance.methods
-      .getClaimableAmountAndVestTimeLeft()
-      .call({ from: this.webUser.address });
-  }
+  // async getClaimableVestedAmountAndVestTimeLeft(_address: string): Promise<any> {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+  //     _address,
+  //     { from: this.webUser.address }
+  //   );
 
-  async claimVestedRewards(_address: string, claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-      _address,
-      { from: this.webUser.address }
-    );
+  //   return await contractInstance.methods
+  //     .getClaimableAmountAndVestTimeLeft()
+  //     .call({ from: this.webUser.address });
+  // }
 
-    return await contractInstance.methods
-      .claimRewards(claimUsdc, claimUsdt, claimWeth, convertWethToEth)
-      .send({ from: this.webUser.address });
-  }
+  // async claimVestedRewards(_address: string, claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+  //     _address,
+  //     { from: this.webUser.address }
+  //   );
 
-  async unvest(address: string, amount: string): Promise<string> {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
-      environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-      address,
-      { from: this.webUser.address }
-    );
+  //   return await contractInstance.methods
+  //     .claimRewards(claimUsdc, claimUsdt, claimWeth, convertWethToEth)
+  //     .send({ from: this.webUser.address });
+  // }
 
-    return await contractInstance.methods
-      .withdraw(amount)
-      .send({ from: this.webUser.address });
-  }
+  // async unvest(address: string, amount: string): Promise<string> {
+  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
+  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
+  //     address,
+  //     { from: this.webUser.address }
+  //   );
+
+  //   return await contractInstance.methods
+  //     .withdraw(amount)
+  //     .send({ from: this.webUser.address });
+  // }
 
   /**
    * Escrow Component
    */
 
   // Approve CSXToken first
-  async mintEscrow(amount: string): Promise<string> {
-    return await this.csxInstance.eCSXToken.methods.mintEscrow(amount).send({ from: this.webUser.address });
-  }
+  // async mintEscrow(amount: string): Promise<string> {
+  //   return await this.csxInstance.eCSXToken.methods.mintEscrow(amount).send({ from: this.webUser.address });
+  // }
 
   /**
    * Committed Dialog
@@ -1311,18 +1282,18 @@ export class Web3Service implements OnDestroy {
         event: 'MyEvent',
 
         // contract address that emitted the event
-        address: '0x9876543210abcdef9876543210abcdef98765432',
+        address: oracleAddress,
       },
       // start block (optional)
       fromBlock: 0,
     };
-    this.csxInstance.tradeFactory.events.TradeContractStatusChange(
+    this.contracts['TradeFactory'].events.TradeContractStatusChange(
       options,
       (error: any, event: any) => {
         if (!error) {
           console.log(event.returnValues);
         }
-        console.log('event', event);
+        console.log('subscribeToOracleConfirmation event', event);
       }
     );
   }
@@ -1330,18 +1301,18 @@ export class Web3Service implements OnDestroy {
   /**
    * Completed Dialog
    */
-  repAfterTrade(tradeAddrs: string, isPositive: boolean) {
-    return this.csxInstance.usersContract.methods
-      .repAfterTrade(tradeAddrs, isPositive)
-      .send({ from: this.webUser.address });
-  }
+  // repAfterTrade(tradeAddrs: string, isPositive: boolean) {
+  //   return this.csxInstance.usersContract.methods
+  //     .repAfterTrade(tradeAddrs, isPositive)
+  //     .send({ from: this.webUser.address });
+  // }
 
-  hasMadeRepOnTrade(tradeAddrs: string) {
-    return this.csxInstance.usersContract.methods
-      .hasMadeRepOnTrade(tradeAddrs)
-      .call({ from: this.webUser.address });
-  }
-  
+  // hasMadeRepOnTrade(tradeAddrs: string) {
+  //   return this.csxInstance.usersContract.methods
+  //     .hasMadeRepOnTrade(tradeAddrs)
+  //     .call({ from: this.webUser.address });
+  // }
+
   /**
    * Seller Committed Dialog
    * 
@@ -1359,12 +1330,16 @@ export class Web3Service implements OnDestroy {
    * Utils
    */
 
-  public toWei(ethVal: string): string {
-    return Web3.utils.toWei(ethVal, 'ether');
+  public toWei(ethVal: string, unit: any | undefined): string {
+    return Web3.utils.toWei(ethVal, unit);
   }
 
-  public fromWei(weiVal: string): string {
-    return Web3.utils.fromWei(weiVal, 'ether');
+  public fromWei(weiVal: string, unit: any | undefined): string {
+    return Web3.utils.fromWei(weiVal, unit);
+  }
+
+  public toBN(value: string | number): any {
+    return Web3.utils.toBN(value);
   }
 
   public fromSmallestUnitToSixthDecimalBaseUnit(smallestUnitVal: string): string {
@@ -1381,14 +1356,14 @@ export class Web3Service implements OnDestroy {
     const [integerPart, fractionalPart] = baseUnitVal.split('.');
     const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
     const BalanceBN = Web3.utils.toBN(integerPart);
-    
+
     // Handle case when fractionalPart is undefined
     const fractionalString = fractionalPart ? fractionalPart.padEnd(decimals, '0') : '0'.repeat(decimals);
     const BalanceFractionBN = Web3.utils.toBN(fractionalString);
-    
+
     const smallestUnitVal = BalanceBN.mul(tenPowerDecimals).add(BalanceFractionBN).toString(10);
     return smallestUnitVal;
-  }  
+  }
 
   public isValidUrl(url: string): boolean {
     try {
@@ -1402,7 +1377,7 @@ export class Web3Service implements OnDestroy {
   async getEthPrice(): Promise<number> {
     if (environment.CONTRACTS.priceFeed.isUsing) {
       const contractInstance =
-        await new this.csxInstance.window.web3.eth.Contract(
+        await new this.csxInstance.web3.eth.Contract(
           environment.CONTRACTS.priceFeed.abi as AbiItem[],
           environment.CONTRACTS.priceFeed.address,
           { from: this.webUser.address }
@@ -1421,7 +1396,7 @@ export class Web3Service implements OnDestroy {
   }
 
   async getKeeperOracleAddress(): Promise<string> {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.Keepers.abi as AbiItem[],
       environment.CONTRACTS.Keepers.address,
       { from: this.webUser.address }
@@ -1435,7 +1410,7 @@ export class Web3Service implements OnDestroy {
   }
 
   private ___subscribeToTradeFactoryEvents() {
-    this.csxInstance.tradeFactory.events
+    this.contracts['TradeFactory'].events
       .TradeContractStatusChange()
       .on('data', (event: { returnValues: any }) => {
         this.chainEvents.onEvent(event.returnValues);
@@ -1446,11 +1421,11 @@ export class Web3Service implements OnDestroy {
   }
 
   private async _checkForPastNotifications() {
-    const currentBlock = await this.csxInstance.window.web3.eth.getBlockNumber();
+    const currentBlock = await this.csxInstance.web3.eth.getBlockNumber();
 
     const fromBlock = currentBlock - 50; // Replace 1000 with the desired range
 
-    this.csxInstance.tradeFactory.getPastEvents(
+    this.contracts['TradeFactory'].getPastEvents(
       'TradeContractStatusChange',
       {
         fromBlock: fromBlock,
@@ -1474,16 +1449,16 @@ export class Web3Service implements OnDestroy {
             //this.chainEvents.onEvent(event.returnValues);
             //console.log('event', event);
 
-            this.collectPastEvent(event.returnValues);
+            this._collectPastEvent(event.returnValues);
           });
-          this.processPastEvents();
+          this._processPastEvents();
         }
       }
     );
   }
 
   pastEvents: any[] = [];
-  collectPastEvent(event: any) {
+  private _collectPastEvent(event: any) {
     // get the event data
     console.log('collectPastEvent', event);
 
@@ -1510,7 +1485,7 @@ export class Web3Service implements OnDestroy {
     }
   }
 
-  processPastEvents() {
+  private _processPastEvents() {
     this.pastEvents.forEach((event) => {
       // this.chainEvents.onEvent(event);
       // Push notification
@@ -1557,14 +1532,19 @@ export class Web3Service implements OnDestroy {
             this.notificationsService.notify(`You're about to deliver item. It's time for you to deliver the trade`, event.contractAddress, 'More Info', true)
           });
         }
+      } else if (event.status == TradeStatus.Disputed) {
+        this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
+          this.notificationsService.notify(`${res} Trade has been disputed.`, event.contractAddress, 'More Info', true);
+        }).catch((err) => {
+          console.log('getTradeContractitemMarketName error', err);
+          this.notificationsService.notify(`A Trade has been disputed`, event.contractAddress, 'More Info', true);
+        });
       }
-
-
     });
   }
 
   async getTradeContractitemMarketName(_address: string) {
-    const contractInstance = await new this.csxInstance.window.web3.eth.Contract(
+    const contractInstance = await new this.csxInstance.web3.eth.Contract(
       environment.CONTRACTS.tradeContract.abi as AbiItem[],
       _address,
       { from: this.webUser.address }
@@ -1575,6 +1555,146 @@ export class Web3Service implements OnDestroy {
       .call({ from: this.webUser.address });
 
     return res;
+  }
+
+  //
+
+  public contracts: { [key: string]: any } = {};
+
+  private initializeContracts() {
+    // for (const name in CONTRACTS) {
+    //   this.contracts[name] = new this.csxInstance.web3.eth.Contract(
+    //     CONTRACTS[name].abi,
+    //     CONTRACTS[name].address,
+    //     { from: this.webUser.address }
+    //   );
+    // } used above code to initialize contracts
+  }
+
+  // async callContractMethod(
+  //   contractName: string,
+  //   methodName: string,
+  //   methodParams: any[],
+  //   transactionType: 'call' | 'send',
+  //   fromAddress?: string,
+  // ): Promise<any> {
+  //   try {
+  //     let contractInstance = this.contracts[contractName];
+
+  //     if (contractName === 'Trade' || contractName === 'VestedStaking') {
+  //       if (!methodParams || methodParams.length === 0) {
+  //         throw new Error('Address is required as the first method parameter for Trade or VestedStaking contracts.');
+  //       }
+  //       const contractAddress = methodParams[0]; // Assuming the first methodParam is the contract address
+
+  //       // Check if the contractAddress is a valid EVM address
+  //       if (!this.csxInstance.web3.utils.isAddress(contractAddress)) {
+  //         throw new Error('Invalid Ethereum address provided.');
+  //       }
+
+  //       methodParams = methodParams.slice(1); // Remove the contractAddress from the methodParams array
+
+  //       contractInstance = new this.csxInstance.web3.eth.Contract(
+  //         CONTRACTS[contractName].abi,
+  //         contractAddress,
+  //         { from: this.webUser.address }
+  //       );
+  //     }
+
+  //     if (!contractInstance) {
+  //       throw new Error(`Contract ${contractName} does not exist.`);
+  //     }
+
+  //     const method = contractInstance.methods[methodName];
+  //     if (!method) {
+  //       throw new Error(`Method ${methodName} does not exist on contract ${contractName}.`);
+  //     }
+
+  //     switch (transactionType) {
+  //       case 'call':
+  //         return await method(...methodParams).call();
+  //       case 'send':
+  //         if (!fromAddress) {
+  //           throw new Error('From address is required for send transactions.');
+  //         }
+  //         return await method(...methodParams).send({ from: fromAddress });
+  //       default:
+  //         throw new Error(`Unsupported transaction type: ${transactionType}`);
+  //     }
+
+  //   } catch (error) {
+  //     console.error('An error occurred while calling the contract method:', error);
+  //     throw error;  // re-throw the error so it can be caught and handled by the caller if needed
+  //   }
+  // }
+
+  async callContractMethod(
+    contractName: string,
+    methodName: string,
+    methodParams: any[],
+    transactionType: 'call' | 'send',
+    options?: { from?: string, value?: string, gas?: string, gasPrice?: string },
+  ): Promise<any> {
+    try {
+      let contractInstance = this.contracts[contractName];
+
+      if (contractName === 'Trade' || contractName === 'VestedStaking') {
+        if (!methodParams || methodParams.length === 0) {
+          throw new Error('Address is required as the first method parameter for Trade or VestedStaking contracts.');
+        }
+        const contractAddress = methodParams[0]; // Assuming the first methodParam is the contract address
+
+        // Check if the contractAddress is a valid EVM address
+        if (!this.csxInstance.web3.utils.isAddress(contractAddress)) {
+          throw new Error('Invalid Trade Contract address provided.');
+        }
+
+        methodParams = methodParams.slice(1); // Remove the contractAddress from the methodParams array
+
+        contractInstance = new this.csxInstance.web3.eth.Contract(
+          CONTRACTS[contractName].abi,
+          contractAddress,
+          { from: this.webUser.address }
+        );
+      }
+
+      if (!contractInstance) {
+        throw new Error(`Contract ${contractName} does not exist.`);
+      }
+
+      const method = contractInstance.methods[methodName];
+      if (!method) {
+        throw new Error(`Method ${methodName} does not exist on contract ${contractName}.`);
+      }
+
+      // Set up default options
+      const defaultOptions = { from: this.webUser.address };
+
+      // Merge the provided options with the defaults
+      let mergedOptions = { ...defaultOptions, ...options };
+
+      switch (transactionType) {
+        case 'call':
+          return await method(...methodParams).call();
+        case 'send':
+          if (!mergedOptions.from) {
+            throw new Error('From address is required for send transactions.');
+          }
+          // If no gas limit is provided, estimate the gas required for the transaction
+          if (!mergedOptions.gas) {
+            const estimatedGas = await method(...methodParams).estimateGas({ from: mergedOptions.from });
+            console.log('ESTMIATED GAS', estimatedGas);
+            //mergedOptions = { ...mergedOptions, gas: estimatedGas };
+          }
+          return await method(...methodParams).send(mergedOptions);
+        default:
+          throw new Error(`Unsupported transaction type: ${transactionType}`);
+      }
+
+    } catch (error) {
+      console.error('An error occurred while calling the contract method:', error);
+      throw error;  // re-throw the error so it can be caught and handled by the caller if needed
+    }
   }
 
   ngOnDestroy(): void { }
