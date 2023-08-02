@@ -539,14 +539,18 @@ export class MyTradesService implements OnDestroy{
   }
 
   private async _getTradesTotal() {
-    return await this.web3.getUserTotalTradeUIs();
+    return this.web3.callContractMethod('Users', 'getUserTotalTradeUIs', [this.web3.webUser.address], 'call');
   }
 
   private async _getTradeUIs(_total: number) {
     let trades = [];
 
     for (let i = 0; i < _total; i++) {
-      trades.push({...await this.web3.getUserTradeUIByIndex(i), index : i});
+      trades.push(
+        {
+          ...await this.web3.callContractMethod('Users', 'getUserTradeUIByIndex', [this.web3.webUser.address, i], 'call'), 
+          index : i
+        });
     }
 
     return trades;

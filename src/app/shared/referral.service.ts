@@ -28,14 +28,17 @@ export class ReferralService {
   async hasReferralCodeLocalOrChain(): Promise<[boolean, any]> {
     // Check if the user has a referral code on-chain getReferralCode(), if so, call getReferralCode() to get the buyerRatio and return it,
     // otherwise check if the user has a referral code in localStorage, if so, call getReferralInfo() to check its valid on chain and return the buyerRatio, otherwise return false.
-    const primaryReferralCode = await this.web3.getReferralCode(this.web3.webUser.address!);
+    const primaryReferralCode = await this.web3.callContractMethod('ReferralRegistry', 'getReferralCode', [this.web3.webUser.address!], 'call');
+    
     if (primaryReferralCode === '0x0000000000000000000000000000000000000000000000000000000000000000') {
       // No primary referral code on chain, check if there is one in localStorage
       const localReferralCode = this.getLocalReferralCode();
       if (localReferralCode) {
         // There is a referral code in localStorage, check if it is valid on chain
         const localReferralCodeBytes32 = this.stringToBytes32(localReferralCode);
-        const localReferralInfo = await this.web3.getReferralInfo(localReferralCodeBytes32);
+        const localReferralInfo = 
+          await this.web3.callContractMethod('ReferralRegistry', 'getReferralInfo', [localReferralCodeBytes32], 'call');
+
         if (localReferralInfo.owner === '0x0000000000000000000000000000000000000000') {
           // The referral code in localStorage is not valid on chain, remove it from localStorage
           this.removeLocalReferralCode();
@@ -55,7 +58,8 @@ export class ReferralService {
       }
     } else {
       // There is a primary referral code on chain, return the buyerRatio
-      const primaryReferralInfo = await this.web3.getReferralInfo(primaryReferralCode);
+      const primaryReferralInfo = await this.web3.callContractMethod('ReferralRegistry', 'getReferralInfo', [primaryReferralCode], 'call');
+      //this.web3.getReferralInfo(primaryReferralCode);
       const discountRatio = parseInt(primaryReferralInfo?.buyerRatio ?? '0');
       this.referralInfo = {...primaryReferralInfo, discountRatio: discountRatio, hasReferral: true, bytes32: primaryReferralCode};
       return [true, this.referralInfo];

@@ -81,7 +81,8 @@ export class LevelCircleComponent implements OnChanges {
 
   getTradeDetails() {
     if (this.displayTradeDetails) {
-      this.web3Service.getUserDataFromUsers(this.userAddress).then((tradeDetails: any) => {
+      // this.web3Service.getUserDataFromUsers(this.userAddress)
+      this.web3Service.callContractMethod('Users', 'getUserData', [this.userAddress], 'call').then((tradeDetails: any) => {
         // console.log('LevelCircleComponent getTradeDetails', tradeDetails);
         this.reputationNeg = tradeDetails.reputationNeg;
         this.reputationPos = tradeDetails.reputationPos;

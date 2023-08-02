@@ -54,8 +54,7 @@ export class EscrowDialog {
         const tokenValue = this.tokenAmountForm.get('tokenAmount')?.value;
         const tokenValueInWeiString = this.web3.csxInstance.web3.utils.toWei(tokenValue.toString(), 'ether');
 
-        this.web3.allowance('CSX', this.web3.webUser.address!, environment.CONTRACTS.EscrowedCSX.address).then((allowance) => {
-            //this.allowanceCSX = allowance;
+        this.web3.callContractMethod('CSXToken', 'allowance', [this.web3.webUser.address!, this.web3.contracts['EscrowedCSX'].options.address], 'call').then((allowance) => {
             console.log('allowance', allowance);
             console.log('tokenValue', tokenValueInWeiString);
 
@@ -86,7 +85,9 @@ export class EscrowDialog {
     isEscrowing: boolean = false;
     _escrowCSX(_value: string) {
         this.isEscrowing = true;
-        this.web3.mintEscrow(_value).then(() => {
+        //this.web3.mintEscrow(_value).then(() => {
+
+        this.web3.callContractMethod('EscrowedCSX', 'mintEscrow', [_value], 'send').then((result) => {
             console.log('escrowed successfully');
             const _valueInEther = this.web3.csxInstance.web3.utils.fromWei(_value, 'ether');
             this.web3.decreaseBalance('CSX', _valueInEther);

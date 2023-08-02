@@ -22,7 +22,8 @@ export class CompletedDialog implements AfterViewInit {
   repAfterTrade(_isPositive: boolean) {
     this.labelChoice = _isPositive ? '+REP' : '-REP';
     this.isRepping = true;
-    this._web3.repAfterTrade(this.item!.contractAddress, _isPositive).then((result: any) => {
+    this._web3.callContractMethod('Users', 'repAfterTrade', [this.item!.contractAddress, _isPositive], 'send')
+    .then((result: any) => {
       console.log('result', result);
       this.isRepping = false;
       this.hasRepped = true;
@@ -34,7 +35,8 @@ export class CompletedDialog implements AfterViewInit {
   }
 
   hasMadeRepBefore() {
-    this._web3.hasMadeRepOnTrade(this.item!.contractAddress).then((result: any) => {
+    this._web3.callContractMethod('Users', 'hasMadeRepOnTrade', [this.item!.contractAddress], 'call')
+    .then((result: any) => {
       console.log('result', result);
 
       const role = this.item?.uiInfo.role; // 'Buyer' or 'Seller'

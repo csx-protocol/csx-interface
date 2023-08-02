@@ -19,7 +19,8 @@ export class BuyerCommittedService {
   }
 
   async getBuyerCommitTimestamp(contractAddress: string) {
-    return await this.web3.getVariableFromTradeContract(contractAddress, 'buyerCommitTimestamp');
+    // return await this.web3.getVariableFromTradeContract(, 'buyerCommitTimestamp');
+    return await this.web3.callContractMethod('Trade', 'buyerCommitTimestamp', [contractAddress], 'call');
   }
 }
 

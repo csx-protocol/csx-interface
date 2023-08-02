@@ -121,7 +121,8 @@ export class wethConvertDialog {
 
             if (isUnwrap) {
                 this.isSigninTX = true;
-                this.web3.unwrapWETH(valueInWeiString).then((result: any) => {
+                
+                this.web3.callContractMethod('WETH', 'withdraw', [valueInWeiString], 'send').then((result: any) => {
                     console.log('unwrapWETH result', result);
                     
                     this.web3.decreaseBalance('WETH', value.toString());
@@ -155,7 +156,7 @@ export class wethConvertDialog {
 
             } else {
                 this.isSigninTX = true;
-                this.web3.wrapETH(valueInWeiString).then((result: any) => {
+                this.web3.callContractMethod('WETH', 'deposit', [], 'send', { value: valueInWeiString }).then((result: any) => {
                     console.log('wrapETH result', result);
                     this.web3.decreaseBalance('ETH', value.toString());
                     this.web3.increaseBalance('WETH', value.toString());

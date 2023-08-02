@@ -47,7 +47,7 @@ export class AffiliateComponent {
   secondFormGroup: FormBuilder | any;
   @ViewChild('stepper') stepper: MatStepper | undefined;
   @ViewChild('tabGroup') tabGroup: MatTabGroup | undefined;
-  
+
   displayedColumns: string[] = ['referralCode', 'buyerRatio', 'sellerRatio', 'rebateETH', 'rebateUSDC', 'rebateUSDT'];
 
   rebates: ReferralRebateData[] = [];
@@ -63,11 +63,11 @@ export class AffiliateComponent {
       scndCtrl: [50, Validators.required],
     });
 
-    
+
   }
 
   async getRebates(): Promise<ReferralRebateData[]> {
-    const refCodes = await this.web3.getReferralCodesByUser(this.web3.webUser.address!);
+    const refCodes = await this.web3.callContractMethod('ReferralRegistry', 'getReferralCodesByUser', [this.web3.webUser.address!], 'call');
     this.loadCount = ((refCodes.length - this.rebates.length)).toString();
     const rebates = await this._getRebatesFromBytes32Codes(refCodes);
     return rebates;
@@ -77,10 +77,10 @@ export class AffiliateComponent {
     let rebates: ReferralRebateData[] = [];
     for (const code of codes) {
       const rebate = await this.__getRebatesFromBytes32Code(code);
-      const ratios = await this.web3.getReferralInfo(code);      
+      const ratios = await this.web3.callContractMethod('ReferralRegistry', 'getReferralInfo', [code], 'call')
       const reb: ReferralRebateData = {
-        codeString: this.referralService.bytes32ToString(code), 
-        code: code, 
+        codeString: this.referralService.bytes32ToString(code),
+        code: code,
         rebates: rebate,
         buyerRatio: ratios.buyerRatio,
         sellerRatio: ratios.ownerRatio
@@ -110,8 +110,9 @@ export class AffiliateComponent {
     let rebates: Rebate[] = [];
 
     for (const token of paymentTokens) {
-      const rebate = await this.web3.getRebatePerCodePerPaymentToken(code, token.address)
-      const reb: Rebate = {token: token.name, rebate: rebate};
+      const rebate =
+        await this.web3.callContractMethod('ReferralRegistry', 'getRebatePerCodePerPaymentToken', [code, token.address], 'call');
+      const reb: Rebate = { token: token.name, rebate: rebate };
       rebates.push(reb);
     }
 
@@ -127,7 +128,7 @@ export class AffiliateComponent {
       // Convert to bytes32
       this.refferalCode = this.referralService.stringToBytes32(stringCode);
 
-      this.web3.getReferralInfo(this.refferalCode).then((res: any) => {
+      this.web3.callContractMethod('ReferralRegistry', 'getReferralInfo', [this.refferalCode], 'call').then((res: any) => {
         if (res[0] === '0x0000000000000000000000000000000000000000') {
           //this.referralService.setReferralCode(this.refferalCode);
           //this.notify.openSnackBar('Referral code available!', '👍');
@@ -151,7 +152,8 @@ export class AffiliateComponent {
       console.log(rebate, discount);
 
       // registerReferralCode with this.refferalCode
-      this.web3.registerReferralCode(this.refferalCode, rebate, discount).then((res: any) => {
+      this.web3.callContractMethod('ReferralRegistry', 'registerReferralCode', [this.refferalCode, rebate, discount], 'send'
+      ).then((res: any) => {
         console.log(res);
         this.isCreatingCode = false;
         this.notify.openSnackBar('Referral code created!', '👍');
@@ -163,7 +165,7 @@ export class AffiliateComponent {
         this.stepper!.previous();
         this.tabGroup!.selectedIndex = 1;
         // Push the new code to the table
-        
+
       }).catch((err: any) => {
         console.log(err);
         this.isCreatingCode = false;
@@ -182,8 +184,8 @@ export class AffiliateComponent {
     return true;
   }
 
-  tabChange(event: any){
-    if(event.index === 1){
+  tabChange(event: any) {
+    if (event.index === 1) {
       this.isLoading = true;
       this.getRebates().then((rebates: ReferralRebateData[]) => {
         this.rebates = rebates;
@@ -209,7 +211,8 @@ export class AffiliateComponent {
         case 'buyerRatio': return this._compare(parseInt(a.buyerRatio), parseInt(b.buyerRatio), isAsc);
         case 'sellerRatio': return this._compare(parseInt(a.sellerRatio), parseInt(b.sellerRatio), isAsc);
         default: return 0;
-      }});
+      }
+    });
   }
 
   _compare(a: any, b: any, isAsc: boolean) {
@@ -224,12 +227,12 @@ export class AffiliateComponent {
     // this.stakeInfo.usdc.wei = res.usdcAmount;
     // this.stakeInfo.usdt.wei = res.usdtAmount;
 
-    if(_decimals === 18){
+    if (_decimals === 18) {
       // const num = parseFloat(_num).toFixed(4);
       // return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       return parseFloat(this.web3.csxInstance.web3.utils.fromWei(_num, 'ether')).toFixed(4);
     }
-    
+
     const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(_decimals));
 
     const stableBalanceBN = Web3.utils.toBN(_num);
