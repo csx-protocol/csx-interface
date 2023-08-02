@@ -1,0 +1,29 @@
+<mat-stepper linear="true" #stepper>
+    <mat-step [completed]="isFirstStepComplete" [stepControl]="firstFormGroup" >
+        <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Approve</ng-template>
+            <p style="font-size: small;">Approve {{txInfo.name}} spend.</p>
+            <div class="centered-loading-spinner">                
+                <span style="color: rgb(124, 130, 235)"></span> <mat-progress-spinner
+                class="example-margin"
+                color="primary"
+                mode="indeterminate"
+                [diameter]="25">
+              </mat-progress-spinner>
+              </div>
+        </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" label="Sign TX" >
+        <form [formGroup]="secondFormGroup">
+            <p style="font-size: small;">Sign {{txInfo.method}}.</p>
+            <div class="centered-loading-spinner">                
+                <span style="color: rgb(124, 130, 235)"></span> <mat-progress-spinner
+                class="example-margin"
+                color="primary"
+                mode="indeterminate"
+                [diameter]="25">
+              </mat-progress-spinner>
+              </div>
+        </form>
+    </mat-step>
+</mat-stepper>
