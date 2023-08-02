@@ -50,7 +50,7 @@ export class NavBarComponent implements OnDestroy {
     this.trimmedAddress = this.getTrimmedAccount();
 
     if(this.account){
-      await this._web3.updateBalance();
+      await this._web3.updateUser();
       this.myTradesService.initialized = false;
       this.myTradesService.init();
     } else {
@@ -90,7 +90,8 @@ export class NavBarComponent implements OnDestroy {
     etherPrice: '',
     trimmedAddress: '',
     uiInfo: { contractAddress: '', role: '', status: '' },
-    skinInfo: undefined
+    skinInfo: undefined,
+    priceType: ''
   };  
 
   async openDaDialog(_contractAddress:string): Promise<void> {
