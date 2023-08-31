@@ -289,7 +289,11 @@ export class ListItemComponent implements OnDestroy {
 
       const weaponType = this.itemData.weapon_type;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
-      const priceType = this.selectedPriceType == 'WETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
+      const priceType = this.selectedPriceType == 'ETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
+      console.log("priceType", priceType);
+      console.log('selectedPriceType', this.selectedPriceType);
+      
+      
 
       const weiPrice = priceType == '0' ? this.web3.toWei(ethPrice.toString(), 'ether') : this.web3.fromBaseUnitToSmallestUnit(ethPrice.toString());
 
