@@ -10,8 +10,7 @@ export interface Task {
     name: string;
     completed: boolean;
     color: ThemePalette;
-    disabled?: boolean;
-    subtasks?: Task[];
+    subtasks: Task[];
 }
 
 @Component({
@@ -38,10 +37,10 @@ export class ClaimDialog {
         completed: false,
         color: 'primary',
         subtasks: [
-            { name: 'USDC', completed: false, color: 'primary'},
-            { name: 'USDT', completed: false, color: 'primary'},
-            { name: 'WETH', completed: false, color: 'primary'},
-            { name: 'WETH to ETH', completed: false, color: 'accent'},
+            { name: 'USDC', completed: false, color: 'primary' } as Task,
+            { name: 'USDT', completed: false, color: 'primary' } as Task,
+            { name: 'WETH', completed: false, color: 'primary' } as Task,
+            { name: 'WETH to ETH', completed: false, color: 'accent' } as Task,
         ]
     };
 
@@ -53,15 +52,21 @@ export class ClaimDialog {
     ) { }
 
     allComplete: boolean = false;
+    noneComplete: boolean = true;
 
-    updateAllComplete() {
+    updateAllComplete(_task: Task) {
         this.allComplete = this.task.subtasks != null && this.task.subtasks.every(t => t.completed);
+        this.noneComplete = this.task.subtasks != null && this.task.subtasks.every(t => !t.completed);
+        if (_task.name == 'WETH to ETH' && !this.task.subtasks[2].completed) {
+            this.task.subtasks[2].completed = this.task.subtasks[3].completed;
+        }
     }
 
     someComplete(): boolean {
         if (this.task.subtasks == null) {
             return false;
         }
+        this.noneComplete = this.task.subtasks != null && this.task.subtasks.every(t => !t.completed);
         return this.task.subtasks.filter(t => t.completed).length > 0 && !this.allComplete;
     }
 
@@ -73,7 +78,66 @@ export class ClaimDialog {
         this.task.subtasks.forEach(t => (t.completed = completed));
     }
 
+    isClaiming: boolean = false;
     claimRewards() {
 
+        if (this.noneComplete) {
+            this.notify.openSnackBar('Please select at least one reward to claim', 'OK');
+            return;
+        }
+
+        this.isClaiming = true;
+        const USDCveridict = this.task.subtasks[0].completed;
+        const USDTveridict = this.task.subtasks[1].completed;
+        const WETHveridict = this.task.subtasks[2].completed;
+        const WETHtoETHveridict = this.task.subtasks[3].completed;
+
+
+
+        // this.web3.claim(
+        //     USDCveridict,
+        //     USDTveridict,
+        //     WETHveridict,
+        //     WETHtoETHveridict
+        // ).then((res: any) => {
+        this.web3.callContractMethod(
+            'StakedCSX',
+            'claim',
+            [
+                USDCveridict,
+                USDTveridict,
+                WETHveridict,
+                WETHtoETHveridict
+            ],
+            'send'
+        ).then((res: any) => {
+            if (res) {
+                this.notify.openSnackBar('Rewards claimed successfully 🎉', 'OK');
+                this.isClaiming = false;
+
+                if (USDCveridict) {
+                    this.web3.increaseBalance('USDC', this.data[2][0]);
+                }
+
+                if (USDTveridict) {
+                    this.web3.increaseBalance('USDT', this.data[2][1]);
+                }
+
+                if (WETHveridict && WETHtoETHveridict) {
+                    this.web3.increaseBalance('ETH', this.data[2][2]);
+                } else if (WETHveridict) {
+                    this.web3.increaseBalance('WETH', this.data[2][2]);
+                }
+
+                this.dialogRef.close([USDCveridict, USDTveridict, WETHveridict, WETHtoETHveridict]);
+                return;
+            }
+            throw new Error('Error claiming rewards', res);
+        }).catch((err: any) => {
+            console.error(err);
+            this.notify.openSnackBar(err.message, 'OK');
+            this.isClaiming = false;
+            this.dialogRef.close();
+        });
     }
 }
