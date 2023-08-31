@@ -2,7 +2,7 @@
    
     <mat-dialog-content>
         <h2 *ngIf="mode == 'stake'">Stake {{type}}</h2>
-        <h2 *ngIf="mode == 'unstake' && type != 'eCSX'">Unstake {{type}}</h2>
+        <h2 *ngIf="mode == 'unStake' && type != 'eCSX'">Unstake {{type}}</h2>
     </mat-dialog-content>
 </mat-card>
 
@@ -11,7 +11,7 @@
     <mat-card-content style="align-items: center;">
 
         <form [formGroup]="tokenAmountForm">
-          <mat-form-field>
+          <mat-form-field> 
             <mat-label>Enter {{type}} Amount</mat-label>
             <input matInput type="number" formControlName="tokenAmount" />
             <button mat-button matSuffix (click)="setMaxValue()">
@@ -28,7 +28,7 @@
             <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['max'] && mode == 'stake'">
               <span style="color: #f44336">Can't stake more amount than what you have 😭 ({{maxValue}}).</span>
             </span>
-            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['max'] && mode == 'unstake'">
+            <span *ngIf="tokenAmountForm.controls['tokenAmount'].errors?.['max'] && mode == 'unStake'">
               <span style="color: #f44336">Can't unstake more amount than what you have 😭 ({{maxValue}}).</span>
             </span>
           </div>
@@ -37,18 +37,17 @@
                    
         </div>
         <button *ngIf="!isApproving && !isStaking && mode == 'stake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitStake()">Stake</button>
-        <button *ngIf="!isApproving && !isUnstaking && mode == 'unstake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitUnstake()">Unstake</button>
-        <div *ngIf="isApproving || isStaking || isUnstaking" style="margin-left: 1rem; display: flex; align-items: center;">
+        <button *ngIf="!isApproving && !isUnstaking && mode == 'unStake'" [disabled]="!tokenAmountForm.valid" mat-button (click)="submitUnstake()">Unstake</button>
+        <div *ngIf="isUnstaking" style="margin-left: 1rem; display: flex; align-items: center;">
           <mat-progress-spinner
             class="example-margin"
             color="primary"
             mode="indeterminate"
             [diameter]="25">
           </mat-progress-spinner>
-          <p style="margin-left: 1rem;" *ngIf="isApproving">1/2 TXs, Approve CSX.</p>
-          <p style="margin-left: 1rem;" *ngIf="isStaking">2/2 TXs, Stake {{type}}.</p>
           <p style="margin-left: 1rem;" *ngIf="isUnstaking">1/1 TXs, Unstake {{type}}.</p>
-        </div>        
+        </div>    
+        <app-sign-step *ngIf="isApproving" [txInfo]="txInfo" (callFunctionComplete)="onSignStepComplete($event)"></app-sign-step>    
      
       </mat-card-content>
 </div>
