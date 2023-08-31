@@ -6,7 +6,10 @@
     <i style="color: #7f94be !important;">The trade has been completed!</i>
     <br>
     <br>
-    You can now give positive or negative rep to the seller.
+    <span *ngIf="!hasReppedBefore">You can now give positive or negative rep to the {{oppositeRole}}.</span>
+    <div *ngIf="!isRepping && hasReppedBefore">
+      <i style="color: #7f94be !important;">You have given rep to the {{oppositeRole}}.</i>
+    </div>
     <br>
     <br>
     <button *ngIf="!isRepping && !hasRepped && !hasReppedBefore" mat-button cdkFocusInitial style="color: rgba(54, 244, 79, 0.651) !important;" (click)="repAfterTrade(true)">+REP </button>
@@ -16,10 +19,7 @@
     </mat-progress-spinner></span>
     <div *ngIf="hasRepped && !isRepping && !hasReppedBefore">
       <i style="color: #7f94be !important;">You have given {{labelChoice}} to the seller successfully.</i>
-    </div>
-    <div *ngIf="!isRepping && hasReppedBefore">
-      <i style="color: #7f94be !important;">You have already given rep to the seller.</i>
-    </div>
+    </div>    
   </mat-dialog-content>
 </span>
 <span *ngIf="!item">
