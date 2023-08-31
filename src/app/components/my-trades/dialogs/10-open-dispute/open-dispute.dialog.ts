@@ -1,8 +1,9 @@
-import { Component, Inject, Input } from "@angular/core";
+import { AfterViewInit, Component, Inject, Input } from "@angular/core";
 import { MyTradeItem } from "../my-trade-item.interface";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Web3Service } from "../../../../shared/web3.service";
 
 @Component({
   selector: 'trades-open-dispute-dialog',
@@ -21,12 +22,15 @@ import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms"
     ]),
 ],
 })
-export class OpenDisputeDialog {
+export class OpenDisputeDialog implements AfterViewInit {
   @Input() item: MyTradeItem | undefined;
   // reasonControl: FormControl;
   // form: FormGroup;
   firstFormGroup: FormBuilder | any;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any, 
+    private fb: FormBuilder,
+    private web3: Web3Service) {
     console.log(this.data);
     this.item = this.data;
 
@@ -35,6 +39,11 @@ export class OpenDisputeDialog {
     });
   }
 
+  ngAfterViewInit(): void {
+    console.log('dialog item', this.item);
+  }
+
+  isDisputing: boolean = false;
   createDispute() {
     console.log('this.firstFormGroup.invalid', this.firstFormGroup.invalid);
     
@@ -44,5 +53,16 @@ export class OpenDisputeDialog {
     }
 
     console.log('valid form');
+
+    this.isDisputing = true;
+
+    this.web3.callContractMethod('Trade', 'openDispute', [this.item!.contractAddress ,this.firstFormGroup.value.firstCtrl], 'send').then((result) => {
+      console.log('result', result);
+      this.isDisputing = false;
+    }
+    ).catch((error) => {
+      console.log('error', error);
+      this.isDisputing = false;
+    });
   }
 }

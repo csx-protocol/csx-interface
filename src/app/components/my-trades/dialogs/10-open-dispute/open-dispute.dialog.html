@@ -16,7 +16,11 @@
           </mat-form-field>
         </form>
         <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
-        <button color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
+        <div style="display: flex; align-items: center;">
+          <button *ngIf="!isDisputing" color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
+          <span *ngIf="isDisputing">Sign TX</span>
+          <span *ngIf="isDisputing"><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25"></mat-progress-spinner></span>
+        </div>
       </mat-dialog-content>
     </span>
   
@@ -36,7 +40,11 @@
               </mat-form-field>
             </form>
             <p style="color: rgb(255 49 67)">Note that setting the trade in <br> disputed mode is irreversible.</p>
-            <button color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
+            <div style="display: flex; align-items: center;">
+              <button *ngIf="!isDisputing" color="warn" [disabled]="firstFormGroup.get('firstCtrl').invalid" mat-button cdkFocusInitial (click)="createDispute()">Dispute Trade</button>
+              <span *ngIf="isDisputing">Sign TX</span>
+              <span *ngIf="isDisputing"><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25"></mat-progress-spinner></span>
+            </div>
         </mat-dialog-content>
     </span>
     
