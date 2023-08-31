@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { CsgoItemsService } from 'src/app/shared/csgo-items.service';
 import { Web3Service } from 'src/app/shared/web3.service';
 import { MarketplaceService } from './marketplace.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+
 export interface ExampleTab {
   label: string;
   content: string;
@@ -10,6 +12,18 @@ export interface ExampleTab {
   selector: 'app-marketplace',
   templateUrl: './marketplace.component.html',
   styleUrls: ['./marketplace.component.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      state('in', style({ opacity: 1 })),
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate(620)
+      ]),
+      transition(':leave',
+        animate(620, style({ opacity: 0 }))
+      )
+    ])
+  ]
 })
 export class MarketplaceComponent {
   panelOpenState = false;

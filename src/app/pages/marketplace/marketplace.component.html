@@ -1,4 +1,4 @@
-<mat-card class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+<mat-card @fadeInOut class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
   <mat-card-content>
 
     <h1>CS Skins for Sale</h1>
@@ -7,16 +7,6 @@
   </mat-card-content>
 </mat-card>
 <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
-
-<div *ngIf="!this.web3.webUser.isUserWalletConnected">
-  <mat-card  class="margins background" >
-    <mat-card-content>
-      <h2>Wallet not connected.</h2>
-      <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
-      <p></p>
-    </mat-card-content>
-  </mat-card>
-</div>
 
 <div *ngIf="this.web3.webUser.isUserWalletConnected">
   <div class="margins">
@@ -59,6 +49,16 @@
   <app-recently-listed-items></app-recently-listed-items>
 </div>
   <!-- <app-recently-listed-items></app-recently-listed-items> -->
+</div>
+
+<div *ngIf="!this.web3.webUser.isUserWalletConnected" @fadeInOut>
+  <mat-card  class="margins background" >
+    <mat-card-content>
+      <h2>Wallet not connected.</h2>
+      <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
+      <p></p>
+    </mat-card-content>
+  </mat-card>
 </div>
 
 

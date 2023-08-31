@@ -37,6 +37,16 @@ enum ListedItemsPixelBreakPoints {
         animate(150, style({ opacity: 0, transform: 'scale(0.5)' })),
       ]),
     ]),
+    trigger('fadeInOut', [
+      state('in', style({ opacity: 1 })),
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate(600)
+      ]),
+      transition(':leave',
+        animate(600, style({ opacity: 0 }))
+      )
+    ])
   ],
 })
 export class RecentlyListedItemsComponent implements OnInit, OnDestroy {

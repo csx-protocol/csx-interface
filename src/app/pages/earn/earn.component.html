@@ -1,4 +1,4 @@
-<mat-card class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+<mat-card @fadeInOut class="margins background" style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
     <mat-card-content>  
       <h1>Earn</h1>
       <p>Stake CSX to earn rewards.</p>
@@ -65,21 +65,26 @@
           <div style="font-size: 1rem; color: #9295b3;">{{addCommas(this.web3.webUser.balances!['vCSX'].balanceEth)}} <img src="assets/csx-logo.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>
           <br>
           <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">ETH Reward</div>
-          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.weth.ether)}} <img src="assets/utils/ethereum-eth.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>          
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(vestInfo.weth.ether)}} <img src="assets/utils/ethereum-eth.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>          
           <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDC Reward</div>
-          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.usdc.ether)}} <img src="assets/utils/centre-usdc.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(vestInfo.usdc.ether)}} <img src="assets/utils/centre-usdc.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>
           <div style="font-weight: bold; font-size: .8rem; margin-bottom: 1px; color: #afb2d6;">USDT Reward</div>
-          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(stakeInfo.usdt.ether)}} <img src="assets/utils/tether-usdt.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>
+          <div style="font-size: .9rem; color: #9295b3;">{{addCommas(vestInfo.usdt.ether)}} <img src="assets/utils/tether-usdt.png" style="height: .9rem; margin-bottom: -2px; margin-right: 2px;"></div>
           <br>
         </div>  
-        <p *ngIf="this.web3.webUser.balances!['vCSX'].balanceEth != '0.0000' && vestTimeLeft != 0" style="font-size: 1rem; color: #9295b3;">With {{ transform(vestTimeLeft) }} remaining on your vesting journey, <br> we continue to build and grow together.</p>
+        <!-- <p *ngIf="this.web3.webUser.balances!['vCSX'].balanceEth != '0.0000' && vestTimeLeft != 0" style="font-size: 1rem; color: #9295b3;">With {{ transform(vestTimeLeft) }} remaining on your vesting journey, <br> we continue to build and grow together.</p> -->
         <div>
-          <p *ngIf="this.web3.webUser.balances!['vCSX'].balanceEth != '0.0000' && vestTimeLeft == 0" style="font-size: 1rem; color: #9295b3;">
+          <mat-progress-bar *ngIf="hasVestingStarted" [mode]="getUIMode(isLoading)" [value]="progressBarValue"
+        matTooltip="{{progressBarValue}}%"></mat-progress-bar>
+        <!-- <span matTooltip="{{timeLeft}} == (hh:mm:ss)">Time left: {{timeLeft}} ({{progressBarValue}}%).</span> -->
+        </div>
+        <div>
+          <!-- <p *ngIf="this.web3.webUser.balances!['vCSX'].balanceEth != '0.0000' && vestTimeLeft == 0" style="font-size: 1rem; color: #9295b3;">
             As we celebrate the completion of your vesting period, <br> 
             we look forward to embarking on new adventures together <br>
             in the boundless landscape of CSX. <br><br>
             Thank you for your continued support and commitment.
-          </p>
+          </p> -->
         </div>
         <div style="align-items: center;">
           <button mat-button (click)="submitVest()">Vest & Stake</button> 

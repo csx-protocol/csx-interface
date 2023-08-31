@@ -78,7 +78,7 @@
     <mat-grid-list *ngIf="this.recentlyListed.filteredItems && this.recentlyListed.filteredItems.length > 0 && !this.recentlyListed.isLoadingChip" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
     <mat-grid-tile style="overflow: visible;" *ngFor="let item of this.recentlyListed.filteredItems">
       <!-- [@cardAnimation]="state" -->
-      <mat-card  class="item-card background">
+      <mat-card  class="item-card background"  @fadeInOut>
         <mat-card-header>
           <div mat-card-avatar class="item-header-image" matTooltip="Trade Address: {{item.contractAddress}}">
             <svg  [data-jdenticon-value]="item.contractAddress"></svg>
@@ -151,7 +151,7 @@
     <mat-grid-list *ngIf="this.recentlyListed.isLoading" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
       <mat-grid-tile style="overflow: visible;" *ngFor="let amount of createRangeForSkeletonLoader(this.recentlyListed.step)" >
 
-          <mat-card [@cardAnimation]="state"  class="item-card background" style="max-height: 462.5px; min-width: 225px;">
+          <mat-card [@cardAnimation]="state" class="item-card background" style="max-height: 462.5px; min-width: 225px;">
             <mat-card-header>
               <div mat-card-avatar class="item-header-image">
                 <svg data-jdenticon-value="loading"></svg>
