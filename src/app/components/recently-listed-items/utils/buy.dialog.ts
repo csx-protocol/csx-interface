@@ -31,6 +31,7 @@ export class BuyDialog {
   isInMinutes: boolean = false;
 
   @ViewChild('stepper') stepper: MatStepper | undefined;
+ // @ViewChild('stepper2') stepper2: MatStepper | undefined;
 
   item: Item;
 
@@ -40,6 +41,14 @@ export class BuyDialog {
     secondCtrl: ['', /*Validators.required*/],
   });
   isLinear = true;
+
+  // thirdFormGroup = this._formBuilder.group({
+  //   thirdCtrl: ['', /*Validators.required*/],
+  // });
+
+  // forthFormGroup = this._formBuilder.group({
+  //   forthCtrl: ['', /*Validators.required*/],
+  // });
 
   constructor(
     public dialogRef: MatDialogRef<BuyDialog>,

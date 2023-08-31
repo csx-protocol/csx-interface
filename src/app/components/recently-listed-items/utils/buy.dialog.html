@@ -106,15 +106,47 @@
     <ng-template matStepLabel>Done</ng-template>
     <h3>Congratulations on your new purchase!</h3>
 
-    <p>Whats Next:</p>
+    <p>What's Next:</p>
 
-    <p>Waiting for the Seller to Accept and send you a steam trade-offer with the item!</p>
-      
-    <p>In the event that they decline, expect a refund of your payment into your wallet.</p>
-      
-    <p>If the seller takes no action, you'll have the opportunity to retract your purchase after a period of 24 hours starting from this moment.</p>
-    
-    <p>You can follow updates as they come along in the notification bell in the upper-right corner or via 'My Trades' under the 'Dealings' tab.</p>
+    <p>Await the Seller's Acceptance and an incoming Steam trade-offer containing your item.</p>
+
+    <p>If the seller declines, your payment will be refunded to your wallet.</p>
+
+    <p>Should the seller remain inactive, you can cancel the purchase after 24 hours from now.</p>
+
+    <p>Track updates via the notification bell at the top-right or through 'My Trades' under the 'Dealings' tab.</p>
+
+
+    <!-- <mat-stepper linear="true" #stepper2>
+      <mat-step [stepControl]="thirdFormGroup" >
+          <form [formGroup]="thirdFormGroup">
+              <ng-template matStepLabel>Seller Veridict</ng-template>
+              <p style="font-size: small;">Waiting for Seller to Accept.</p>
+              <div class="centered-loading-spinner">                
+                  <span style="color: rgb(124, 130, 235)"></span> <mat-progress-spinner
+                  class="example-margin"
+                  color="primary"
+                  mode="indeterminate"
+                  [diameter]="25">
+                </mat-progress-spinner>
+                </div>
+                <p style="font-size: small;"></p>
+          </form>
+      </mat-step>
+      <mat-step [stepControl]="forthFormGroup" label="Sign TX" >
+          <form [formGroup]="forthFormGroup">
+              <p style="font-size: small;">Seller has accepted! Look for a trade offer by seller on steam.</p>
+              <div class="centered-loading-spinner">                
+                  <span style="color: rgb(124, 130, 235)"></span> <mat-progress-spinner
+                  class="example-margin"
+                  color="primary"
+                  mode="indeterminate"
+                  [diameter]="25">
+                </mat-progress-spinner>
+                </div>
+          </form>
+      </mat-step>
+    </mat-stepper> -->
 
     <div>
       <button mat-button mat-dialog-close>Thanks</button>
