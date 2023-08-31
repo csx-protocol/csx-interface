@@ -46,6 +46,28 @@ export class SellerCommittedDialog implements AfterViewInit {
     });
   }
 
+  isDisputingTL: boolean = false;
+  isDisputingWrongInventory: boolean = false;
+
+  openDisputeWithCause(myTradeItem: MyTradeItem, cause: string): void {
+    if(cause == 'BUYER_INVALID_TRADELINK') {
+      this.isDisputingTL = true;
+    }
+    if(cause == 'SELLER_SENT_WRONG_INVENTORY') {
+      this.isDisputingWrongInventory = true;
+    }
+    this.web3.callContractMethod('Trade', 'openDispute', [myTradeItem!.contractAddress, cause], 'send').then((result) => {
+      console.log('result', result)
+      this.isDisputingTL = false;
+      this.isDisputingWrongInventory = false;
+    }
+    ).catch((error) => {
+      console.log('error', error);
+      this.isDisputingTL = false;
+      this.isDisputingWrongInventory = false;
+    });
+  }
+
   getSteamId64(_partnerId: string): string {
     const partnerId = _partnerId;    
     if (partnerId) {

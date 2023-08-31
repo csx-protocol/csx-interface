@@ -4,8 +4,7 @@
     <span *ngIf="item.uiInfo.role === 'Buyer'">
       <h1 mat-dialog-title>You have purchased {{item.itemMarketName}} for {{item.etherPrice}} ETH!</h1>
       <mat-dialog-content>
-        <h4>It's time to accept the trade offer on Steam from the seller or wait for the seller to accept your trade
-          offer if you've already sent one.</h4>
+        <h4>It's time to accept the trade offer on Steam from the seller.</h4>
 
 
         <p
@@ -40,36 +39,16 @@
     </span>
 
     <span *ngIf="item.uiInfo.role === 'Seller'">
-      <h1 style="margin-bottom: 1rem;" mat-dialog-title>{{item.itemMarketName}} has been purchased for {{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span> <span *ngIf="item.priceType == '1'">USDC</span> <span *ngIf="item.priceType == '2'">USDT</span>!</h1>
-      <mat-dialog-content>
-        <!-- <h4>SSG 08 | Mainframe 001 (Well-Worn)</h4> -->
-        <app-float-bar></app-float-bar>
-        <h4>Paint Index: {{item.skinInfo.paintIndex}} Paint Seed: {{item.skinInfo.paintSeed}}</h4>
+      <h4 style="padding: 0 24px 9px; margin-top: 2rem; color: #5ccf54;">{{item.itemMarketName}} purchased for {{item.etherPrice}} <span *ngIf="item.priceType == '0'">ETH</span> <span *ngIf="item.priceType == '1'">USDC</span> <span *ngIf="item.priceType == '2'">USDT</span>!</h4>
+
+      <mat-dialog-content style="margin-top: -2rem;">
         <h4 style="color: #f14d42;">1&rpar; It's time to send the trade-offer to the buyer.</h4>
-        <h4 style="color: #f14d42;">2&rpar; Make sure the {{item.itemMarketName}} is arriving to the <a
+        <h4 style="color: #5057dd;">2&rpar; Make sure the {{item.itemMarketName}} is arriving to the <a
             [href]="getSteamId64(this.item!.buyerTradeUrl[0])+'/inventory'" target="_blank">correct inventory</a> or the funds won't be released to you, here
           is the <a [href]="getSteamId64(this.item!.buyerTradeUrl[0])" target="_blank">buyer's steam profile</a>.</h4>
-        <a [href]="getTradeOfferLink()" target="_blank"><button mat-button color="primary" style="color: #c6c3df !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
-
-
-        <!-- <mat-accordion>
-          <mat-expansion-panel hideToggle>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Got No Offer?
-              </mat-panel-title>
-              <mat-panel-description>
-                Buyer has not sent an offer regarding the sold item.
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-            <div style="margin: 3%;">
-              <p>If the buyer has not sent an offer to you on Steam regarding the correct item, you may send one to <a
-                  href="https://google.com" target="_blank">them</a>.</p>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion> -->
-
-        <br>
+        <h4>Paint Index: {{item.skinInfo.paintIndex}} Paint Seed: {{item.skinInfo.paintSeed}}</h4>
+        <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar><br>
+        <a [href]="getTradeOfferLink()" target="_blank"><button mat-button color="primary" style="color: #5ccf54 !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
 
         <mat-accordion>
           <mat-expansion-panel hideToggle>
@@ -87,8 +66,39 @@
               <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> If you don't deliver the item and
                 <u>not</u> cancelling the trade below, the Keeper Oracle will punish on non-delivered committed trades.
               </p>
-              <button mat-button color="warn" [mat-dialog-close]="true"
+              <div style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+                <button mat-button color="warn" (click)="openDisputeWithCause(item, 'SELLER_SENT_WRONG_INVENTORY')"
                 style="color: rgb(244 67 54 / 38%) !important;">Cancel Trade</button>
+                <span *ngIf="isDisputingWrongInventory"><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
+                </mat-progress-spinner></span>
+              </div>
+              
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+        <br>
+        <mat-accordion>
+          <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Trade Link Invalid?
+              </mat-panel-title>
+              <mat-panel-description>
+                Buyer's trade-link is invalid.
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div style="margin: 3%;">
+              <p>If the buyer's trade link is invalid, you have the option to either reach out to them on Steam or dispute the trade.</p>
+              <p>If you choose to dispute the trade, the funds will be returned to the buyer, and the trade will be voided.</p>
+              <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> 
+                Disputing a trade when the link is valid, claiming it's invalid, is a punishable action.
+              </p>
+              <div style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+                <button mat-button color="warn" (click)="openDisputeWithCause(item, 'BUYER_INVALID_TRADELINK')" style="color: rgb(244 67 54 / 38%) !important;">Open
+                  Dispute due to Invalid Trade Link</button>
+                  <span *ngIf="isDisputingTL"><mat-progress-spinner  class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
+                  </mat-progress-spinner></span>
+              </div>
             </div>
           </mat-expansion-panel>
         </mat-accordion>
@@ -106,7 +116,7 @@
 
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Open
+        <button mat-button color="warn" (click)="openDispute(item)" style="color: rgb(244 67 54 / 38%) !important;">Open
           Dispute</button>
         <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Close</button>
       </mat-dialog-actions>
