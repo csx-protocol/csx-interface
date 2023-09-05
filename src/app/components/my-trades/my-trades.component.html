@@ -40,7 +40,7 @@
 
       <tr *ngFor="let userInteraction of myTradesService.userItems.slice()" style="height: 38px;">
         <!-- <td><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg>{{userInteraction.trimmedAddress}}</td> -->
-        <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg> {{userInteraction.itemMarketName}}</td>
+        <td class="tdColor"><svg style="width: 14px; display: inline-block;" [data-jdenticon-value]="userInteraction.contractAddress"></svg><a routerLink="trade/{{userInteraction.contractAddress}}">{{userInteraction.itemMarketName}}</a></td>
         <td class="tdColor" *ngIf="myTradesService.selectedRoleFilter == 'ANY'">{{userInteraction.uiInfo.role}}</td>
         <td class="tdColor">{{userInteraction.uiInfo.status}}</td>
         <td class="tdColor">

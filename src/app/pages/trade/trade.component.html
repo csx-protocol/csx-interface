@@ -1,0 +1,134 @@
+<div class="container margins" *ngIf="hasWeb3 && hasValidTradeAddress">
+    <div class="left-column">
+        <mat-card @fadeInOut class="margins background"
+            style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+            <mat-card-content  style="display: flex; justify-content: center; align-items: center;">
+                
+                <div class="left-column"><h1>{{item.itemMarketName}}</h1></div>
+                <div class="right-column">
+                    <img class="responsive-img" style="max-width: min-content;" mat-card-image [src]="item.itemImageUrl" alt="{{item.itemMarketName}}"> <br>
+                    <span *ngIf="item.stickers">
+                        <span *ngFor="let sticker of item.stickers">
+                          <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="1000" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{item.itemMarketName}}">
+                        </span>
+                    </span>
+                </div>
+                
+            </mat-card-content>
+        </mat-card>
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-card class="margins background">
+            <mat-card-content>
+                <mat-stepper [@fadeInOut]="stepper.selectedIndex !== 0 ? 'out' : 'in'" [orientation]="stepperOrientation" linear="true" #stepper>
+                    <mat-step [stepControl]="firstFormGroup" >
+                        <form [formGroup]="firstFormGroup">
+                            <ng-template matStepLabel>For Sale</ng-template>
+                            <div *ngIf="role != 1 && status == 0">
+                                <p >Seize the Moment: Own The {{item.weaponType}} Now!</p>
+                                <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD"> Price: 
+                                    <img *ngIf="item.priceType == 0" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+                                    <img *ngIf="item.priceType == 1" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+                                    <img *ngIf="item.priceType == 2" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"> 
+                                    <span *ngIf="item.priceType == 0" style="color:#687dff;">{{item.indexInfo.etherPrice}} </span> <span *ngIf="item.priceType != 0" style="color:#687dff;">{{item.indexInfo.priceInUSD.toFixed(2)}} </span> 
+                                    <span *ngIf="item.priceType == 0">ETH</span>
+                                    <span *ngIf="item.priceType == 1">USDC</span>
+                                    <span *ngIf="item.priceType == 2">USDT</span>
+                                    <span matTooltipPosition="above" matTooltip="-{{referralInfo.discountRatio / 2}}% OFF FEE APPLIED" style="margin-left: -23px; width: 10px; display: -webkit-inline-box;">
+                                      <button style="color: rgb(181, 37, 37);" disabled="true" *ngIf="referralInfo.hasReferral" mat-button color="primary">
+                                        <mat-icon>local_offer</mat-icon>
+                                      </button>
+                                    </span>
+                                  </p>
+                                <button matTooltip="Buy Item" (click)="openBuyDialog(item)" style="color: #10b819 !important; z-index: 16;" mat-button color="primary">
+                                    <mat-icon>add_shopping_cart</mat-icon>BUY NOW
+                                  </button>
+                            </div>
+                            <div *ngIf="role == 1 && status == 0">
+                                <p style="font-size: small;">Remove Listing</p>
+                                <button style="color: rgb(255, 47, 47) !important;" mat-button>Cancel Listing</button>
+                            </div>
+                            
+                        </form>
+                    </mat-step>
+                    <mat-step [stepControl]="secondFormGroup" label="Sold" >
+                        <form [formGroup]="secondFormGroup">
+                            <!-- <div *ngIf="role != 1 && status == 2">
+                                <p >Status: {{statusToString(status)}}</p>
+                                <button style="color: rgb(255, 47, 47) !important;" mat-button>Cancel Order</button>
+                            </div> -->
+                        </form>
+                    </mat-step>
+                    <mat-step [stepControl]="thirdFormGroup" label="Completed" >
+                        <form [formGroup]="thirdFormGroup">
+                            <p style="font-size: small;">wtf is  this???+</p>
+                        </form>
+                    </mat-step>
+                </mat-stepper>                
+            </mat-card-content>
+        </mat-card>
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-card class="margins background">
+            <mat-card-content>
+                <app-timeline *ngIf="item.contractAddress" @fadeInOut [contractAddress]="item.contractAddress"></app-timeline>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="right-column" @fadeInOut>
+        <mat-card class="margins background">
+            <!-- Content for second card -->
+            <span style="margin-left: 20px; margin-right: 20px;">
+                <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD"> Price: 
+                    <img *ngIf="item.priceType == 0" src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+                    <img *ngIf="item.priceType == 1" src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;">
+                    <img *ngIf="item.priceType == 2" src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"> 
+                    <span *ngIf="item.priceType == 0" style="color:#687dff;">{{item.indexInfo.etherPrice}} </span> <span *ngIf="item.priceType != 0" style="color:#687dff;">{{item.indexInfo.priceInUSD.toFixed(2)}} </span> 
+                    <span *ngIf="item.priceType == 0">ETH</span>
+                    <span *ngIf="item.priceType == 1">USDC</span>
+                    <span *ngIf="item.priceType == 2">USDT</span>
+                    <span matTooltipPosition="above" matTooltip="-{{referralInfo.discountRatio / 2}}% OFF FEE APPLIED" style="margin-left: -23px; width: 10px; display: -webkit-inline-box;">
+                      <button style="color: rgb(181, 37, 37);" disabled="true" *ngIf="referralInfo.hasReferral" mat-button color="primary">
+                        <mat-icon>local_offer</mat-icon>
+                      </button>
+                    </span>
+                  </p>
+                <div style="display: inline-block; margin-top: -16px;">
+                <p [appCustomTooltip]="customTooltipTemplate">Sold By: <span style="color:#687dff;">{{item.sellerShort}}</span></p>                
+                </div>
+                <app-float-bar [min]="item.skinInfo.floatValues[1]" [max]="item.skinInfo.floatValues[0]" [value]="item.skinInfo.floatValues[2]"></app-float-bar>
+                <div>
+                    <p>Float: <span style="color:#687dff;">{{item.skinInfo.floatValues[2]}}</span></p>
+                    <p style="margin-top: -11px;">Paint Seed: <span style="color:#687dff;">{{item.skinInfo.paintSeed}}</span></p>
+                    <p style="margin-top: -11px;">Paint Index: <span style="color:#687dff;">{{item.skinInfo.paintIndex}}</span></p>
+                </div>
+                
+                <!---->
+                <ng-template #customTooltipTemplate>
+                    <div style="background-color: rgb(16 16 30 / 94%) !important; align-items: center;">
+                        <!-- <p style="padding-top: 1rem; color: #b0b3da; text-align: center; ">Seller</p> -->
+                        <app-level-circle [userAddress]="item.seller" [displayTradeDetails]="true"></app-level-circle>
+                    </div>
+                </ng-template>
+                <!---->
+            </span>
+
+        </mat-card>
+    </div>
+</div>
+
+<mat-card *ngIf="hasWeb3 && !hasValidTradeAddress" @fadeInOut class="margins background"
+    style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+    <mat-card-content>
+        <h1>Trade Address Required</h1>
+        <p>set trade address in url /trade/0x..</p>
+        <p></p>
+    </mat-card-content>
+</mat-card>
+
+<mat-card *ngIf="!hasWeb3" @fadeInOut class="margins background"
+    style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+    <mat-card-content>
+        <h1>Login to Web3</h1>
+        <p>Connect wallet to continue.</p>
+        <p></p>
+    </mat-card-content>
+</mat-card>
