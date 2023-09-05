@@ -80,8 +80,10 @@
       <!-- [@cardAnimation]="state" -->
       <mat-card  class="item-card background"  @fadeInOut>
         <mat-card-header>
-          <div mat-card-avatar class="item-header-image" matTooltip="Trade Address: {{item.contractAddress}}">
-            <svg  [data-jdenticon-value]="item.contractAddress"></svg>
+          <div mat-card-avatar class="item-header-image" matTooltip="Go to listing">
+            <a routerLink="trade/{{item.contractAddress}}">
+              <svg [data-jdenticon-value]="item.contractAddress"></svg>
+            </a> 
           </div>
 
           <mat-card-title [appCustomTooltip]="customTooltipTemplate"><p>{{item.sellerTrimmedAddress}}</p></mat-card-title>
