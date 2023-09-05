@@ -94,7 +94,7 @@ export class BuyDialog {
 
   onCheckOutClick(): void {
     const referralInfo = this.referralService.referralInfo;
-    const netValues = this.web3.calculateNetValue(this.item.weiPrice, referralInfo.hasReferral, 2, referralInfo.discountRatio);
+    const netValues = this.web3.calculateNetValue(this.item.weiPrice, referralInfo.hasReferral, this.web3.webUser.baseFee, referralInfo.discountRatio);
     const tradeLink = this.firstFormGroup.value.firstCtrl;
 
     this.tradeLinkService.setTradeLinkUrl(tradeLink);
