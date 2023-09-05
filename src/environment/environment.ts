@@ -13,7 +13,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0xe2feFf7Bd8b51cF228E1691ba9F03A9c0Cf0E890",
+      address: "0x83A293d57aF712eA0CCCc74aB7D04DE9b8550973",
       abi: [
         {
           "inputs": [],
@@ -337,7 +337,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x4E6Ee3266246f2476d01639A08fA49909e5AeB44",
+      address: "0x116E014918F5323716c91Fce394Bd4240F2702c6",
       abi: [
         {
           "inputs": [
@@ -861,9 +861,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0xE8166872201869daf3a6A7b14cCfecEd455bc63b",
-        USDT: "0xD10ec3976F6143B6D2a5a2eE7457bCe4842d52c4",
-        WETH: "0x942ec0961f0Ff9fcB732Eefcf53Ad78E9b754eb7",
+        USDC: "0x8f1a418E42A8e587f338c930d4630d8D06e8369F",
+        USDT: "0xCB77F53286Ac2CAC62470B3df040669C1618D550",
+        WETH: "0xa80c9404F07694696Afe7855312BaAb7AF02eCb3",
       },
       abi: [
         {
@@ -1450,7 +1450,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0x344941CA631841b3228609064a7036474e13f937",
+      address: "0xab2fA8d250c59B13dD86C0B45f697CB8297FF352",
       abi: [
         {
           "inputs": [
@@ -1857,7 +1857,7 @@ export const environment = {
       ]
     },
     VestedCSX: {
-      address: "0xB7A1D1BC14Bd3080c1E8985117d2f216a4663CD4",
+      address: "0xd19b6581561277BBf46EEB5105C74dfd85a50B00",
       abi: [
         {
           "inputs": [
@@ -2318,11 +2318,30 @@ export const environment = {
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getVestedStakingContractAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },
     Keepers: {
-      address: '0x1c8E24271c1f77d8B832389f99837b565C36b361',
+      address: '0xf99862f1AF3b7b0448E674265e402E9551b77707',
       abi: [
         {
           "inputs": [
@@ -2459,6 +2478,25 @@ export const environment = {
           "inputs": [
             {
               "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "isKeeper",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "_newAddres",
               "type": "address"
             }
@@ -2503,7 +2541,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0xE5D4133DFf0856f6E057ecCA1D810302E78e71A7',
+      address: '0xD381a57D37dd8a82b44a27A76b2C169e9d675D03',
       abi: [
         {
           "inputs": [
@@ -2744,11 +2782,11 @@ export const environment = {
           "inputs": [
             {
               "internalType": "address",
-              "name": "_user",
+              "name": "user",
               "type": "address"
             }
           ],
-          "name": "getUser",
+          "name": "getUserData",
           "outputs": [
             {
               "components": [
@@ -2892,89 +2930,6 @@ export const environment = {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "user",
-              "type": "address"
-            }
-          ],
-          "name": "getUserData",
-          "outputs": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "reputationPos",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "reputationNeg",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalTrades",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "warnings",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isBanned",
-                  "type": "bool"
-                },
-                {
-                  "components": [
-                    {
-                      "internalType": "uint256",
-                      "name": "totalStarts",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "totalDeliveryTime",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "numberOfDeliveries",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "averageDeliveryTime",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct Users.DeliveryTimes",
-                  "name": "deliveryInfo",
-                  "type": "tuple"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalTradesAsSeller",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalTradesAsBuyer",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct Users.User",
-              "name": "",
-              "type": "tuple"
             }
           ],
           "stateMutability": "view",
@@ -3216,7 +3171,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0xb7FF451D7fd58230BE2e640b955145fD10B63158",
+      address: "0x2c0DC9ce468d557414e4EBF1d73F135dB476e401",
       abi: [
         {
           "inputs": [
@@ -3296,11 +3251,6 @@ export const environment = {
             {
               "internalType": "uint256",
               "name": "currentLevel",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "scalingFactor",
               "type": "uint256"
             },
             {
@@ -3413,7 +3363,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0xC98812ec28698D25Df4bEA9c0e250F5642FB656e",
+      address: "0x0518EF719d9c1596F5571BBe6e6A5E8BF7C78554",
       abi: [
         {
           "inputs": [],
@@ -3807,8 +3757,8 @@ export const environment = {
         }
       ],
     },
-    tradeFactory: {
-      address: "0x66D009C55Ad71C7fb62F6CECE1E22DD42ec7C733",
+    TradeFactory: {
+      address: "0x366bbDd4d54DaA8E83Cfe23CAf56C04F5EEd586E",
       abi: [
         {
           "inputs": [
@@ -4421,6 +4371,11 @@ export const environment = {
                   "internalType": "enum PriceType",
                   "name": "priceType",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "assetId",
+                  "type": "string"
                 }
               ],
               "internalType": "struct TradeInfo",
@@ -4580,6 +4535,11 @@ export const environment = {
                   "internalType": "enum PriceType",
                   "name": "priceType",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "assetId",
+                  "type": "string"
                 }
               ],
               "internalType": "struct TradeInfo",
@@ -4671,9 +4631,9 @@ export const environment = {
           "type": "function"
         }
       ],
-    },    
+    },
     BuyAssistoor: {
-      address: "0x3549674B3497EBef60544c6D3dF216CC51080b2D",
+      address: "0xCF883629e1c5BaF1cF6038cd1956C57cd9B783c5",
       abi: [
         {
           "inputs": [
@@ -4893,19 +4853,6 @@ export const environment = {
               "internalType": "string",
               "name": "",
               "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "disputedStatus",
-          "outputs": [
-            {
-              "internalType": "enum TradeStatus",
-              "name": "",
-              "type": "uint8"
             }
           ],
           "stateMutability": "view",
@@ -5150,6 +5097,25 @@ export const environment = {
         {
           "inputs": [],
           "name": "status",
+          "outputs": [
+            {
+              "internalType": "enum TradeStatus",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "statusHistory",
           "outputs": [
             {
               "internalType": "enum TradeStatus",
@@ -5469,6 +5435,19 @@ export const environment = {
           ],
           "stateMutability": "view",
           "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getStatusCount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },
@@ -5651,6 +5630,34 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getClaimableAmountAndVestTimeStart",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "usdcAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "usdtAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "wethAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "vestTimeStart",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bool",
@@ -5697,7 +5704,7 @@ export const environment = {
       isUsing: false,
       ethMockPrice: 1535,
       address: '0x62CAe0FA2da220f43a51F86Db2EDb36DcA9A5A08', //Goerli: 0x62CAe0FA2da220f43a51F86Db2EDb36DcA9A5A08 Main: 0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612
-      abi: [{"inputs":[{"internalType":"address","name":"_aggregator","type":"address"},{"internalType":"address","name":"_accessController","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"int256","name":"current","type":"int256"},{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"updatedAt","type":"uint256"}],"name":"AnswerUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"roundId","type":"uint256"},{"indexed":true,"internalType":"address","name":"startedBy","type":"address"},{"indexed":false,"internalType":"uint256","name":"startedAt","type":"uint256"}],"name":"NewRound","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"OwnershipTransferRequested","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"acceptOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"accessController","outputs":[{"internalType":"contract AccessControllerInterface","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"aggregator","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_aggregator","type":"address"}],"name":"confirmAggregator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"description","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_roundId","type":"uint256"}],"name":"getAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint80","name":"_roundId","type":"uint80"}],"name":"getRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_roundId","type":"uint256"}],"name":"getTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestAnswer","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestTimestamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint16","name":"","type":"uint16"}],"name":"phaseAggregators","outputs":[{"internalType":"contract AggregatorV2V3Interface","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"phaseId","outputs":[{"internalType":"uint16","name":"","type":"uint16"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_aggregator","type":"address"}],"name":"proposeAggregator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"proposedAggregator","outputs":[{"internalType":"contract AggregatorV2V3Interface","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint80","name":"_roundId","type":"uint80"}],"name":"proposedGetRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"proposedLatestRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_accessController","type":"address"}],"name":"setController","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
+      abi: [{ "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }, { "internalType": "address", "name": "_accessController", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "int256", "name": "current", "type": "int256" }, { "indexed": true, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "updatedAt", "type": "uint256" }], "name": "AnswerUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "startedBy", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "startedAt", "type": "uint256" }], "name": "NewRound", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }], "name": "OwnershipTransferRequested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }], "name": "OwnershipTransferred", "type": "event" }, { "inputs": [], "name": "acceptOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "accessController", "outputs": [{ "internalType": "contract AccessControllerInterface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "aggregator", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }], "name": "confirmAggregator", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "description", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_roundId", "type": "uint256" }], "name": "getAnswer", "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "getRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_roundId", "type": "uint256" }], "name": "getTimestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestAnswer", "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRound", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestTimestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }], "name": "phaseAggregators", "outputs": [{ "internalType": "contract AggregatorV2V3Interface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "phaseId", "outputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }], "name": "proposeAggregator", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "proposedAggregator", "outputs": [{ "internalType": "contract AggregatorV2V3Interface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "proposedGetRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "proposedLatestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_accessController", "type": "address" }], "name": "setController", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "version", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
     }
   },
   /**
