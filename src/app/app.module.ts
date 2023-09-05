@@ -92,6 +92,8 @@ import { OpenDisputeDialog } from './components/my-trades/dialogs/10-open-disput
 import { MintEscrowComponent } from './pages/mint-escrow/mint-escrow.component';
 import { EscrowDialog } from './pages/mint-escrow/utils/escrow.dialog';
 import { SignStepComponent } from './components/sign-step/sign-step.component';
+import { TradeComponent } from './pages/trade/trade.component';
+import { TimelineComponent } from './pages/trade/utils/timeline/timeline.component';
 
 
 @NgModule({
@@ -123,7 +125,7 @@ import { SignStepComponent } from './components/sign-step/sign-step.component';
     EscrowDialog, MintEscrowComponent, // MintEscrowComponent
     wethConvertDialog, // NavBarComponent
     OpenDisputeDialog, // SellerCommittedDialog
-    SignStepComponent, // EarnComponent/StakeDialog
+    SignStepComponent, TradeComponent, TimelineComponent, // EarnComponent/StakeDialog
   ],
   imports: [
     BrowserModule,
