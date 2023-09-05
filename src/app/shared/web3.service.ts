@@ -50,6 +50,7 @@ interface WebUser {
   isUserWalletConnected: boolean;
   hasEthWallet?: boolean;
   itemGetInfo?: any;
+  baseFee: number;
 }
 
 @Injectable({
@@ -111,6 +112,7 @@ export class Web3Service implements OnDestroy {
     isConnected: false,
     isUserWalletConnected: false,
     isWrongChain: true,
+    baseFee: 26
   };
 
   constructor(
@@ -244,6 +246,7 @@ export class Web3Service implements OnDestroy {
         this.webUser.address = _accounts[0];
         await this.___initContractInstances();
         this.___subscribeToTradeFactoryEvents();
+        this.webUser.baseFee = await this.___getBaseFee();
         this.csxInstance.accountSubject.next(this.webUser.address);
       } catch (error) {
         this.notificationsService.notify(
@@ -664,7 +667,7 @@ export class Web3Service implements OnDestroy {
       //const etherPrice = this.fromWei(tradeDetails.weiPrice);
       const decimals = tradeDetails.priceType == 1 || tradeDetails.priceType == 2 ? 6 : 18;
 
-      const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, 2, discountRatio);
+      const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, this.webUser.baseFee, discountRatio);
 
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
       const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice, 'ether');
@@ -756,7 +759,7 @@ export class Web3Service implements OnDestroy {
 
       console.log('weiPrajce', element.weiPrice, discountRatio);
 
-      const netValues = this.calculateNetValue(element.weiPrice, hasDiscount, 2, discountRatio);
+      const netValues = this.calculateNetValue(element.weiPrice, hasDiscount, this.webUser.baseFee, discountRatio);
 
       // decimals if priceType 1 or 2 then its 6 otherwise 18
       const decimals = element.priceType == 1 || element.priceType == 2 ? 6 : 18;
@@ -1418,6 +1421,13 @@ export class Web3Service implements OnDestroy {
       .on('error', (error: any) => {
         this.chainEvents.onError(error);
       });
+  }
+
+  private async ___getBaseFee(): Promise<number> {
+    const result = await this.contracts['TradeFactory'].methods
+      .baseFee()
+      .call({ from: this.webUser.address })
+      return parseInt(result);
   }
 
   private async _checkForPastNotifications() {
