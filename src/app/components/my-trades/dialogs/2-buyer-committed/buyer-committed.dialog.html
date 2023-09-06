@@ -127,7 +127,7 @@
 
   <trades-seller-committed-dialog *ngIf="hasSuccessfullyVeridictedAccept" [item]="item"></trades-seller-committed-dialog>
 
-  <trades-seller-cancelled-dialog *ngIf="hasSuccessfullyVeridictedReject" [item]="item"></trades-seller-cancelled-dialog>
+  <trades-seller-cancelled-after-buyer-committed-dialog *ngIf="hasSuccessfullyVeridictedReject" [item]="item"></trades-seller-cancelled-after-buyer-committed-dialog>
 
 </span>
 <span *ngIf="!item">
