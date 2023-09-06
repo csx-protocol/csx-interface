@@ -146,6 +146,10 @@ h1 {
   pointer-events: none !important;
 }
 
+::ng-deep .mat-vertical-stepper-header {
+  pointer-events: none !important;
+}
+
 ::ng-deep .mat-step-icon-state-done {
   background-color: #974539 !important;
 }
@@ -157,6 +161,11 @@ h1 {
 
 ::ng-deep .trade-did-happen .mat-step-icon {
   background-color: green !important;
+  color: white !important;
+}
+
+::ng-deep .trade-in-warning .mat-step-icon {
+  background-color: rgb(172, 134, 0) !important;
   color: white !important;
 }
 
