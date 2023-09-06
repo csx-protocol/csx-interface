@@ -129,7 +129,7 @@ export class TradeComponent {
 
   changeStepperHeaderEndStepDOM(tradeDidNotHappen: boolean, tradeDidHappen: boolean) {
     if (tradeDidNotHappen) {
-      this.step2Icon = 'report_off';
+      this.step2Icon = 'close';
       this.step2Color = 'white';
       const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
       if (stepHeaders && stepHeaders.length > 2) {
@@ -146,19 +146,19 @@ export class TradeComponent {
       }
     }
 
-    if(this.status as number >= TradeStatus.BuyerCommitted){
-      this.step1Color = 'white';
-      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
-      if (stepHeaders && stepHeaders.length > 1) {
-        this.renderer.addClass(stepHeaders[1], 'trade-did-happen');
-      }
-    }
-
     if(this.status as number >= TradeStatus.ForSale){
       this.step1Color = 'white';
       const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
       if (stepHeaders && stepHeaders.length > 1) {
         this.renderer.addClass(stepHeaders[0], 'trade-did-happen');
+      }
+    }
+
+    if(this.status as number >= TradeStatus.BuyerCommitted){
+      this.step1Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 1) {
+        this.renderer.addClass(stepHeaders[1], 'trade-did-happen');
       }
     }
 
