@@ -83,3 +83,19 @@ mat-card-subtitle {
     font-size: 10px;
   }
 }
+
+
+// Color line
+.color-line-right {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+}
+
+.color-line-left {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+}

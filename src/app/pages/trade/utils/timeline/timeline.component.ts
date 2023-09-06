@@ -62,7 +62,7 @@ export class TimelineComponent implements AfterViewInit {
           //console.log(`status`, status);
           const event: TimelineEvent = this.events[status];
           statusHistory.push(event);
-        });        
+        });
       }
 
       this.statusHistory = statusHistory;
@@ -81,6 +81,31 @@ export class TimelineComponent implements AfterViewInit {
     this.statusHistory.push(event);
   }
 
+  getLineColor(status: TradeStatus): string {
+    console.log('statusz', status);
+    
+    switch (status) {
+      case TradeStatus.ForSale:
+      case TradeStatus.BuyerCommitted:
+      case TradeStatus.SellerCommitted:
+      case TradeStatus.Completed:
+      case TradeStatus.Resolved:
+        return 'green';
+      
+      case TradeStatus.SellerCancelled:
+      case TradeStatus.BuyerCancelled:
+      case TradeStatus.SellerCancelledAfterBuyerCommitted:
+      case TradeStatus.Clawbacked:
+        return '#ba2431';
+      
+      case TradeStatus.Disputed:
+        return 'rgb(172, 134, 0)';
+      
+      default:
+        return 'grey';
+    }
+  }
+  
 
 }
 
