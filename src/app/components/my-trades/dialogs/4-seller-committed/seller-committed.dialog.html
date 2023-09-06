@@ -63,12 +63,12 @@
             <div style="margin: 3%;">
               <p>If you sent the item to the incorrect inventory, then you're out of luck!</p>
               <p>You can cancel the trade and the funds will be sent back to the buyer.</p>
-              <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> If you don't deliver the item and
+              <p><span style="color: rgb(229 62 51) !important;">Warning!</span> If you don't deliver the item and
                 <u>not</u> cancelling the trade below, the Keeper Oracle will punish on non-delivered committed trades.
               </p>
               <div style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
                 <button mat-button color="warn" (click)="openDisputeWithCause(item, 'SELLER_SENT_WRONG_INVENTORY')"
-                style="color: rgb(244 67 54 / 38%) !important;">Cancel Trade</button>
+                style="color: rgb(229 62 51) !important;">Cancel Trade</button>
                 <span *ngIf="isDisputingWrongInventory"><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
                 </mat-progress-spinner></span>
               </div>
@@ -90,11 +90,11 @@
             <div style="margin: 3%;">
               <p>If the buyer's trade link is invalid, you have the option to either reach out to them on Steam or dispute the trade.</p>
               <p>If you choose to dispute the trade, the funds will be returned to the buyer, and the trade will be voided.</p>
-              <p><span style="color: rgb(244 67 54 / 38%) !important;">Warning!</span> 
+              <p><span style="color: rgb(229 62 51) !important;">Warning!</span> 
                 Disputing a trade when the link is valid, claiming it's invalid, is a punishable action.
               </p>
               <div style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
-                <button mat-button color="warn" (click)="openDisputeWithCause(item, 'BUYER_INVALID_TRADELINK')" style="color: rgb(244 67 54 / 38%) !important;">Open
+                <button mat-button color="warn" (click)="openDisputeWithCause(item, 'BUYER_INVALID_TRADELINK')" style="color: rgb(229 62 51) !important;">Open
                   Dispute due to Invalid Trade Link</button>
                   <span *ngIf="isDisputingTL"><mat-progress-spinner  class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
                   </mat-progress-spinner></span>
@@ -114,7 +114,7 @@
             </mat-progress-spinner></span>
         </p>
 
-        <button mat-button color="warn" (click)="openDispute(item)" style="color: rgb(244 67 54 / 38%) !important;">Open
+        <button mat-button color="warn" (click)="openDispute(item)" style="color: rgb(229 62 51) !important;">Open
           Dispute</button>
         <button mat-button color="primary" [mat-dialog-close]="true">Close</button>
 
