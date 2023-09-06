@@ -82,7 +82,6 @@ export class TimelineComponent implements AfterViewInit {
   }
 
   getLineColor(status: TradeStatus): string {
-    console.log('statusz', status);
     
     switch (status) {
       case TradeStatus.ForSale:
