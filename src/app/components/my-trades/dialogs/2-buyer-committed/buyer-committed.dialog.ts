@@ -1,5 +1,5 @@
 
-import { ChangeDetectorRef, Component, Inject, Input, OnDestroy } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, Input, OnDestroy } from "@angular/core";
 import { MyTradeItem } from "../my-trade-item.interface";
 import { BuyerCommittedService } from "./buyer-committed.service";
 import { IntervalService } from "../interval.service";
@@ -18,7 +18,7 @@ enum Role {
     templateUrl: './buyer-committed.dialog.html',
     styleUrls: ['./buyer-committed.dialog.scss'],
 })
-export class BuyerCommittedDialog implements OnDestroy {
+export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
     @Input() item: MyTradeItem | undefined;
     role: Role | undefined;
     isLoading: boolean = true;
@@ -33,14 +33,14 @@ export class BuyerCommittedDialog implements OnDestroy {
     }
 
     // Listen on item changes
-    ngOnChanges() {
-        this.isLoading = true;
+    ngAfterViewInit() {
+        this.isLoading = true;       
         if (this.item) {
             this.role = this.item.uiInfo.role === "Seller" ? Role.Seller : Role.Buyer;
             this.validation();
             return;
         }
-        this.isLoading = false;
+      this.isLoading = false;
     }
 
     ngOnDestroy() {
@@ -71,7 +71,7 @@ export class BuyerCommittedDialog implements OnDestroy {
     private async validation() {
         if (this.item) {
             if (this.role === Role.Buyer) {
-                console.log("Buyer");
+                //console.log("Buyer");
                 [this.hasTimeIntervalPassed, this.buyerCommittTimestamp] = await this._hasTimeIntervalPassedSinceBuyerCommittedToTrade();
                 if (this.hasTimeIntervalPassed) {
                     // TODO: Show dialog to buyer that the time interval has passed
@@ -150,7 +150,7 @@ export class BuyerCommittedDialog implements OnDestroy {
         if (this.item && this.hasTimeIntervalPassed !== undefined) {
             this.progressBarValue = this.__getProgressBarValue(this.buyerCommittTimestamp);
             this.__calculateTimeLeft(this.buyerCommittTimestamp);
-            console.log('this.progressBarValue', this.progressBarValue);
+            //console.log('this.progressBarValue', this.progressBarValue);
 
             if (this.progressBarValue === 100) {
                 this.hasTimeIntervalPassed = true;
