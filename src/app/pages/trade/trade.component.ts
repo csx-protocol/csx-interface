@@ -88,6 +88,7 @@ export class TradeComponent {
     };
 
   @ViewChild('stepper') stepper!: MatStepper;
+  @ViewChild('midStep') midStep!: MatStep;
   @ViewChild('endStep') endStep!: MatStep;
 
   firstFormGroup = this._formBuilder.group({
@@ -161,6 +162,15 @@ export class TradeComponent {
       }
     }
 
+    if(this.status as number >= TradeStatus.Disputed){
+      this.step1Icon = 'priority_high';
+      this.step1Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 1) {
+        this.renderer.addClass(stepHeaders[1], 'trade-in-warning');
+      }
+    }
+
     this.cdr.detectChanges();
   }
 
@@ -178,8 +188,12 @@ export class TradeComponent {
     return 'default';
   }
 
+  step1Icon: string = 'check';
   step2Icon: string = 'check';
   getStepIcon(index: number): string {
+    if(index === 1){
+      return this.step1Icon;
+    } else
     if (index === 2) {
       return this.step2Icon;
     }
@@ -277,6 +291,11 @@ export class TradeComponent {
     // this.endStep.label;
     const endStepLabel = this.status == TradeStatus.Completed ? 'Item Sent' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Item Sent';
     this.endStep.label = endStepLabel;
+    
+
+    if(this.status == TradeStatus.Disputed){
+      this.midStep.label = 'Trade Disputed';
+    }
 
     const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
     const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
@@ -321,10 +340,13 @@ export class TradeComponent {
 
       this.editStepIndex = category;
 
+      if(this.status == TradeStatus.Disputed){
+        this.midStep.label = 'Trade Disputed';
+      }
+
       const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
       const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
   
-      
       this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
 
     }, 'TradeComponent');
