@@ -10,6 +10,7 @@ import { BuyDialog } from '../../components/recently-listed-items/utils/buy.dial
 import { MatDialog } from '@angular/material/dialog';
 import { TimelineService } from './utils/timeline/timeline.service';
 import { SubscriptionService } from '../../components/my-trades/dialogs/subscription.service';
+import { MyTradeItem } from '../../components/my-trades/dialogs/my-trade-item.interface';
 
 @Component({
   selector: 'app-trade',
@@ -324,6 +325,7 @@ export class TradeComponent {
             this.status == TradeStatus.Resolved ||
             this.status == TradeStatus.Clawbacked ||
             this.status == TradeStatus.SellerCancelled ||
+            this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ||
             this.status == TradeStatus.BuyerCancelled ? 2 : 1;
 
       if (category >= 1) {
@@ -442,6 +444,35 @@ export class TradeComponent {
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result`, result);
     });
+  }
+
+  private __getRoleString(role: TradeRole | string): string {
+    switch (role.toString()) {
+      case '0':
+        return 'Buyer' || TradeRole.BUYER;
+      case '1':
+        return 'Seller' || TradeRole.SELLER;
+      default:
+        return 'ERROR';
+    }
+  }
+  convertTradeItemToMyTradeItem(_item: TradeItem): MyTradeItem {
+    const role = this.role;
+    const item = { contractAddress: _item.contractAddress, index: undefined, role: role, status: _item.status };
+
+    const [max, min, value] = _item.skinInfo.floatValues;
+
+    const details = {
+      ..._item,
+      uiInfo: {
+        ...item,
+        status: this.statusToString(item.status as TradeStatus),
+        role: this.__getRoleString(item.role),
+      },
+      float: { max: max, min: min, value: value }
+    } as unknown as MyTradeItem;
+
+    return details;
   }
 
   ngOnDestroy(): void {
