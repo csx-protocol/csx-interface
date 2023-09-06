@@ -145,15 +145,32 @@ export class TradeComponent {
       }
     }
 
+    if(this.status as number >= TradeStatus.BuyerCommitted){
+      this.step1Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 1) {
+        this.renderer.addClass(stepHeaders[1], 'trade-did-happen');
+      }
+    }
+
+    if(this.status as number >= TradeStatus.ForSale){
+      this.step1Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 1) {
+        this.renderer.addClass(stepHeaders[0], 'trade-did-happen');
+      }
+    }
+
     this.cdr.detectChanges();
   }
 
   step2Color: string = 'default';
+  step1Color: string = 'default';
   getStepColor(index: number): string {
     if (index === 0) {
       return 'default';
     } else if (index === 1) {
-      return 'default';
+      return this.step1Color;
     } else if (index === 2) {
       return this.step2Color;
     }
@@ -228,12 +245,10 @@ export class TradeComponent {
     this.status = parseInt(_item.status) as TradeStatus;
     const isKeeper: boolean = await this.web3.callContractMethod('Keepers', 'isKeeper', [userAddress], 'call');
 
-    if (userAddress == buyerAddress) this.role = TradeRole.BUYER;
-    if (userAddress == sellerAddress) this.role = TradeRole.SELLER;
-    if (isKeeper) this.role = TradeRole.KEEPER;
-
-    console.log(`status`, this.status);
-
+    if (userAddress == buyerAddress) this.role = TradeRole.BUYER; else
+    if (userAddress == sellerAddress) this.role = TradeRole.SELLER; else
+    if (isKeeper) this.role = TradeRole.KEEPER; 
+    else this.role = TradeRole.ANY;
 
     const category =
       this.status ==
@@ -260,7 +275,7 @@ export class TradeComponent {
     this.editStepIndex = category;
 
     // this.endStep.label;
-    const endStepLabel = this.status == TradeStatus.Completed ? 'Completed' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Completed';
+    const endStepLabel = this.status == TradeStatus.Completed ? 'Item Sent' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Item Sent';
     this.endStep.label = endStepLabel;
 
     const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
@@ -272,7 +287,7 @@ export class TradeComponent {
     console.log("formGroupValid?", this.firstFormGroup.valid, this.secondFormGroup.valid, this.thirdFormGroup.valid);
 
 
-    this.thirdFormGroup.get('thirdCtrl')!.setValue('valid');
+    //this.thirdFormGroup.get('thirdCtrl')!.setValue('valid');
 
     //this.stepper!.selectedIndex = category;
 
@@ -292,18 +307,25 @@ export class TradeComponent {
             this.status == TradeStatus.SellerCancelled ||
             this.status == TradeStatus.BuyerCancelled ? 2 : 1;
 
-      if (category == 1) {
+      if (category >= 1) {
         this.firstFormGroup.get('firstCtrl')!.setValue('valid');
         this.editStepIndex = 1;
+        this.stepper!.next();
       }
 
       if (category == 2) {
         this.secondFormGroup.get('secondCtrl')!.setValue('valid');
         this.editStepIndex = 2;
+        this.stepper!.next();
       }
 
       this.editStepIndex = category;
 
+      const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
+      const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
+  
+      
+      this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
 
     }, 'TradeComponent');
   }
