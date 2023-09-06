@@ -48,7 +48,7 @@
           is the <a [href]="getSteamId64(this.item!.buyerTradeUrl[0])" target="_blank">buyer's steam profile</a>.</h4>
         <h4>Paint Index: {{item.skinInfo.paintIndex}} Paint Seed: {{item.skinInfo.paintSeed}}</h4>
         <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar><br>
-        <a [href]="getTradeOfferLink()" target="_blank"><button mat-button color="primary" style="color: #5ccf54 !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
+        <a [href]="getTradeOfferLink()" target="_blank"><button cdkFocusInitial mat-button color="primary" style="color: #5ccf54 !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
 
         <mat-accordion>
           <mat-expansion-panel hideToggle>
@@ -114,12 +114,11 @@
             </mat-progress-spinner></span>
         </p>
 
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
         <button mat-button color="warn" (click)="openDispute(item)" style="color: rgb(244 67 54 / 38%) !important;">Open
           Dispute</button>
-        <button mat-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>Close</button>
-      </mat-dialog-actions>
+        <button mat-button color="primary" [mat-dialog-close]="true">Close</button>
+
+      </mat-dialog-content>
     </span>
   </span>
 
