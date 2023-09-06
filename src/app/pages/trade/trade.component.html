@@ -63,10 +63,7 @@
                                     <mat-icon>add_shopping_cart</mat-icon>BUY NOW
                                   </button>
                             </div>
-                            <div *ngIf="role == 1 && status == 0">
-                                <p style="font-size: small;">Remove Listing</p>
-                                <button style="color: rgb(255, 47, 47) !important;" mat-button>Cancel Listing</button>
-                            </div>
+                            <!-- <trades-for-sale-dialog *ngIf="role == 1 && status == 0" [item]="convertTradeItemToMyTradeItem(item)"></trades-for-sale-dialog> -->
                             
                         </form>
                     </mat-step>
@@ -77,12 +74,27 @@
                                 <p >Status: {{statusToString(status)}}</p>
                                 <button style="color: rgb(255, 47, 47) !important;" mat-button>Cancel Order</button>
                             </div> -->
+                            <div *ngIf="role == 2 && status == 7">
+                                Keeper Attention Required on Disputed.
+                            </div>
+                            <div >
+                                <trades-disputed-dialog *ngIf="role == 0 && status == 7|| role == 1 && status == 7 || role == 2 && status == 7" [item]="convertTradeItemToMyTradeItem(item)"></trades-disputed-dialog>
+                                <!-- <trades-buyer-committed-dialog *ngIf="role == 0 && status == 2 || role == 1 && status == 2" [item]="convertTradeItemToMyTradeItem(item)"></trades-buyer-committed-dialog> -->
+                                <!-- <trades-seller-committed-dialog *ngIf="role == 0 && status == 4 || role == 1 && status == 4" [item]="convertTradeItemToMyTradeItem(item)"></trades-seller-committed-dialog>     -->
+                            </div>
+                            
                         </form>
                     </mat-step>
                   
                     <mat-step [stepControl]="thirdFormGroup" label="Item Sent" #endStep>
                         <form [formGroup]="thirdFormGroup">
                             <!-- <p style="font-size: small;">wtf is  this???+</p> -->
+                            <trades-completed-dialog *ngIf="role == 0 && status == 6 || role == 1 && status == 6" [item]="convertTradeItemToMyTradeItem(item)"></trades-completed-dialog>
+                            <trades-resolved-dialog *ngIf="role == 0 && status == 8 || role == 1 && status == 8 || role == 2 && status == 8" [item]="convertTradeItemToMyTradeItem(item)"></trades-resolved-dialog>
+                            <trades-clawbacked-dialog *ngIf="role == 0 && status == 9 || role == 1 && status == 9 || role == 2 && status == 9" [item]="convertTradeItemToMyTradeItem(item)"></trades-clawbacked-dialog>
+                            <trades-seller-cancelled-dialog *ngIf="role == 0 && status == 1 || role == 1 && status == 1" [item]="convertTradeItemToMyTradeItem(item)"></trades-seller-cancelled-dialog>
+                            <trades-seller-cancelled-after-buyer-committed-dialog *ngIf="role == 0 && status == 5 || role == 1 && status == 5" [item]="convertTradeItemToMyTradeItem(item)"></trades-seller-cancelled-after-buyer-committed-dialog>
+                            <trades-buyer-cancelled-dialog *ngIf="role == 0 && status == 3 || role == 1 && status == 3" [item]="convertTradeItemToMyTradeItem(item)"></trades-buyer-cancelled-dialog>
                         </form>
                     </mat-step>
                   
@@ -136,6 +148,9 @@
             </span>
 
         </mat-card>
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <app-action-card></app-action-card>
+        
     </div>
 </div>
 
