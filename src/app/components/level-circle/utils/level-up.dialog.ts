@@ -113,8 +113,7 @@ export class LevelUpDialog {
             console.log('cost', cost);
             this.csxCost = cost;
         });
-
-        this.web3.allowance('CSX', this.web3.webUser.address!, environment.CONTRACTS.UserProfileLevel.address).then((allowance) => {
+        this.web3.callContractMethod('CSXToken', 'allowance', [this.web3.webUser.address!, this.web3.contracts['UserProfileLevel'].options.address], 'call').then((allowance) => {
             //this.allowanceCSX = allowance;
             console.log('allowance', allowance);
             console.log('totalCostInWei', totalCostInWei);
