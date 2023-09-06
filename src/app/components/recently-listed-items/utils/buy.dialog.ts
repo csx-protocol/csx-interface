@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Inject, NgZone, Output, ViewChild } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Item } from "../../../shared/item.interface";
@@ -29,7 +29,7 @@ import { NotificationService } from "../../../shared/notification.service";
 export class BuyDialog {
   state = 'in'; // for animation
   isInMinutes: boolean = false;
-
+  @Output() public dialogData: EventEmitter<any> = new EventEmitter();
   @ViewChild('stepper') stepper: MatStepper | undefined;
  // @ViewChild('stepper2') stepper2: MatStepper | undefined;
 
@@ -41,15 +41,6 @@ export class BuyDialog {
     secondCtrl: ['', /*Validators.required*/],
   });
   isLinear = true;
-
-  // thirdFormGroup = this._formBuilder.group({
-  //   thirdCtrl: ['', /*Validators.required*/],
-  // });
-
-  // forthFormGroup = this._formBuilder.group({
-  //   forthCtrl: ['', /*Validators.required*/],
-  // });
-
   constructor(
     public dialogRef: MatDialogRef<BuyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -57,7 +48,7 @@ export class BuyDialog {
     public web3: Web3Service,
     public referralService: ReferralService,
     private tradeLinkService: TradeLinkService,
-    private notify: NotificationService
+    private notify: NotificationService,
   ) {
 
     this.firstFormGroup = this._formBuilder.group({
@@ -73,7 +64,6 @@ export class BuyDialog {
     if (tradeLinkLS !== '') {
       this.firstFormGroup.controls['firstCtrl'].setValue(tradeLinkLS);
     }
-
   }
 
   onNoClick(): void {
@@ -107,6 +97,7 @@ export class BuyDialog {
         }
         this.stepper!.selectedIndex = 2;
         this.notify.notify(`You're currently awaiting confirmation from seller for ${this.item.itemMarketName}.`, this.item.contractAddress, 'Cancel Trade', true);
+        this.dialogData.emit({ bought: true });
       });
     } else {
       this.buyWithERC20(netValues.buyerNetPrice, tradeLink, referralInfo.bytes32, netValues.buyerNetPrice);
@@ -172,6 +163,7 @@ export class BuyDialog {
       console.log('buy item success');
       const _valueInEther = this.web3.csxInstance.web3.utils.fromWei(_weiValue, 'ether');
       this.web3.decreaseBalance(_token, _valueInEther);
+      this.dialogData.emit({ bought: true });    
     }
     ).catch((error) => {
       this.isBuying = false;
