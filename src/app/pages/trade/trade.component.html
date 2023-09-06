@@ -19,8 +19,28 @@
         <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
         <mat-card class="margins background">
             <mat-card-content>
+
                 <mat-stepper [@fadeInOut]="stepper.selectedIndex !== 0 ? 'out' : 'in'" [orientation]="stepperOrientation" linear="true" #stepper>
-                    <mat-step [stepControl]="firstFormGroup" >
+
+                    <!-- Custom icon for completed steps -->
+                     
+                          
+                    <ng-template matStepperIcon="edit" let-index="index">
+                    <mat-icon [ngStyle]="{'color': getStepColor(index)}">{{ getStepIcon(index) }}</mat-icon>
+                    </ng-template>
+                    
+                    <ng-template matStepperIcon="number" let-index="index">
+                    <ng-container *ngIf="isStepEditable(index); else defaultIcon">
+                        <mat-icon [ngStyle]="{'color': getStepColor(index)}">{{ getStepIcon(index) }}</mat-icon>
+                    </ng-container>
+                    <ng-template #defaultIcon>
+                        <span [ngStyle]="{'color': getStepColor(index)}">{{index + 1}}</span>
+                    </ng-template>
+                    </ng-template>
+
+                   
+                  
+                    <mat-step [stepControl]="firstFormGroup">
                         <form [formGroup]="firstFormGroup">
                             <ng-template matStepLabel>For Sale</ng-template>
                             <div *ngIf="role != 1 && status == 0">
@@ -50,7 +70,8 @@
                             
                         </form>
                     </mat-step>
-                    <mat-step [stepControl]="secondFormGroup" label="Sold" >
+                    
+                    <mat-step [stepControl]="secondFormGroup" label="Sold">
                         <form [formGroup]="secondFormGroup">
                             <!-- <div *ngIf="role != 1 && status == 2">
                                 <p >Status: {{statusToString(status)}}</p>
@@ -58,18 +79,21 @@
                             </div> -->
                         </form>
                     </mat-step>
-                    <mat-step [stepControl]="thirdFormGroup" label="Completed" >
+                  
+                    <mat-step [stepControl]="thirdFormGroup" label="Completed" #endStep>
                         <form [formGroup]="thirdFormGroup">
-                            <p style="font-size: small;">wtf is  this???+</p>
+                            <!-- <p style="font-size: small;">wtf is  this???+</p> -->
                         </form>
                     </mat-step>
-                </mat-stepper>                
+                  
+                  </mat-stepper>
+                  
             </mat-card-content>
         </mat-card>
         <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
         <mat-card class="margins background">
             <mat-card-content>
-                <app-timeline *ngIf="item.contractAddress" @fadeInOut [contractAddress]="item.contractAddress"></app-timeline>
+                <app-timeline *ngIf="item.contractAddress" [contractAddress]="item.contractAddress" [weaponType]="item.weaponType"></app-timeline>
             </mat-card-content>
         </mat-card>
     </div>

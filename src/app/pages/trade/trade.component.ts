@@ -1,14 +1,15 @@
-import { Component, ViewChild, HostListener } from '@angular/core';
+import { Component, ViewChild, HostListener, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Web3Service } from '../../shared/web3.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatStepper, StepperOrientation } from '@angular/material/stepper';
+import { MatStep, MatStepper, StepperOrientation } from '@angular/material/stepper';
 import { ReferralService } from '../../shared/referral.service';
 import { BuyDialog } from '../../components/recently-listed-items/utils/buy.dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { TimelineService } from './utils/timeline/timeline.service';
+import { SubscriptionService } from '../../components/my-trades/dialogs/subscription.service';
 
 @Component({
   selector: 'app-trade',
@@ -87,8 +88,7 @@ export class TradeComponent {
     };
 
   @ViewChild('stepper') stepper!: MatStepper;
-
-
+  @ViewChild('endStep') endStep!: MatStep;
 
   firstFormGroup = this._formBuilder.group({
     firstCtrl: ['', Validators.required],
@@ -101,12 +101,15 @@ export class TradeComponent {
   });
 
   constructor(
-    private route: ActivatedRoute, 
-    private web3: Web3Service, 
-    private _formBuilder: FormBuilder, 
-    private referralService: ReferralService, 
+    private route: ActivatedRoute,
+    private web3: Web3Service,
+    private _formBuilder: FormBuilder,
+    private referralService: ReferralService,
     private dialog: MatDialog,
-    private timelineService: TimelineService) {
+    private timelineService: TimelineService,
+    private subService: SubscriptionService,
+    private cdr: ChangeDetectorRef,
+    private renderer: Renderer2, private el: ElementRef) {
     this.web3AccSub = web3.webUser.afterAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
     if (this.web3.webUser.address) {
       this.runAfterWeb3Init();
@@ -117,12 +120,68 @@ export class TradeComponent {
     this.setStepperOrientation();
   }
 
+  editStepIndex: number = 0;  // Set this to the index of the step you want to show as "editable"
+
+  isStepEditable(index: number): boolean {
+    return index === this.editStepIndex;
+  }
+
+  changeStepperHeaderEndStepDOM(tradeDidNotHappen: boolean, tradeDidHappen: boolean) {
+    if (tradeDidNotHappen) {
+      this.step2Icon = 'report_off';
+      this.step2Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 2) {
+        this.renderer.addClass(stepHeaders[2], 'trade-did-not-happen');
+      }
+    }
+
+    if (tradeDidHappen){
+      this.step2Icon = 'check';
+      this.step2Color = 'white';
+      const stepHeaders = this.el.nativeElement.querySelectorAll('.mat-step-header');
+      if (stepHeaders && stepHeaders.length > 2) {
+        this.renderer.addClass(stepHeaders[2], 'trade-did-happen');
+      }
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  step2Color: string = 'default';
+  getStepColor(index: number): string {
+    if (index === 0) {
+      return 'default';
+    } else if (index === 1) {
+      return 'default';
+    } else if (index === 2) {
+      return this.step2Color;
+    }
+    // Add more conditions as needed
+    return 'default';
+  }
+
+  step2Icon: string = 'check';
+  getStepIcon(index: number): string {
+    if (index === 2) {
+      return this.step2Icon;
+    }
+    return 'check';
+  }
+
+  getStepNumber(index: number): number {
+    return index + 1;
+  }
+
   setStepperOrientation() {
     if (window.innerWidth < 768) {
       this.stepperOrientation = 'vertical';
     } else {
       this.stepperOrientation = 'horizontal';
     }
+    const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
+    const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
+    this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
   }
 
   async runAfterWeb3Init(): Promise<void> {
@@ -173,6 +232,9 @@ export class TradeComponent {
     if (userAddress == sellerAddress) this.role = TradeRole.SELLER;
     if (isKeeper) this.role = TradeRole.KEEPER;
 
+    console.log(`status`, this.status);
+
+
     const category =
       this.status ==
         TradeStatus.ForSale ? 0 :
@@ -180,19 +242,70 @@ export class TradeComponent {
           this.status == TradeStatus.Resolved ||
           this.status == TradeStatus.Clawbacked ||
           this.status == TradeStatus.SellerCancelled ||
+          this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ||
           this.status == TradeStatus.BuyerCancelled ? 2 : 1;
 
-    if(category == 1) {
+    console.log(`category`, category);
+
+    if (category >= 1) {
       this.firstFormGroup.get('firstCtrl')!.setValue('valid');
+      this.stepper!.next();
     }
 
-    if(category == 2) {
+    if (category == 2) {
       this.secondFormGroup.get('secondCtrl')!.setValue('valid');
+      this.stepper!.next();
     }
-    
-    //this.thirdFormGroup.get('thirdCtrl')!.setValue('valid');
 
-    this.stepper!.selectedIndex = category;
+    this.editStepIndex = category;
+
+    // this.endStep.label;
+    const endStepLabel = this.status == TradeStatus.Completed ? 'Completed' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Completed';
+    this.endStep.label = endStepLabel;
+
+    const tradeDidNotHappen = this.status == TradeStatus.SellerCancelled || this.status == TradeStatus.BuyerCancelled || this.status == TradeStatus.SellerCancelledAfterBuyerCommitted || this.status == TradeStatus.Clawbacked;
+    const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
+
+    
+    this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
+
+    console.log("formGroupValid?", this.firstFormGroup.valid, this.secondFormGroup.valid, this.thirdFormGroup.valid);
+
+
+    this.thirdFormGroup.get('thirdCtrl')!.setValue('valid');
+
+    //this.stepper!.selectedIndex = category;
+
+
+    this.subService.addSubscription([_item.contractAddress], (event: any) => {
+      console.log('event subService', event);
+      const status = event[1];
+      this.status = parseInt(status) as TradeStatus;
+      this.timelineService.addStatus(this.status);
+      //
+      const category =
+        this.status ==
+          TradeStatus.ForSale ? 0 :
+          this.status == TradeStatus.Completed ||
+            this.status == TradeStatus.Resolved ||
+            this.status == TradeStatus.Clawbacked ||
+            this.status == TradeStatus.SellerCancelled ||
+            this.status == TradeStatus.BuyerCancelled ? 2 : 1;
+
+      if (category == 1) {
+        this.firstFormGroup.get('firstCtrl')!.setValue('valid');
+        this.editStepIndex = 1;
+      }
+
+      if (category == 2) {
+        this.secondFormGroup.get('secondCtrl')!.setValue('valid');
+        this.editStepIndex = 2;
+      }
+
+      this.editStepIndex = category;
+
+
+    }, 'TradeComponent');
   }
 
   public statusToString(_status: TradeStatus): string {
@@ -266,17 +379,30 @@ export class TradeComponent {
   }
 
   openBuyDialog(_item: TradeItem): void {
-    const dialogRef = this.dialog.open(BuyDialog, {
+    let dialogRef = this.dialog.open(BuyDialog, {
       data: _item,
     });
 
+    //this.timelineService.addStatus(TradeStatus.BuyerCommitted);
+
+    dialogRef.componentInstance.dialogData.subscribe((data: any) => {
+      console.log(`data`, data);
+      if (data.bought) {
+        // this.timelineService.addStatus(TradeStatus.BuyerCommitted);
+        // this.status = TradeStatus.BuyerCommitted;
+        // this.firstFormGroup.get('firstCtrl')!.setValue('valid');
+        // this.stepper!.selectedIndex = 1;
+      }
+    });
+
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      console.log(`Dialog result`, result);
     });
   }
 
   ngOnDestroy(): void {
     this.web3AccSub?.unsubscribe();
+    this.subService.unsubscribe([this.item.contractAddress], 'TradeComponent');
   }
 
   parseInt(_int: string): number {
