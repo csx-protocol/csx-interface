@@ -81,7 +81,7 @@ export class TimelineComponent implements AfterViewInit {
     this.statusHistory.push(event);
   }
 
-  getLineColor(status: TradeStatus): string {
+  getCardLineColor(status: TradeStatus): string {
     
     switch (status) {
       case TradeStatus.ForSale:

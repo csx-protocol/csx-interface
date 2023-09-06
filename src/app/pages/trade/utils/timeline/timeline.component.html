@@ -6,7 +6,7 @@
   <span *ngIf="!isLoading">
     <div *ngFor="let event of statusHistory; let isOdd = odd" class="timeline-item" [class.timeline-item-odd]="isOdd">
         <mat-card class="event-card" @fadeInOut>
-          <div [ngClass]="{'color-line-left': isOdd, 'color-line-right': !isOdd}" [style.background-color]="getLineColor(event.status)"></div>
+          <div [ngClass]="{'color-line-left': isOdd, 'color-line-right': !isOdd}" [style.background-color]="getCardLineColor(event.status)"></div>
           <mat-card-header>
             <mat-card-title>{{ event.title }}</mat-card-title>
             <mat-card-subtitle>{{ event.subTitle }}</mat-card-subtitle>
