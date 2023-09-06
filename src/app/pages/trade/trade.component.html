@@ -71,7 +71,7 @@
                         </form>
                     </mat-step>
                     
-                    <mat-step [stepControl]="secondFormGroup" label="Sold">
+                    <mat-step [stepControl]="secondFormGroup" label="Sold" #midStep>
                         <form [formGroup]="secondFormGroup">
                             <!-- <div *ngIf="role != 1 && status == 2">
                                 <p >Status: {{statusToString(status)}}</p>
