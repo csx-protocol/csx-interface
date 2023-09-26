@@ -97,7 +97,7 @@ export class EarnComponent implements OnDestroy {
   runAfterWeb3Init() {
     //this.web3.getClaimableAmount().then((res) => {
 
-    this.web3.callContractMethod('StakedCSX', 'getClaimableAmount', [this.web3.webUser.address], 'call').then((res) => {
+    this.web3.callContractMethod('StakedCSX', 'rewardOf', [this.web3.webUser.address], 'call').then((res) => {
       this.stakeInfo.weth.wei = res.wethAmount;
       this.stakeInfo.usdc.wei = res.usdcAmount;
       this.stakeInfo.usdt.wei = res.usdtAmount;
