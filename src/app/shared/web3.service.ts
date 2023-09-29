@@ -689,7 +689,7 @@ export class Web3Service implements OnDestroy {
 
   async getTradeCountByStatus(status: TradeStatus): Promise<number> {
     return await this.contracts['TradeFactory'].methods
-      .getTradeCountByStatus(status)
+      .tradeCountByStatus(status)
       .call({ from: this.webUser.address });
   }
 
