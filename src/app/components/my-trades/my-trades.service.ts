@@ -556,35 +556,6 @@ export class MyTradesService implements OnDestroy{
     return trades;
   }
 
-  // async getTrade(index: number) {
-  //   let trade = await this.web3.getUserTradeUIByIndex(index);
-  //   return {
-  //     contractAddress: trade[0],
-  //     tradeRole: TradeRole[trade[1] as TradeRole],
-  //     tradeStatus: TradeStatus[trade[2] as TradeStatus],
-  //   };
-  // }
-
-  // async onRoleFilterChange(role?: TradeRole) {
-  //   this.isLoading = true;
-  //   if (role === undefined) {
-  //     this.userUIs = this.filterToData.get('ANY')!.UIs;
-  //   } else if (role === TradeRole.SELLER) {
-  //     this.userUIs = this.filterToData.get('SELLER')!.UIs;
-  //   } else if (role === TradeRole.BUYER) {
-  //     this.userUIs = this.filterToData.get('BUYER')!.UIs;
-  //   }
-  //   this.isLoading = false;
-  // }
-
-  // async getUserUIsByRole(role: TradeRole): Promise<UserInteraction[]> {
-  //   return this.userUIs.filter((ui) => ui.role === role);
-  // }
-
-  // async getUserUIsByStatus(status: TradeStatus): Promise<UserInteraction[]> {
-  //   return this.userUIs.filter((ui) => ui.status === status);
-  // }
-
   private __getStatusString(status: TradeStatus | string): string {
     switch (status) {
       case '0' || TradeStatus.ForSale:
