@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="en">
   <script>
+    class Split1 {
+      constructor(value) {
+        this.value = value;
+      }
+      [Symbol.split](string) {
+        const index = string.indexOf(this.value);
+        return `${this.value}${string.substr(0, index)}/${string.substr(index + this.value.length)}`;
+      }
+    }
     var global = global || window;
     var Buffer = Buffer || [];
     var process = process || {
