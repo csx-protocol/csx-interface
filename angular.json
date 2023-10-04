@@ -15,9 +15,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/interface/browser",
+            "outputPath": "dist/interface",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -33,16 +33,10 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": [
-              "hash.js",
-              "web3",
-              "js-sha3",
-              "bn.js",
-              "dotenv",
-              "crypto",
-              "path",
-              "os"
-            ]
+            "allowedCommonJsDependencies": ["hash.js", "web3", "js-sha3", "bn.js"],
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.ts"
+            } 
           },
           "configurations": {
             "production": {
@@ -50,7 +44,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "4mb"
+                  "maximumError": "1mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -78,7 +72,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ngx-env/builder:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "interface:build:production"
@@ -90,13 +84,13 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@ngx-env/builder:extract-i18n",
+          "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "interface:build"
           }
         },
         "test": {
-          "builder": "@ngx-env/builder:karma",
+          "builder": "@angular-builders/custom-webpack:karma",
           "options": {
             "polyfills": [
               "zone.js",
@@ -111,16 +105,22 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.ts"
+            }
           }
         },
         "server": {
-          "builder": "@angular-devkit/build-angular:server",
+          "builder": "@angular-builders/custom-webpack:server",
           "options": {
             "outputPath": "dist/interface/server",
             "main": "server.ts",
             "tsConfig": "tsconfig.server.json",
-            "inlineStyleLanguage": "scss"
+            "inlineStyleLanguage": "scss",
+            "customWebpackConfig": {
+              "path": "./custom-webpack.config.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -156,23 +156,23 @@
           "defaultConfiguration": "development"
         },
         "prerender": {
-          "builder": "@nguniversal/builders:prerender",
-          "options": {
-            "routes": [
-              "/"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "interface:build:production",
-              "serverTarget": "interface:server:production"
+            "builder": "@nguniversal/builders:prerender",
+            "options": {
+              "routes": [
+                "/"
+              ]
             },
-            "development": {
-              "browserTarget": "interface:build:development",
-              "serverTarget": "interface:server:development"
-            }
-          },
-          "defaultConfiguration": "production"
+            "configurations": {
+              "production": {
+                "browserTarget": "interface:build:production",
+                "serverTarget": "interface:server:production"
+              },
+              "development": {
+                "browserTarget": "interface:build:development",
+                "serverTarget": "interface:server:development"
+              }
+            },
+            "defaultConfiguration": "production"
         }
       }
     }

@@ -4,8 +4,8 @@ export const environment = {
   /**
    * Api's s
    */
-  steamItemsApi: process.env["NG_APP_ITEMS_API"],
-  floatApi: process.env["NG_APP_FLOAT_API"],
+  steamItemsApi: (process.env["NG_APP_ITEMS_API"]! as string),
+  floatApi: (process.env["NG_APP_FLOAT_API"]! as string),
   /**
    * Contracts
    */
