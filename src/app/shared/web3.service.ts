@@ -2,7 +2,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Observable, Subject } from 'rxjs';
 
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';

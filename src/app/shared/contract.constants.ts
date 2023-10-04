@@ -1,4 +1,4 @@
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 import { AbiItem } from 'web3-utils';
 
 export interface ContractInfo {

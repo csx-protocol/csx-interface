@@ -5,7 +5,7 @@ import { NotificationService } from '../../../shared/notification.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { environment } from '../../../../environment/environment';
+import { environment } from '../../../../environments/environment';
 import { Sort } from '@angular/material/sort';
 import { MatTabGroup } from '@angular/material/tabs';
 import Web3 from 'web3';

@@ -2,7 +2,7 @@ import { Component, Inject, } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Web3Service } from "../../../shared/web3.service";
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { environment } from "../../../../environment/environment";
+import { environment } from "../../../../environments/environment";
 import { NotificationService } from "../../../shared/notification.service";
 
 @Component({

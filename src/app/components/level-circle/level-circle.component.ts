@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Web3Service } from '../../shared/web3.service';
-import { environment } from 'src/environment/environment';
+import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { LevelUpDialog } from './utils/level-up.dialog';
 

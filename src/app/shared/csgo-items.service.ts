@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Web3Service } from './web3.service';
 import { catchError, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,9 @@ export class CsgoItemsService {
   step = 5;
   loadLoop = false;
   fetchItems() {
-    this.http.get<any>(environment.steamItemsApi).subscribe(data => {
+    const api = environment.steamItemsApi.trim();
+    
+    this.http.get<any>(api).subscribe((data:any) => {
     this.itemsObject = data;
     const array = Object.entries(data).map(([name, link]) => ({ name, link }));
     this.itemsArray = array;

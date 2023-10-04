@@ -4,7 +4,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NotificationService } from "src/app/shared/notification.service";
 import { Web3Service } from "src/app/shared/web3.service";
-import { environment } from "../../../../environment/environment";
+import { environment } from "../../../../environments/environment";
 
 @Component({
     selector: 'escrow-dialog',
