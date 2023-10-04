@@ -4,9 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && ng run interface:server && mv dist/interface/browser _static",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "dev:ssr": "ng run interface:serve-ssr",
+    "serve:ssr": "node dist/interface/server/main.js",
+    "build:ssr": "ng build && ng run interface:server",
+    "prerender": "ng run interface:prerender"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +25,7 @@
     "@angular/platform-browser": "^15.0.0",
     "@angular/platform-browser-dynamic": "^15.0.0",
     "@angular/router": "^15.0.0",
+    "@nguniversal/express-engine": "^15.2.1",
     "ng-circle-progress": "^1.7.1",
     "ngx-jdenticon": "^1.0.4",
     "ngx-skeleton-loader": "^7.0.0",
