@@ -129,7 +129,7 @@ import { ActionCardComponent } from './pages/trade/utils/action-card/action-card
     SignStepComponent, TradeComponent, TimelineComponent, ActionCardComponent, // EarnComponent/StakeDialog
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,

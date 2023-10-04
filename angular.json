@@ -17,7 +17,7 @@
         "build": {
           "builder": "@ngx-env/builder:browser",
           "options": {
-            "outputPath": "dist/interface",
+            "outputPath": "dist/interface/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -113,6 +113,66 @@
             ],
             "scripts": []
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/interface/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "interface:build:development",
+              "serverTarget": "interface:server:development"
+            },
+            "production": {
+              "browserTarget": "interface:build:production",
+              "serverTarget": "interface:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "interface:build:production",
+              "serverTarget": "interface:server:production"
+            },
+            "development": {
+              "browserTarget": "interface:build:development",
+              "serverTarget": "interface:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }
