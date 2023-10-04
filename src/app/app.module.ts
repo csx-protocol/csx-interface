@@ -183,9 +183,7 @@ import { ActionCardComponent } from './pages/trade/utils/action-card/action-card
     MatCheckboxModule // ClaimDialog
   ],
   exports: [CdkVirtualScrollViewport, CdkVirtualForOf],
-  providers: [
-    {provide: "API_TEST", useValue: process.env["NG_APP_ITEMS_API"]},
-  ],
+  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
