@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
   <script>
+    import * as process from 'process';
+    window.process = process;
     var global = global || window;
     var Buffer = Buffer || [];
     var process = process || {
