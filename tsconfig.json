@@ -9,6 +9,7 @@
       "https": ["./node_modules/https-browserify"],
       "os": ["./node_modules/os-browserify"],
       "path": ["./node_modules/path-browserify"],
+      "process": ["./node_modules/process/browser"],
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
