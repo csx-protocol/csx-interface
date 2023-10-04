@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && ng run interface:server && mv dist/interface/browser _static",
+    "build": "ng build && ng run interface:server && mv dist/interface _static",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "dev:ssr": "ng run interface:serve-ssr",
