@@ -1,13 +1,11 @@
-import { apis } from "./apis";
-
 export const environment = {
   production: false,
 
   /**
    * Api's s
    */
-  steamItemsApi: apis.steamItemsApi,
-  floatApi: apis.floatApi,
+  steamItemsApi: process.env["NG_APP_ITEMS_API"],
+  floatApi: process.env["NG_APP_FLOAT_API"],
   /**
    * Contracts
    */
