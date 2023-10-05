@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
 
   /**
    * Api's s
@@ -11,7 +11,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0x34C59410A8b28f88D6E0f95E308978D7c8DD6A49",
+      address: "0x64EA3e47A88172d80F77bDe62D9E4229658C5e52",
       abi: [
         {
           "inputs": [],
@@ -335,7 +335,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0x80b1a6b7FD9B3f3acb4e4754336b5d6d2Ec0d94C",
+      address: "0x8912Fe4679D34009a4806E4a24D5f409543d86e1",
       abi: [
         {
           "inputs": [
@@ -1087,9 +1087,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0x6822539b8C9A9c8b2eaC232A6455F4245D883b2e",
-        USDT: "0x891bDc429366FAee69c9acd2b9b47399341D4F38",
-        WETH: "0x810764D130D00241c803Bb42fe3dA523e9500E46",
+        USDC: "0x2E13BDA166638A457ec8fd3dbf7139B3dD00CD31",
+        USDT: "0x76Bb2Df806365D49ee6F98108A3c730d28ed01F9",
+        WETH: "0xCa6ca132d470805022eb8CEC4754c0Af10387974",
       },
       abi: [
         {
@@ -1676,7 +1676,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0x69A02E975620513bCDBa562D4560828422bb8cDc",
+      address: "0xbB30927CD5e214a644217eA188E166a61F9c4D8d",
       abi: [
         {
           "inputs": [
@@ -2111,7 +2111,7 @@ export const environment = {
       ],
     },
     VestedCSX: {
-      address: "0xC01Ef194cd125AAeb456a21C19f0622A44e064bd",
+      address: "0xE04dC50c38Bc53c4e266b37733f0bB3eD9dB1a2f",
       abi: [
         {
           "inputs": [
@@ -2610,7 +2610,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x4B7EF34b0FD5029a6a1a4224D77A6D6Ae0a2351C',
+      address: '0xFE65CB50b6D6997874Db861001FBb36AcA2F134a',
       abi: [
         {
           "inputs": [
@@ -2877,7 +2877,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0xeED1FFA456E976Afb41cea990D0ACa5bbd4d27b2',
+      address: '0x49E25dDA38C8575923c92c90203B78fd3EBa6468',
       abi: [
         {
           "inputs": [
@@ -3583,7 +3583,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0x8F6AA7cc6D8b3CA5CDB2ED24F55b48b9d48b3856",
+      address: "0x041613c8fcfEAe6Dad17B1Bf380f893fAdB6AB56",
       abi: [
         {
           "inputs": [
@@ -3882,7 +3882,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0xa453D2262895063740556Ae50E6A51c7e258875F",
+      address: "0x18F8020885eF49FCfEfC6ebfE69C215961987335",
       abi: [
         {
           "inputs": [
@@ -4375,7 +4375,7 @@ export const environment = {
       ],
     },
     TradeFactory: {
-      address: "0x624C46055c583078c05B2B948c87B0ae3a7b6E57",
+      address: "0x8CBFC70088a6E8e6aAbe134a74F13BA9CDb6D4f5",
       abi: [
         {
           "inputs": [
@@ -5292,7 +5292,7 @@ export const environment = {
       ],
     },
     BuyAssistoor: {
-      address: "0x9C226dC41E5Ec719F272482A3abDf11404bc85b9",
+      address: "0x52ae74F7717e5800932b56126771b7BcF8132d4f",
       abi: [
         {
           "inputs": [
@@ -6502,7 +6502,7 @@ export const environment = {
       ]
     },
     priceFeed: {
-      isUsing: false,
+      isUsing: true,
       ethMockPrice: 1535,
       address: '0x62CAe0FA2da220f43a51F86Db2EDb36DcA9A5A08', //Goerli: 0x62CAe0FA2da220f43a51F86Db2EDb36DcA9A5A08 Main: 0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612
       abi: [{ "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }, { "internalType": "address", "name": "_accessController", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "int256", "name": "current", "type": "int256" }, { "indexed": true, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": false, "internalType": "uint256", "name": "updatedAt", "type": "uint256" }], "name": "AnswerUpdated", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "uint256", "name": "roundId", "type": "uint256" }, { "indexed": true, "internalType": "address", "name": "startedBy", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "startedAt", "type": "uint256" }], "name": "NewRound", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }], "name": "OwnershipTransferRequested", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }], "name": "OwnershipTransferred", "type": "event" }, { "inputs": [], "name": "acceptOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "accessController", "outputs": [{ "internalType": "contract AccessControllerInterface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "aggregator", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }], "name": "confirmAggregator", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "description", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_roundId", "type": "uint256" }], "name": "getAnswer", "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "getRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "_roundId", "type": "uint256" }], "name": "getTimestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestAnswer", "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRound", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "latestTimestamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }], "name": "phaseAggregators", "outputs": [{ "internalType": "contract AggregatorV2V3Interface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "phaseId", "outputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_aggregator", "type": "address" }], "name": "proposeAggregator", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "proposedAggregator", "outputs": [{ "internalType": "contract AggregatorV2V3Interface", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint80", "name": "_roundId", "type": "uint80" }], "name": "proposedGetRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "proposedLatestRoundData", "outputs": [{ "internalType": "uint80", "name": "roundId", "type": "uint80" }, { "internalType": "int256", "name": "answer", "type": "int256" }, { "internalType": "uint256", "name": "startedAt", "type": "uint256" }, { "internalType": "uint256", "name": "updatedAt", "type": "uint256" }, { "internalType": "uint80", "name": "answeredInRound", "type": "uint80" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_accessController", "type": "address" }], "name": "setController", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }], "name": "transferOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "version", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
@@ -6512,9 +6512,8 @@ export const environment = {
    * Network configuration
    */
   NETWORK: {
-    // Arb-Goerli 0x66eed
     chainId: '0x66eed',
-    // 0x1691 / 0x539 Ganache / 0x7a69 Hardhat
+    // 0x1691 / 0x539 Ganache / 0x7a69 Hardhat / 0xa4b1 Goerli / 0x66eed Arb-Goerli
     chainName: 'Goerli',
     nativeCurrency: {
       name: 'Ethereum',
