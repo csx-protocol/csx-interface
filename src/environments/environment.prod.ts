@@ -6513,7 +6513,7 @@ export const environment = {
    */
   NETWORK: {
     // Arb-Goerli 0x66eed
-    chainId: '0x539',
+    chainId: '0x66eed',
     // 0x1691 / 0x539 Ganache / 0x7a69 Hardhat
     chainName: 'Goerli',
     nativeCurrency: {
