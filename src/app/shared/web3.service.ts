@@ -473,7 +473,7 @@ export class Web3Service implements OnDestroy {
 
   async allowance(token: string, owner: string, spender: string) {
     const [tokenAbi, tokenAddress] = [
-      this.contracts[token].options.jsonInterface, 
+      this.contracts[token].options.jsonInterface,
       this.contracts[token].options.address
     ];
 
@@ -669,6 +669,13 @@ export class Web3Service implements OnDestroy {
 
       const netValues = this.calculateNetValue(tradeDetails.weiPrice, hasDiscount, this.webUser.baseFee, discountRatio);
 
+      //console.log('netValues', _index, netValues);
+
+      // call refferalRegistry calculateNetValue
+      //const netValuesOnchain = await this.callContractMethod('ReferralRegistry', 'calculateNetValue', [tradeDetails.weiPrice, hasDiscount, '26', discountRatio], 'call');
+      //console.log('netValuesOnchain', _index, netValuesOnchain);
+
+
       // if 6 then fromSmallestUnitToSixthDecimalBaseUnit otherwise fromWei
       const etherPrice = decimals == 6 ? this.fromSmallestUnitToSixthDecimalBaseUnit(netValues.buyerNetPrice) : this.fromWei(netValues.buyerNetPrice, 'ether');
 
@@ -696,26 +703,24 @@ export class Web3Service implements OnDestroy {
   public calculateNetValue(
     fullItemPriceWei: string,
     isBuyerAffiliated: boolean,
-    baseFeePercent: number,
+    baseFeePercentTen: number,
     discountRatio: number
   ) {
-    //console.log("calculateNetValue", fullItemPriceWei, isBuyerAffiliated, baseFeePercent, discountRatio);
     discountRatio = discountRatio / 2;
-
     if (discountRatio > 50) {
       throw new Error("Invalid discount ratio");
     }
 
     // Calculate the base fee
-    let baseFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercent).divn(100);
+    let baseFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercentTen).divn(1000);  // adjusted divisor to match Solidity
 
     let discountedFeeWei = Web3.utils.toBN(0);
     let affiliatorNetRewardWei = Web3.utils.toBN(0);
 
     // Calculate the discounted fee and affiliator reward if the buyer is affiliated
     if (isBuyerAffiliated) {
-      discountedFeeWei = baseFeeWei.muln(discountRatio).divn(100);
-      affiliatorNetRewardWei = baseFeeWei.muln(50 - discountRatio).divn(100);
+      discountedFeeWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercentTen).muln(discountRatio).divn(100000);  // adjusted calculation to match Solidity
+      affiliatorNetRewardWei = Web3.utils.toBN(fullItemPriceWei).muln(baseFeePercentTen).muln(50 - discountRatio).divn(100000);  // adjusted calculation to match Solidity
     }
 
     // Calculate the buyer net price
@@ -726,8 +731,6 @@ export class Web3Service implements OnDestroy {
 
     // Calculate the token holders net reward
     let tokenHoldersNetRewardWei = baseFeeWei.sub(discountedFeeWei).sub(affiliatorNetRewardWei);
-
-    //console.log("buyerNetPriceWei", buyerNetPriceWei.toString());
 
     return {
       buyerNetPrice: buyerNetPriceWei.toString(),
@@ -786,37 +789,37 @@ export class Web3Service implements OnDestroy {
     refCode: string,
     weiPrice: string
   ): Promise<boolean> {
-    if (this.isValidUrl(buyerTradeUrl)) {
-      const params = new URLSearchParams(new URL(buyerTradeUrl).search);
-      const partnerId = params.get('partner');
-      const token = params.get('token');
-      const TradeUrl = {
-        partner: partnerId,
-        token: token,
-      };
+    try {
+      if (this.isValidUrl(buyerTradeUrl)) {
+        const params = new URLSearchParams(new URL(buyerTradeUrl).search);
+        const partnerId = params.get('partner');
+        const token = params.get('token');
+        const TradeUrl = {
+          partner: partnerId,
+          token: token,
+        };
 
-      const contractInstance =
-        await new this.csxInstance.web3.eth.Contract(
-          environment.CONTRACTS.tradeContract.abi as AbiItem[],
-          itemAddress,
-          { from: this.webUser.address }
-        );
+        const contractInstance =
+          await new this.csxInstance.web3.eth.Contract(
+            environment.CONTRACTS.tradeContract.abi as AbiItem[],
+            itemAddress,
+            { from: this.webUser.address }
+          );
 
-      return contractInstance.methods
-        .commitBuy(TradeUrl, refCode, '0x0000000000000000000000000000000000000000')
-        .send({ from: this.webUser.address })
-        .then((receipt: any) => {
-          console.log('TX receipt', receipt);
-          return true;
-        })
-        .catch((error: any) => {
-          console.log('TX error', error);
-          this.notificationsService.openSnackBar(error.message, 'OK');
-          return false;
-        });
+        const receipt = await contractInstance.methods
+          .commitBuy(TradeUrl, refCode, '0x0000000000000000000000000000000000000000')
+          .send({ from: this.webUser.address });
+
+        console.log('TX receipt', receipt);
+        return true;
+      }
+    } catch (error: any) {
+      console.log('TX error', error);
+      this.notificationsService.openSnackBar(error.message, 'OK');
     }
     return false;
   }
+
 
   public async BuyItemWithEthToWeth(itemAddress: string, buyerTradeUrl: string, refCode: string, weiPrice: string): Promise<boolean> {
     if (this.isValidUrl(buyerTradeUrl)) {
@@ -1427,7 +1430,7 @@ export class Web3Service implements OnDestroy {
     const result = await this.contracts['TradeFactory'].methods
       .baseFee()
       .call({ from: this.webUser.address })
-      return parseInt(result);
+    return parseInt(result);
   }
 
   private async _checkForPastNotifications() {
