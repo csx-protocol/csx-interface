@@ -35,8 +35,16 @@ export class NavBarComponent implements OnDestroy {
     });
   }
 
-  async connectWallet(): Promise<void>{
-    await this._web3.initWallet();
+  loadingWallet: boolean = false;
+  connectWallet(): void{
+    this.loadingWallet = true;
+    this._web3.initWallet().then(async () => {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      this.loadingWallet = false;
+    }).catch((err) => {
+      this.notificationsService.openSnackBar(err, 'OK');
+      this.loadingWallet = false;
+    });
   }
 
   refresh(): void {
