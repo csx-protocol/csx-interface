@@ -39,7 +39,7 @@ export class NavBarComponent implements OnDestroy {
   connectWallet(): void{
     this.loadingWallet = true;
     this._web3.initWallet().then(async () => {
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 2800));
       this.loadingWallet = false;
     }).catch((err) => {
       this.notificationsService.openSnackBar(err, 'OK');

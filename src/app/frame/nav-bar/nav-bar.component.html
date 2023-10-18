@@ -30,11 +30,10 @@
     </div>
     
     <ng-template #spinnerTemplate>
-      <button matBadge="X" matBadgeColor="warn" mat-icon-button aria-label="Example icon-button with a menu">
+      <button matBadge="⌛" matBadgeColor="warn" mat-icon-button aria-label="Example icon-button with a menu">
         <mat-progress-spinner style="margin:0 auto;" mode="indeterminate" diameter="25"></mat-progress-spinner>
       </button>
     </ng-template>
-    
     
     <button matBadge="&#x2713;" matBadgeColor="primary" *ngIf="!this.loadingWallet && this._web3.webUser.isUserWalletConnected && !this._web3.webUser.isWrongChain" mat-icon-button [matMenuTriggerFor]="walletMenuConnected" aria-label="Example icon-button with a menu">
       <mat-icon mat-button>wallet</mat-icon>
