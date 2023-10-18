@@ -820,7 +820,6 @@ export class Web3Service implements OnDestroy {
     return false;
   }
 
-
   public async BuyItemWithEthToWeth(itemAddress: string, buyerTradeUrl: string, refCode: string, weiPrice: string): Promise<boolean> {
     if (this.isValidUrl(buyerTradeUrl)) {
       const params = new URLSearchParams(new URL(buyerTradeUrl).search);
@@ -830,10 +829,6 @@ export class Web3Service implements OnDestroy {
         partner: partnerId,
         token: token,
       };
-
-      console.log('BuyItemWithEthToWeth', TradeUrl, refCode, itemAddress, weiPrice);
-
-
       const contractInstance =
         await new this.csxInstance.web3.eth.Contract(
           environment.CONTRACTS.BuyAssistoor.abi as AbiItem[],
@@ -1085,199 +1080,6 @@ export class Web3Service implements OnDestroy {
   }
 
   /**
-   * Wrapped ETH Swap Dialog
-   */
-
-  //unwrap WETH
-  // async unwrapWETH(amount: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-  //     environment.CONTRACTS.Currencies.addresses.WETH,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .withdraw(amount)
-  //     .send({ from: this.webUser.address });
-  // }
-
-  //wrap ETH
-  // async wrapETH(amount: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.Currencies.wAbi as AbiItem[],
-  //     environment.CONTRACTS.Currencies.addresses.WETH,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .deposit()
-  //     .send({ from: this.webUser.address, value: amount });
-  // }
-
-  /**
-   * Referral Component
-   */
-
-  // async getReferralInfo(refCode32: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .getReferralInfo(refCode32)
-  //     .call({ from: this.webUser.address });
-  // }
-
-  // async getReferralCode(address: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .getReferralCode(address)
-  //     .call({ from: this.webUser.address });
-  // }
-
-  // async registerReferralCode(referralCode: string, ownerRatio: string, buyerRatio: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .registerReferralCode(referralCode, ownerRatio, buyerRatio)
-  //     .send({ from: this.webUser.address });
-  // }
-
-  // async getReferralCodesByUser(address: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .getReferralCodesByUser(address)
-  //     .call({ from: this.webUser.address });
-  // }
-
-  // async getRebatePerCodePerPaymentToken(referralCode: string, paymentToken: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .getRebatePerCodePerPaymentToken(referralCode, paymentToken)
-  //     .call({ from: this.webUser.address });
-  // }
-
-  // async setReferralCodeAsUser(referralCode: string) {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.ReferralRegistry.abi as AbiItem[],
-  //     environment.CONTRACTS.ReferralRegistry.address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .setReferralCodeAsUser(referralCode)
-  //     .send({ from: this.webUser.address });
-  // }
-
-  /**
-   * Stake Component
-   */
-
-  // Approve CSXToken first
-  // async stake(amount: string): Promise<string> {
-  //   return await this.csxInstance.sCSXToken.methods.stake(amount).send({ from: this.webUser.address });
-  // }
-
-  // async unstake(amount: string): Promise<string> {
-  //   return await this.csxInstance.sCSXToken.methods.unStake(amount).send({ from: this.webUser.address });
-  // }
-
-  // async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
-  //   //const gasAmount = await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).estimateGas({ from: this.webUser.address });
-
-  //   //console.log("Estimated gas: ", gasAmount);
-
-  //   return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address/*, gas: gasAmount*/ });
-  // }
-
-
-  // async claim(claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
-  //   return await this.csxInstance.sCSXToken.methods.claim(claimUsdc, claimUsdt, claimWeth, convertWethToEth).send({ from: this.webUser.address });
-  // }
-
-  // async getClaimableAmount(): Promise<any> {
-  //   return await this.csxInstance.sCSXToken.methods.getClaimableAmount(this.webUser.address).call({ from: this.webUser.address });
-  // }
-
-  // eCSXToken
-
-  // async vest(amount: string): Promise<string> {
-  //   return await this.csxInstance.vCSXToken.methods.vest(amount).send({ from: this.webUser.address });
-  // }
-
-  // async getVestedStakingContractAddress(): Promise<string> {
-  //   return await this.csxInstance.vCSXToken.methods.getVestedStakingContractAddress(this.webUser.address).call({ from: this.webUser.address });
-  // }
-
-  // VestedStaking Contract Calls
-
-  // async getClaimableVestedAmountAndVestTimeLeft(_address: string): Promise<any> {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-  //     _address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .getClaimableAmountAndVestTimeLeft()
-  //     .call({ from: this.webUser.address });
-  // }
-
-  // async claimVestedRewards(_address: string, claimUsdc: boolean, claimUsdt: boolean, claimWeth: boolean, convertWethToEth: boolean): Promise<string> {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-  //     _address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .claimRewards(claimUsdc, claimUsdt, claimWeth, convertWethToEth)
-  //     .send({ from: this.webUser.address });
-  // }
-
-  // async unvest(address: string, amount: string): Promise<string> {
-  //   const contractInstance = await new this.csxInstance.web3.eth.Contract(
-  //     environment.CONTRACTS.VestedStaking.abi as AbiItem[],
-  //     address,
-  //     { from: this.webUser.address }
-  //   );
-
-  //   return await contractInstance.methods
-  //     .withdraw(amount)
-  //     .send({ from: this.webUser.address });
-  // }
-
-  /**
-   * Escrow Component
-   */
-
-  // Approve CSXToken first
-  // async mintEscrow(amount: string): Promise<string> {
-  //   return await this.csxInstance.eCSXToken.methods.mintEscrow(amount).send({ from: this.webUser.address });
-  // }
-
-  /**
    * Committed Dialog
    */
   async subscribeToOracleConfirmation() {
@@ -1303,7 +1105,6 @@ export class Web3Service implements OnDestroy {
       }
     );
   }
-
   /**
    * Completed Dialog
    */
@@ -1436,7 +1237,7 @@ export class Web3Service implements OnDestroy {
   private async _checkForPastNotifications() {
     const currentBlock = await this.csxInstance.web3.eth.getBlockNumber();
 
-    const fromBlock = currentBlock - 10000; // Replace 1000 with the desired range
+    const fromBlock = currentBlock - 50000;
 
     this.contracts['TradeFactory'].getPastEvents(
       'TradeContractStatusChange',
@@ -1704,8 +1505,9 @@ export class Web3Service implements OnDestroy {
           throw new Error(`Unsupported transaction type: ${transactionType}`);
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('An error occurred while calling the contract method:', error);
+      this.notificationsService.openSnackBar(error.message, 'OK');
       throw error;  // re-throw the error so it can be caught and handled by the caller if needed
     }
   }
