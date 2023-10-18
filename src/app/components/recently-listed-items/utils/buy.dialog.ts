@@ -118,10 +118,24 @@ export class BuyDialog {
   }
 
   isApproving: boolean = false;
-  buyWithERC20(_weiValue: string, _tradeLink: string, _rBytes32: string, _buyerNetVal: string) {
+  hasEnoughBalanceERC20: boolean = false;
+  async buyWithERC20(_weiValue: string, _tradeLink: string, _rBytes32: string, _buyerNetVal: string) {
     const tokenValueInWeiString = _weiValue;
 
-    const token = this.item.priceType === '0' ? 'WETH' : this.item.priceType === '1' ? 'USDC' : 'USDT';
+    const token = this.item.priceType === '0' ? 'WETH' : this.item.priceType === '1' ? 'USDC' : 'USDT';   
+    
+    // check balance of user first
+    //const balance = this.web3.getBalance(token);
+    const balance = await this.web3.callContractMethod(token, 'balanceOf', [this.web3.webUser.address!], "call");
+    const balanceBN = this.web3.toBN(balance);
+    const tokenValueInWeiBN = this.web3.toBN(tokenValueInWeiString);
+
+    // if balance is lower than value, then return
+    if (balanceBN.lt(tokenValueInWeiBN)) {
+      this.notify.openSnackBar(`You don't have enough ${token} to buy this item.`, 'OK');
+      this.stepper!.selectedIndex = 0;
+      return;
+    }
 
     this.web3.allowance(token, this.web3.webUser.address!, this.item.contractAddress).then((allowance) => {
       console.log('allowance', allowance);
