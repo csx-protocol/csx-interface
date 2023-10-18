@@ -1237,7 +1237,7 @@ export class Web3Service implements OnDestroy {
   private async _checkForPastNotifications() {
     const currentBlock = await this.csxInstance.web3.eth.getBlockNumber();
 
-    const fromBlock = currentBlock - 50000;
+    const fromBlock = currentBlock - 49000;
 
     this.contracts['TradeFactory'].getPastEvents(
       'TradeContractStatusChange',
