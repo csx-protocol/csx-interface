@@ -11,7 +11,7 @@ export const environment = {
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0x9C93605e005816DD7729175BDaa589d36c90534E",
+      address: "0x41c8a477c960A608bA9a1b7e3DeAB25814929d84",
       abi: [
         {
           "inputs": [],
@@ -335,7 +335,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0xCf8094E6263cF2F14eA2fd663e9D41ea4a4bA2BA",
+      address: "0xd263D6dbC431Ec3aA0c0d313604d7556b88bbF6c",
       abi: [
         {
           "inputs": [
@@ -1087,9 +1087,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0x209b572e89187c6472a786474C52f551BB226E2c",
-        USDT: "0xB83E20891A423eEccD7341476feACd0a4d10a139",
-        WETH: "0xA1887504AdE7085fB4873dB6507C22F3Bd479978",
+        USDC: "0x87f5877B34AaF0602D9bAa7364eB26b73201f639",
+        USDT: "0x1f5d00Ea152B1EDCFfcB445Dcd51E0336623ff5a",
+        WETH: "0xf5242dd9AA2DBdC5eCA92609Ba2C1de77e9294dc",
       },
       abi: [
         {
@@ -1676,7 +1676,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0x01Ac21cAB815604a78E0ca720925129824899d27",
+      address: "0xD59787d1b7774065587B588972b00f6739031171",
       abi: [
         {
           "inputs": [
@@ -2111,7 +2111,7 @@ export const environment = {
       ],
     },
     VestedCSX: {
-      address: "0x1D2D80111da040134d2108abBB51eb01aF0afC3b",
+      address: "0x845a9520132C7Ff714a89f27703C7F98be56b26E",
       abi: [
         {
           "inputs": [
@@ -2610,7 +2610,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x45f2CDC9892b906dc3FBFdAE905407c7C04e215d',
+      address: '0x7bFbf3A6C656F693Ca74CF2453Ab54a42D8Dc156',
       abi: [
         {
           "inputs": [
@@ -2621,7 +2621,7 @@ export const environment = {
             },
             {
               "internalType": "address",
-              "name": "_keeperNodeAddress",
+              "name": "_keeperOracleAddress",
               "type": "address"
             }
           ],
@@ -2748,6 +2748,19 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getKeepersCount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -2824,6 +2837,19 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "keeperOracleAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "uint256",
@@ -2877,7 +2903,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0xf6E9507Ba5909c6EBe4a283623d3BAd13b0b73F9',
+      address: '0xA01C9C561e1FD4111b65f02Ab63B016D2b2516aB',
       abi: [
         {
           "inputs": [
@@ -3583,7 +3609,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0x9B319d09d66FBa4D10a440502E3B32836F08E094",
+      address: "0xd70cb07Dad7D8b37498f2AF98968cbD6A1Fb8863",
       abi: [
         {
           "inputs": [
@@ -3882,7 +3908,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0x308337bb45Bb02ADEB4A3Ed8E033BDF9D8370375",
+      address: "0x7024976Fc503A001A70Ae52B4d1c0138653efF26",
       abi: [
         {
           "inputs": [
@@ -4375,7 +4401,7 @@ export const environment = {
       ],
     },
     TradeFactory: {
-      address: "0x1618474a7061a0Bd68b4DC87E7FEC3FC4e294DD5",
+      address: "0x3B7a0Fc387cBe819f0034619F49A3D93654abA70",
       abi: [
         {
           "inputs": [
@@ -5292,7 +5318,7 @@ export const environment = {
       ],
     },
     BuyAssistoor: {
-      address: "0xF916f447E9C634ABF27B1A10591c4f6063DA0d05",
+      address: "0x345d6fd3EB44E03bE60bed1adb901B0Ce05E6AB8",
       abi: [
         {
           "inputs": [
