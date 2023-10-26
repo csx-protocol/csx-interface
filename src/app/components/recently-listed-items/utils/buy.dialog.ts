@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, NgZone, Output, ViewChild } from "@angular/core";
+import { Component, EventEmitter, Inject, Output, ViewChild } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Item } from "../../../shared/item.interface";
@@ -8,6 +8,9 @@ import { ReferralService } from "../../../shared/referral.service";
 import { TradeLinkService } from "../../../shared/trade-link-url.service";
 import { MatStepper } from "@angular/material/stepper";
 import { NotificationService } from "../../../shared/notification.service";
+import { MyTradesService } from "../../my-trades/my-trades.service";
+import { TradeStatus } from "../../my-trades/my-trades.component";
+import { ActionCardService } from "../../../pages/trade/utils/action-card/action-card.service";
 
 @Component({
   selector: 'buy-dialog',
@@ -32,7 +35,6 @@ export class BuyDialog {
   @Output() public dialogData: EventEmitter<any> = new EventEmitter();
   @ViewChild('stepper') stepper: MatStepper | undefined;
  // @ViewChild('stepper2') stepper2: MatStepper | undefined;
-
   item: Item;
 
   firstFormGroup: FormBuilder | any;
@@ -49,6 +51,8 @@ export class BuyDialog {
     public referralService: ReferralService,
     private tradeLinkService: TradeLinkService,
     private notify: NotificationService,
+    private myTradesService: MyTradesService,
+    private readonly actionCardService: ActionCardService
   ) {
 
     this.firstFormGroup = this._formBuilder.group({
@@ -56,7 +60,6 @@ export class BuyDialog {
         /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+&token=.+$/
       ),],
     });
-
     this.item = data;
 
     const tradeLinkLS: string = this.tradeLinkService.getTradeLinkUrl();
@@ -66,8 +69,8 @@ export class BuyDialog {
     }
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
+  partnerIdToSteamId64(partnerId: string): string {
+    return (BigInt(partnerId) + BigInt(76561197960265728n)).toString();
   }
 
   isBuyNowClicked: boolean = false;
@@ -97,7 +100,9 @@ export class BuyDialog {
         }
         this.stepper!.selectedIndex = 2;
         this.notify.notify(`You're currently awaiting confirmation from seller for ${this.item.itemMarketName}.`, this.item.contractAddress, 'Cancel Trade', true);
+        //this.myTradesService.updateTradeStatus(this.item.contractAddress, TradeStatus.BuyerCommitted);
         this.dialogData.emit({ bought: true });
+        this.actionCardService.updateTradeStatus(TradeStatus.BuyerCommitted);
       });
     } else {
       this.buyWithERC20(netValues.buyerNetPrice, tradeLink, referralInfo.bytes32, netValues.buyerNetPrice);
@@ -177,7 +182,9 @@ export class BuyDialog {
       console.log('buy item success');
       const _valueInEther = this.web3.csxInstance.web3.utils.fromWei(_weiValue, 'ether');
       this.web3.decreaseBalance(_token, _valueInEther);
-      this.dialogData.emit({ bought: true });    
+      this.myTradesService.updateTradeStatus(this.item.contractAddress, TradeStatus.BuyerCommitted);
+      this.dialogData.emit({ bought: true });
+      this.actionCardService.updateTradeStatus(TradeStatus.BuyerCommitted);
     }
     ).catch((error) => {
       this.isBuying = false;

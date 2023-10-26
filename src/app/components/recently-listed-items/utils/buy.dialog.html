@@ -3,14 +3,16 @@
 
 
 <mat-dialog-content style="max-width: 600px;">
-  <button mat-icon-button mat-dialog-close style="position: absolute; top: 5px; right: 5px;">
-    <mat-icon>close</mat-icon>
-  </button>
+  
   <div style="text-align: center;">
-    <h3>{{item.itemMarketName}}</h3>
-    <mat-card>
+    <button mat-icon-button mat-dialog-close style="position: absolute; top: 5px; right: 5px; margin-top: -5px;">
+      <mat-icon>close</mat-icon>
+    </button>
+    <h3 style="margin-top: -5px;">{{item.itemMarketName}}</h3>
+    
+    <mat-card style="margin-top: -5px;">
       <mat-card-content style="display: flex; flex-direction: column; align-items: center;">
-        <img style="margin: 10%; max-width: 50%;" mat-card-image [src]="item.itemImageUrl">
+        <img style=" max-width: 50%;" mat-card-image [src]="item.itemImageUrl">
         <div style="position: relative; bottom: 5%; white-space: nowrap; z-index: 999; display: flex; justify-content: center;" *ngIf="item.stickers">
             <span *ngFor="let sticker of item.stickers">
                 <img style="margin-left: 2%; max-width: 50px;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="500" class="thumbnail" mat-card-image [src]="sticker.imageLink" alt="{{item.itemMarketName}}">
@@ -24,7 +26,7 @@
      
     </mat-card>
 
-    <div style="height: 10px;"></div>
+    
   
   <mat-grid-list *ngIf="!isBuyNowClicked" cols="2" rowHeight="2:1">
     <mat-grid-tile>
@@ -57,8 +59,23 @@
         <p>{{item.skinInfo.paintIndex}}</p>
       </div>
     </mat-grid-tile>
+    <mat-grid-tile style="margin-top: -12px;">
+      <div>
+        <a matTooltip="Check Item In Seller Inventory" href="https://steamcommunity.com/profiles/{{partnerIdToSteamId64(item.sellerTradeUrl[0])}}/inventory/#730_2_{{item.assetId}}" target="_blank">
+          <button mat-button color="primary">
+            <mat-icon><img src="https://steamcommunity.com/favicon.ico" style="height: 100%; filter: brightness(75%);"></mat-icon><span style="margin-top: 5px; color: #1280bd !important; font-size: large;"> CHECK ITEM</span>
+          </button>
+        </a>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile style="margin-top: -12px;">
+      <div>
+        <button mat-button color="primary" style="font-size: large; color: rgb(0, 151, 0) !important; min-width: 250px;" (click)="onBuyNowClick()" cdkFocusInitial>BUY NOW</button>
+      </div>
+    </mat-grid-tile>
   </mat-grid-list>
-  <div style="height: 10px;"></div>
+
+  <!-- <div style="height: 10px;"></div> -->
 
   <mat-stepper [@cardAnimation]="state" hide-header *ngIf="isBuyNowClicked" [linear]="isLinear" #stepper>
   <mat-step [stepControl]="firstFormGroup">
@@ -156,8 +173,8 @@
 
  </div>
 </mat-dialog-content>
-<mat-dialog-actions align="center" *ngIf="!isBuyNowClicked">
+<!-- <mat-dialog-actions align="center" *ngIf="!isBuyNowClicked">
   <button mat-button color="primary" style="font-size: large; color: green !important; min-width: 250px;" (click)="onBuyNowClick()" cdkFocusInitial>BUY NOW</button>
-</mat-dialog-actions>
+</mat-dialog-actions> -->
 
-<div style="height: 20px;"></div>
+<!-- <div style="height: 20px;"></div> -->
