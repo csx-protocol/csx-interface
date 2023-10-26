@@ -47,6 +47,9 @@ export class SellerCommittedDialog implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
+      if(result == 'success'){
+        this.item!.status = TradeStatus.Disputed as string;
+      }
     });
   }
 
