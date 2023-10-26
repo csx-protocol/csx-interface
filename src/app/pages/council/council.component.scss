@@ -1,0 +1,68 @@
+.margins {
+    margin: auto;
+    margin-left: 15%;
+    margin-right: 15%;
+    color: #afb2d6;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.background {
+    background-color: #0c0c0c34;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.card {
+    flex: 0 0 calc(50% - 16px);
+    /* Assumes 8px margin on each side of card */
+    margin: 8px;
+}
+
+@media (max-width: 768px) {
+    .card {
+        flex: 0 0 calc(100% - 16px);
+        /* Assumes 8px margin on each side of card */
+    }
+}
+
+.light-list {
+    //background-color: #ffffff; /* or any light color */
+    color: #afb2d6;
+    /* or any dark color for text */
+}
+
+.light-list-item {
+    //background-color: #ffffff; /* or any light color */
+    color: #afb2d6;
+    /* or any dark color for text */
+}
+
+.light-icon {
+    color: #afb2d6;
+    /* or any dark color */
+}
+
+/* Change the color of text and icon when hovering over mat-list-item */
+mat-list-item:hover .mat-list-item-content {
+    color: rgb(127, 136, 252);
+    /* or any other color you prefer */
+}
+
+/* Change the color of the icon when hovering over mat-list-item */
+mat-list-item:hover mat-icon {
+    color: rgb(127, 136, 252);
+    /* or any other color you prefer */
+}
+
+/* Change the color of matListItemTitle and matListItemLine when hovering over mat-list-item */
+mat-list-item:hover div[matListItemTitle],
+mat-list-item:hover div[matListItemLine] {
+    color: rgb(127, 136, 252);
+    /* or any other color you prefer */
+}

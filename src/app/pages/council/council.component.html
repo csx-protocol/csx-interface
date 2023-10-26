@@ -1,0 +1,128 @@
+<mat-card *ngIf="this.web3.webUser.isUserWalletConnected && isCouncil" @fadeInOut class="margins background"
+    style="background-image: url(../../../assets/art_csx_sm.png); background-repeat: no-repeat; background-size: cover;">
+    <mat-card-content>
+        <h1>Council</h1>
+        <p>Council Administration </p>
+        <p></p>
+    </mat-card-content>
+</mat-card>
+
+<mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+
+<div *ngIf="!this.web3.webUser.isUserWalletConnected">
+    <mat-card class="margins background">
+        <mat-card-content>
+            <h2>Wallet not connected.</h2>
+            <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
+            <p></p>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+<div *ngIf="this.web3.webUser.isUserWalletConnected && isCouncil" class="card-container margins">
+    <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
+        <mat-list class="light-text">
+            <div mat-subheader><b>Council</b></div>
+            <mat-list-item>
+                <!-- <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon> -->
+                <mat-icon *ngIf="!isChangingCouncil" matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon>
+                <div matListItemTitle class="light-icon">{{council}}</div>
+            </mat-list-item>
+            <div [formGroup]="addressForm" *ngIf="isCommittedToChangeCouncil">
+                <mat-form-field style="display: flex; align-items: center;">
+                    <mat-label>Address</mat-label>
+                    <input matInput formControlName="councilAddress">
+                    <mat-error *ngIf="addressForm.get('councilAddress')?.hasError('required')">
+                        This field is required.
+                    </mat-error>
+                    <button *ngIf="!isChangingCouncil" mat-button matSuffix (click)="submitChangeCouncil()">
+                        Change
+                    </button>
+                    <button *ngIf="!isChangingCouncil" mat-button matPrefix (click)="isCommittedToChangeCouncil = false">
+                        X
+                    </button>
+                    <button *ngIf="isChangingCouncil" mat-button matSuffix>
+                        <span class="centered-loading-spinner">
+                            <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                [diameter]="25">
+                            </mat-progress-spinner>
+                        </span>
+                    </button>
+                </mat-form-field>
+            </div>
+            <mat-divider></mat-divider>
+            <div mat-subheader><b>Keeper Oracle</b></div>
+            <mat-list-item>
+                <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeKeeperOracle()">bubble_chart</mat-icon>
+                <div matListItemTitle class="light-icon">{{keeperOracle}}</div>
+            </mat-list-item>
+            <div [formGroup]="addressForm" *ngIf="isCommittedToChangeKeeperOracle">
+                <mat-form-field style="display: flex; align-items: center;">
+                    <mat-label>Address</mat-label>
+                    <input matInput formControlName="keeperOracleAddress">
+                    <mat-error *ngIf="addressForm.get('keeperOracleAddress')?.hasError('required')">
+                        This field is required.
+                    </mat-error>
+                    <button *ngIf="!isChangingKeeperOracle" mat-button matSuffix (click)="submitChangeKeeperOracle()">
+                        Change
+                    </button>
+                    <button *ngIf="!isChangingKeeperOracle" mat-button matPrefix (click)="isCommittedToChangeKeeperOracle = false">
+                        X
+                    </button>
+                    <button *ngIf="isChangingKeeperOracle" mat-button matSuffix>
+                        <span class="centered-loading-spinner">
+                            <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                [diameter]="25">
+                            </mat-progress-spinner>
+                        </span>
+                    </button>
+                </mat-form-field>
+            </div>
+        </mat-list>
+    </mat-card>
+    <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
+        <!-- <b>Keepers</b>
+      <br> -->
+        <b style="margin: calc((3rem - 1.5rem)/2) 16px;">Add Keeper</b>
+        <br>
+        <div [formGroup]="addressForm">
+            <mat-form-field style="display: flex; align-items: center;">
+                <mat-label>Address</mat-label>
+                <input matInput formControlName="keepersAddress">
+                <mat-error *ngIf="addressForm.get('keepersAddress')?.hasError('required')">
+                    This field is required.
+                </mat-error>
+                <button *ngIf="!isAddingKeeper" mat-button matSuffix (click)="submitAddKeeper()">
+                    Add
+                </button>
+                <button *ngIf="isAddingKeeper" mat-button matSuffix>
+                    <span class="centered-loading-spinner">
+                        <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                            [diameter]="25">
+                        </mat-progress-spinner>
+                    </span>
+                </button>
+            </mat-form-field>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <mat-list class="light-text">
+                <div mat-subheader><b>Keepers</b></div>
+                <mat-list-item class="light-text-item" *ngFor="let keeper of keepers">
+                    <mat-icon *ngIf="!isRemovingKeeper" matListItemIcon class="light-icon link-like" (click)="removeKeeper(keeper)">person</mat-icon>
+                    <span matListItemIcon class="centered-loading-spinner" *ngIf="isRemovingKeeper">
+                        <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                            [diameter]="25">
+                        </mat-progress-spinner>
+                    </span>
+                    <div matListItemTitle class="light-icon">{{keeper}}</div>
+                </mat-list-item>
+                <mat-list-item class="light-text-item" *ngIf="keepers.length == 0">
+                    <mat-icon matListItemIcon class="light-icon">person</mat-icon>
+                    <div matListItemTitle class="light-icon">N/A</div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+
+            </mat-list>
+        </div>
+    </mat-card>
+</div>

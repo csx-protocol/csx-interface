@@ -95,6 +95,7 @@ import { SignStepComponent } from './components/sign-step/sign-step.component';
 import { TradeComponent } from './pages/trade/trade.component';
 import { TimelineComponent } from './pages/trade/utils/timeline/timeline.component';
 import { ActionCardComponent } from './pages/trade/utils/action-card/action-card.component';
+import { CouncilComponent } from './pages/council/council.component';
 
 
 @NgModule({
@@ -126,7 +127,7 @@ import { ActionCardComponent } from './pages/trade/utils/action-card/action-card
     EscrowDialog, MintEscrowComponent, // MintEscrowComponent
     wethConvertDialog, // NavBarComponent
     OpenDisputeDialog, // SellerCommittedDialog
-    SignStepComponent, TradeComponent, TimelineComponent, ActionCardComponent, // EarnComponent/StakeDialog
+    SignStepComponent, TradeComponent, TimelineComponent, ActionCardComponent, CouncilComponent, // EarnComponent/StakeDialog
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

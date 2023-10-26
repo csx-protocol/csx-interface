@@ -5,6 +5,7 @@ import { EarnComponent } from './pages/earn/earn.component';
 import { ReferralsComponent } from './pages/referrals/referrals.component';
 import { MintEscrowComponent } from './pages/mint-escrow/mint-escrow.component';
 import { TradeComponent } from './pages/trade/trade.component';
+import { CouncilComponent } from './pages/council/council.component';
 
 const routes: Routes = [
   { path: '', component: MarketplaceComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'earn', component: EarnComponent },
   { path: 'referrals', component: ReferralsComponent },
   { path: 'mint', component: MintEscrowComponent },
+  { path: 'council', component: CouncilComponent },
   { path: '**', redirectTo: '' } // wildcard route
 ];
 
