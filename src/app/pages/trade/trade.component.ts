@@ -1,4 +1,4 @@
-import { Component, ViewChild, HostListener, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
+import { Component, ViewChild, HostListener, ChangeDetectorRef, Renderer2, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Web3Service } from '../../shared/web3.service';
@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TimelineService } from './utils/timeline/timeline.service';
 import { SubscriptionService } from '../../components/my-trades/dialogs/subscription.service';
 import { MyTradeItem } from '../../components/my-trades/dialogs/my-trade-item.interface';
+import { ActionCardService } from './utils/action-card/action-card.service';
 
 @Component({
   selector: 'app-trade',
@@ -29,13 +30,14 @@ import { MyTradeItem } from '../../components/my-trades/dialogs/my-trade-item.in
     ])
   ]
 })
-export class TradeComponent {
+export class TradeComponent implements OnInit, OnDestroy {
   public stepperOrientation: StepperOrientation = 'horizontal';
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.setStepperOrientation();
   }
   web3AccSub?: Subscription;
+  actionCardSub?: Subscription;
   hasWeb3: boolean = false;
   hasValidTradeAddress: boolean = false;
   role: TradeRole = TradeRole.ANY;
@@ -111,8 +113,10 @@ export class TradeComponent {
     private timelineService: TimelineService,
     private subService: SubscriptionService,
     private cdr: ChangeDetectorRef,
-    private renderer: Renderer2, private el: ElementRef) {
+    private renderer: Renderer2, private el: ElementRef,
+    private actionCardService: ActionCardService) {
     this.web3AccSub = web3.webUser.afterAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
+    this.actionCardSub = this.actionCardService.tradeStatus$.subscribe((status: TradeStatus) => { this.runNextStatusUpdate(status); });
     if (this.web3.webUser.address) {
       this.runAfterWeb3Init();
     }
@@ -227,11 +231,11 @@ export class TradeComponent {
 
       if (optionalParam) {
         // Validate optionalParam here
-        console.log('Optional Parameter:', optionalParam);
+        //console.log('Optional Parameter:', optionalParam);
 
         // Fetch data from trade address, catch if invalid
         this.web3.callContractMethod('TradeFactory', 'getTradeDetailsByAddress', [optionalParam], 'call').then((item: any) => {
-          console.log('Valid trade address');
+          //console.log('Valid trade address');
           this.hasValidTradeAddress = true;
           this.__resolveItemData(item);
         }).catch((err: any) => {
@@ -251,11 +255,11 @@ export class TradeComponent {
     const buyerAddress = _item.buyer.toLowerCase();
     const sellerAddress = _item.seller.toLowerCase();
 
-    console.log(`item`, _item);
+    // console.log(`item`, _item);
 
-    console.log('User Address:', userAddress);
-    console.log('Buyer Address:', buyerAddress);
-    console.log('Seller Address:', sellerAddress);
+    // console.log('User Address:', userAddress);
+    // console.log('Buyer Address:', buyerAddress);
+    // console.log('Seller Address:', sellerAddress);
 
     this.status = parseInt(_item.status) as TradeStatus;
     const isKeeper: boolean = await this.web3.callContractMethod('Keepers', 'isKeeper', [userAddress], 'call');
@@ -275,7 +279,7 @@ export class TradeComponent {
           this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ||
           this.status == TradeStatus.BuyerCancelled ? 2 : 1;
 
-    console.log(`category`, category);
+    //console.log(`category`, category);
 
     if (category >= 1) {
       this.firstFormGroup.get('firstCtrl')!.setValue('valid');
@@ -289,11 +293,9 @@ export class TradeComponent {
 
     this.editStepIndex = category;
 
-    // this.endStep.label;
     const endStepLabel = this.status == TradeStatus.Completed ? 'Item Sent' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Item Sent';
     this.endStep.label = endStepLabel;
     
-
     if(this.status == TradeStatus.Disputed){
       this.midStep.label = 'Trade Disputed';
     }
@@ -304,7 +306,7 @@ export class TradeComponent {
     
     this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
 
-    console.log("formGroupValid?", this.firstFormGroup.valid, this.secondFormGroup.valid, this.thirdFormGroup.valid);
+    //console.log("formGroupValid?", this.firstFormGroup.valid, this.secondFormGroup.valid, this.thirdFormGroup.valid);
 
 
     //this.thirdFormGroup.get('thirdCtrl')!.setValue('valid');
@@ -312,10 +314,20 @@ export class TradeComponent {
     //this.stepper!.selectedIndex = category;
 
 
-    this.subService.addSubscription([_item.contractAddress], (event: any) => {
-      console.log('event subService', event);
-      const status = event[1];
-      this.status = parseInt(status) as TradeStatus;
+
+    // this.subService.addSubscription([_item.contractAddress], (event: any) => {
+    //   const status = event[1];
+    //   const parsedStatus = parseInt(status) as TradeStatus;
+    //   //this.runAfterStatusUpdate(parsedStatus);
+    // }, 'TradeComponent');
+  }
+
+  //this.timelineService.addStatus(this.status);
+
+  runAfterStatusUpdate(_status: TradeStatus): void {
+      console.log('runAfterStatusUpdate', _status);
+      
+      this.status = _status;
       this.timelineService.addStatus(this.status);
       //
       const category =
@@ -342,6 +354,9 @@ export class TradeComponent {
 
       this.editStepIndex = category;
 
+      const endStepLabel = this.status == TradeStatus.Completed ? 'Item Sent' : this.status == TradeStatus.Resolved ? 'Resolved' : this.status == TradeStatus.Clawbacked ? 'Clawbacked' : this.status == TradeStatus.SellerCancelled ? 'Seller Cancelled' : this.status == TradeStatus.BuyerCancelled ? 'Buyer Cancelled' : this.status == TradeStatus.SellerCancelledAfterBuyerCommitted ? 'Seller Rejected' : 'Item Sent';
+      this.endStep.label = endStepLabel;
+
       if(this.status == TradeStatus.Disputed){
         this.midStep.label = 'Trade Disputed';
       }
@@ -350,8 +365,14 @@ export class TradeComponent {
       const tradeDidHappen = this.status == TradeStatus.Completed || this.status == TradeStatus.Resolved;
   
       this.changeStepperHeaderEndStepDOM(tradeDidNotHappen, tradeDidHappen);
+  }
 
-    }, 'TradeComponent');
+  async runNextStatusUpdate(_status: TradeStatus): Promise<void> {
+    this.status = _status;
+    // this.item.status = _status.toString();
+    // await this._validateRoleAndStatus(this.item);
+    await this._validateTradeAddress();
+    this.timelineService.addStatus(this.status);
   }
 
   public statusToString(_status: TradeStatus): string {
@@ -406,7 +427,7 @@ export class TradeComponent {
       },
 
     };
-    console.log('Itemss:', this.item);
+    //console.log('Itemss:', this.item);
 
     await this._validateRoleAndStatus(this.item);
   }
@@ -431,15 +452,15 @@ export class TradeComponent {
 
     //this.timelineService.addStatus(TradeStatus.BuyerCommitted);
 
-    dialogRef.componentInstance.dialogData.subscribe((data: any) => {
-      console.log(`data`, data);
-      if (data.bought) {
-        // this.timelineService.addStatus(TradeStatus.BuyerCommitted);
-        // this.status = TradeStatus.BuyerCommitted;
-        // this.firstFormGroup.get('firstCtrl')!.setValue('valid');
-        // this.stepper!.selectedIndex = 1;
-      }
-    });
+    // dialogRef.componentInstance.dialogData.subscribe((data: any) => {
+    //   console.log(`data`, data);
+    //   if (data.bought) {
+    //     // this.timelineService.addStatus(TradeStatus.BuyerCommitted);
+    //     // this.status = TradeStatus.BuyerCommitted;
+    //     // this.firstFormGroup.get('firstCtrl')!.setValue('valid');
+    //     // this.stepper!.selectedIndex = 1;
+    //   }
+    // });
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result`, result);
@@ -478,6 +499,7 @@ export class TradeComponent {
   ngOnDestroy(): void {
     this.web3AccSub?.unsubscribe();
     this.subService.unsubscribe([this.item.contractAddress], 'TradeComponent');
+    this.actionCardSub?.unsubscribe();
   }
 
   parseInt(_int: string): number {
@@ -485,7 +507,7 @@ export class TradeComponent {
   }
 }
 
-interface TradeItem {
+export interface TradeItem {
   assetId: string;
   averageSellerDeliveryTime: string;
   buyer: string;
@@ -508,14 +530,14 @@ interface TradeItem {
   indexInfo: { etherPrice: string, priceInUSD: number };
 }
 
-enum TradeRole {
+export enum TradeRole {
   BUYER,
   SELLER,
   KEEPER,
   ANY = 'ANY'
 }
 
-enum TradeStatus {
+export enum TradeStatus {
   ForSale,
   SellerCancelled,
   BuyerCommitted,
