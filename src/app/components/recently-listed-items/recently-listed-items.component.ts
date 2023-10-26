@@ -87,7 +87,10 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
     
-    this.recentlyListed.initialize();
+    await this.recentlyListed.initialize();
+    if(this.recentlyListed.selectedName != '') {
+      this.recentlyListed.filterNames({target: { value: this.recentlyListed.selectedName}}, true);
+    }
   }
 
   initBreakpoint() {

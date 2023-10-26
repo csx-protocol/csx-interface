@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Web3Service } from '../../shared/web3.service';
 import { TradeStatus } from '../my-trades/my-trades.component';
 import { ReferralService } from '../../shared/referral.service';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class RecentlyListedItemsService {
   isLoading: boolean = true;
   isLoadingChip: boolean = false;
   filterToData = new Map<string, FilterItemsAndIndex>();
-  step:number = 0; //= 5;
+  step: number = 0; //= 5;
   totalContracts: number = 0;
   initialized: boolean = false;
   filteredItems: any[] | undefined = undefined;
@@ -26,7 +27,11 @@ export class RecentlyListedItemsService {
 
   pendings: any;
 
-  constructor(private web3: Web3Service, private referralService: ReferralService) {}
+  constructor(
+    private web3: Web3Service,
+    private referralService: ReferralService,
+    private router: Router
+  ) { }
 
   sortBy: 'index' | 'weiPrice' = 'index' as 'index' | 'weiPrice';
   sortDirection: 'asc' | 'desc' = 'desc';
@@ -36,7 +41,7 @@ export class RecentlyListedItemsService {
     this.sortKnownMappingsAndCurrentFilteredItems(this.sortBy, this.sortDirection);
   }
 
-  async sortKnownMappingsAndCurrentFilteredItems(sortBy: 'index' | 'weiPrice', sortDirection: 'asc' | 'desc'){
+  async sortKnownMappingsAndCurrentFilteredItems(sortBy: 'index' | 'weiPrice', sortDirection: 'asc' | 'desc') {
     for (const iterator of this.filterToData) {
       // console.log('iteratooooor', iterator);
       //const filterName = iterator[0];
@@ -44,58 +49,21 @@ export class RecentlyListedItemsService {
       const items = iterator[1].items;
 
       iterator[1].indexes = this._sortObjects(indexes, sortBy, sortDirection)
-      if(items.length !== 0){
-        if(items.length === indexes.length){
+      if (items.length !== 0) {
+        if (items.length === indexes.length) {
           iterator[1].items = this._sortObjects(items, sortBy, sortDirection);
         } else {
           iterator[1].items = [];
         }
       }
-
-      // iteratooooor output:
-      /**
-      [
-          "MORE_THAN_1000",
-          {
-              "indexes": [
-                  {
-                      "0": "6",
-                      "1": "1489077140000000000",
-                      "2": "0",
-                      "3": "Driver Gloves",
-                      "4": "★ Driver Gloves | Rezan the Red (Minimal Wear)",
-                      "5": "7",
-                      "index": "6",
-                      "weiPrice": "1489077140000000000",
-                      "priceType": "0",
-                      "weaponType": "Driver Gloves",
-                      "itemMarketName": "★ Driver Gloves | Rezan the Red (Minimal Wear)",
-                      "nextIndex": "7",
-                      "etherPrice": "1.48907714",
-                      "priceInUSD": 2419.6458043940006
-                  }
-              ],
-              "items": []
-          }
-      ]
-       */
     }
-    // if(this.filteredItems)
-    // if(this.filteredItems.length !== 0){
-    //   console.log('filteredItems yes');
 
-    //   // Cant do on this.filteredItems as first becomes 5th and not last, after next load its incorrect.
-    //   // have to reload the 'lastSelectedFiltering'
-    //   this.filteredItems = this._sortObjects(this.filteredItems, sortBy, sortDirection);
-    //   console.log(this.filteredItems);
-
-    // }
-
-    if(this.pendings)
-    this.pendings = this._sortObjects(this.pendings, sortBy, sortDirection);
+    if (this.pendings) {
+      this.pendings = this._sortObjects(this.pendings, sortBy, sortDirection);
+    }
 
     if (this.selectedName != '') {
-      await this.filterNames({target: { value: this.selectedName}});
+      await this.filterNames({ target: { value: this.selectedName } }, true);
     } else {
       //
       if (
@@ -125,16 +93,16 @@ export class RecentlyListedItemsService {
     const directionMultiplier = sortDirection === 'desc' ? -1 : 1;
     return objects.sort((a, b) => {
       if (sortBy === 'index') {
-        console.log(sortBy, directionMultiplier);
-        if(a.index && b.index !== undefined){
+        //console.log(sortBy, directionMultiplier);
+        if (a.index && b.index !== undefined) {
           return directionMultiplier * (a.index - b.index);
         } else {
           return directionMultiplier * (a.indexInfo.index - b.indexInfo.index);
         }
       } else if (sortBy === 'weiPrice') {
-        console.log(sortBy, directionMultiplier);
-        if(a.priceInUSD && b.priceInUSD !== undefined){
-         return directionMultiplier * (Number(a.priceInUSD) - Number(b.priceInUSD));
+        //console.log(sortBy, directionMultiplier);
+        if (a.priceInUSD && b.priceInUSD !== undefined) {
+          return directionMultiplier * (Number(a.priceInUSD) - Number(b.priceInUSD));
         } else {
           return directionMultiplier * (Number(a.indexInfo.priceInUSD) - Number(b.indexInfo.priceInUSD));
         }
@@ -143,13 +111,23 @@ export class RecentlyListedItemsService {
       }
     });
   }
+  updateUrlParams(params: any): void {
+    const navigationExtras: NavigationExtras = {
+      queryParams: params,
+      queryParamsHandling: 'merge'  // keep current query params unless the new query params have the same key
+    };
+    this.router.navigate([], navigationExtras);
+  }
 
   filterTimeout: any;
-  async filterNames(event: any) {
+  async filterNames(event: any, updateUrlOnAction: boolean) {
     clearTimeout(this.filterTimeout);
     this.filterTimeout = setTimeout(async () => {
-      this._filterNames(event);
-      console.log('RESULTS', this.filterToData);
+      await this._filterNames(event);
+      if (updateUrlOnAction) {
+        this.updateUrlParams({ i: this.selectedName });
+      }
+      //console.log('updateUrl', updateUrlOnAction, 'RESULTS', this.filterToData);
     }, 10);
   }
 
@@ -182,16 +160,16 @@ export class RecentlyListedItemsService {
             }
             let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
             const [max, min, value] = this.getFloatValues(details.skinInfo);
-            details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
+            details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
             _filteredItems.push(details);
           }
 
-          console.log(
-            'setting filterValue',
-            filterValue,
-            this.filteredNames,
-            _filteredItems
-          );
+          // console.log(
+          //   'setting filterValue',
+          //   filterValue,
+          //   this.filteredNames,
+          //   _filteredItems
+          // );
 
           this.filterToData.set(filterValue, {
             indexes: this.filteredNames,
@@ -239,29 +217,29 @@ export class RecentlyListedItemsService {
   clearInput() {
     this.selectedName = '';
     this.isSearching = false;
-    this.filterNames({ target: { value: '' } });
+    this.filterNames({ target: { value: '' } }, true);
   }
 
   onOptionSelected(event: any) {
-    this.filterNames({ target: { value: event.option.value } });
+    this.filterNames({ target: { value: event.option.value } }, true);
   }
 
   //hasReferral: boolean = false;
   //discountRatio: number = 0;
 
-  referralInfo: { 
-    hasReferral: boolean, 
-    buyerRatio: string, 
-    ownerRatio: string, 
-    owner: string, 
-    discountRatio: number 
-  } = { 
-    hasReferral: false, 
-    buyerRatio: '', 
-    ownerRatio: '', 
-    owner: '', 
-    discountRatio: 0 
-  };
+  referralInfo: {
+    hasReferral: boolean,
+    buyerRatio: string,
+    ownerRatio: string,
+    owner: string,
+    discountRatio: number
+  } = {
+      hasReferral: false,
+      buyerRatio: '',
+      ownerRatio: '',
+      owner: '',
+      discountRatio: 0
+    };
 
   async initialize() {
     if (!this.initialized) {
@@ -271,7 +249,7 @@ export class RecentlyListedItemsService {
       const [hasReferral, referralInfo] = await this.referralService.hasReferralCodeLocalOrChain();
 
       const discountRatio = parseInt(referralInfo?.buyerRatio ?? '0');
-      this.referralInfo = {...referralInfo, discountRatio: discountRatio, hasReferral: hasReferral};
+      this.referralInfo = { ...referralInfo, discountRatio: discountRatio, hasReferral: hasReferral };
 
       const [pendings, totalContracts] = await this.web3.getTradeIndexesByStatus(
         TradeStatus.ForSale,
@@ -282,15 +260,15 @@ export class RecentlyListedItemsService {
       );
 
       this.totalContracts = totalContracts;
-      console.log('GOTYOPENDINGs', pendings);
+      //console.log('PendingsInit', pendings);
       console.log('totalContracts', totalContracts);
-      
+
       //Sorting highest first, lowest last.
       this.pendings = pendings.sort(
         (a: { index: number }, b: { index: number }) => b.index - a.index
       );
 
-      this.filterNames({ target: { value: '' } });
+      //this.filterNames({ target: { value: '' } });
 
       if (this.totalContracts > 0) {
         this.filterToData.set('ANY', {
@@ -369,10 +347,10 @@ export class RecentlyListedItemsService {
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
-          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};          
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
           _filteredItems.push(details);
         }
-        console.log('SETTING: selectedFilter', selectedFilter);
+        //console.log('SETTING: selectedFilter', selectedFilter);
 
         this.filterToData.set(selectedFilter, {
           items: _filteredItems,
@@ -430,7 +408,7 @@ export class RecentlyListedItemsService {
         const item = filteredIndexes[i];
         let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
         const [max, min, value] = this.getFloatValues(details.skinInfo);
-        details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
+        details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
         _filteredItems.push(details);
       }
       // console.log('SETTING: selectedFilter', selectedFilter);
@@ -523,13 +501,13 @@ export class RecentlyListedItemsService {
     let _filteredItems = [];
     let _filteredLength: number = 0;
     if (selectedFilter !== undefined) {
-      console.log(
-        'selectedPriceFilter',
-        this.selectedPriceFilter,
-        'selectedTypeFilter',
-        selectedFilter,
-        this.filterToData.get(this.selectedPriceFilter)?.indexes
-      );
+      // console.log(
+      //   'selectedPriceFilter',
+      //   this.selectedPriceFilter,
+      //   'selectedTypeFilter',
+      //   selectedFilter,
+      //   this.filterToData.get(this.selectedPriceFilter)?.indexes
+      // );
 
       const hasKey = this.filterToData.has(
         this.selectedPriceFilter + selectedFilter
@@ -546,7 +524,7 @@ export class RecentlyListedItemsService {
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
-          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
           _filteredItems.push(details);
         }
         // console.log(
@@ -591,7 +569,7 @@ export class RecentlyListedItemsService {
   }
 
   _filterItemsByWeaponType(items: any[], weaponType: string) {
-    console.log('AJT', items);
+    //console.log('AJT', items);
     // const filteredGloves = pendings.filter((item: any) =>
     //       this.gloves.includes(item.weaponType)
     //     );
@@ -667,13 +645,13 @@ export class RecentlyListedItemsService {
     if (selectedPriceFilter !== undefined) {
       let selectedFilterKey = selectedPriceFilter;
       if (selectedFilter !== undefined) {
-        console.log(
-          'selectedPriceFilter',
-          this.selectedPriceFilter,
-          'selectedGunTypeFilter',
-          selectedFilter,
-          this.filterToData.get(this.selectedPriceFilter)?.indexes
-        );
+        // console.log(
+        //   'selectedPriceFilter',
+        //   this.selectedPriceFilter,
+        //   'selectedGunTypeFilter',
+        //   selectedFilter,
+        //   this.filterToData.get(this.selectedPriceFilter)?.indexes
+        // );
         selectedFilterKey = selectedFilterKey + selectedFilter;
       } else if (
         selectedFilter == undefined &&
@@ -697,10 +675,10 @@ export class RecentlyListedItemsService {
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
-          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
           _filteredItems.push(details);
         }
-        console.log('SETTING: selectedFilterKey', selectedFilterKey);
+        //console.log('SETTING: selectedFilterKey', selectedFilterKey);
 
         this.filterToData.set(selectedFilterKey, {
           indexes: _filteredIndexItems,
@@ -750,13 +728,13 @@ export class RecentlyListedItemsService {
     if (selectedPriceFilter !== undefined) {
       let selectedFilterKey = selectedPriceFilter;
       if (selectedFilter !== undefined) {
-        console.log(
-          'selectedPriceFilter',
-          this.selectedPriceFilter,
-          'selectedGunTypeFilter',
-          selectedFilter,
-          this.filterToData.get(this.selectedPriceFilter)?.indexes
-        );
+        // console.log(
+        //   'selectedPriceFilter',
+        //   this.selectedPriceFilter,
+        //   'selectedGunTypeFilter',
+        //   selectedFilter,
+        //   this.filterToData.get(this.selectedPriceFilter)?.indexes
+        // );
         selectedFilterKey = selectedFilterKey + selectedFilter;
       } else if (this.selectedGunsTypeFilter !== undefined) {
         selectedFilterKey = selectedFilterKey + this.selectedGunsTypeFilter;
@@ -777,7 +755,7 @@ export class RecentlyListedItemsService {
           }
           let details = await this.web3.getTradeDetailsByIndex(item.index, this.referralInfo.hasReferral, this.referralInfo.discountRatio);
           const [max, min, value] = this.getFloatValues(details.skinInfo);
-          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value}};
+          details = { ...details, indexInfo: item, float: { max: max, min: min, value: value } };
           _filteredItems.push(details);
         }
         // console.log('SETTING: selectedFilterKey', selectedFilterKey);

@@ -54,7 +54,7 @@
 
   <mat-form-field style="background-color: #12131f;">
     <mat-label>Search</mat-label>
-    <input matInput [matAutocomplete]="auto" [(ngModel)]="this.recentlyListed.selectedName" (input)="this.recentlyListed.filterNames($event)" [disabled]="this.recentlyListed.isLoading">
+    <input matInput [matAutocomplete]="auto" [(ngModel)]="this.recentlyListed.selectedName" (input)="this.recentlyListed.filterNames($event, true)" [disabled]="this.recentlyListed.isLoading">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="this.recentlyListed.onOptionSelected($event)">
       <mat-option *ngFor="let item of this.recentlyListed.filteredNames" [value]="item.itemMarketName">
         {{ item.itemMarketName }}
@@ -65,15 +65,18 @@
     </button>
   </mat-form-field>
 
+  
   <mat-button-toggle-group appearance="legacy" [(ngModel)]="this.recentlyListed.sortBy" name="fontStyle" aria-label="Font Style">
-    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="index">Listing</mat-button-toggle>
-    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="weiPrice">Price</mat-button-toggle>
+    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="index" style="transform: scale(0.8);">Date</mat-button-toggle>
+    <mat-button-toggle [disabled]="this.recentlyListed.isLoading" mat-button value="weiPrice" style="transform: scale(0.8);">Price</mat-button-toggle>
   </mat-button-toggle-group>
   <br>
   <button [disabled]="this.recentlyListed.isLoading" mat-button (click)="this.recentlyListed.toggleSortDirection()" color="primary">
     Sort by <span *ngIf="this.recentlyListed.sortBy == 'index'">Newest vs Oldest</span> <span *ngIf="this.recentlyListed.sortBy == 'weiPrice'">Price</span>
     <mat-icon>{{ this.recentlyListed.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
   </button>
+  <br>
+  
 
     <mat-grid-list *ngIf="this.recentlyListed.filteredItems && this.recentlyListed.filteredItems.length > 0 && !this.recentlyListed.isLoadingChip" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
     <mat-grid-tile style="overflow: visible;" *ngFor="let item of this.recentlyListed.filteredItems">
@@ -109,7 +112,12 @@
           <div *ngIf="item.stickers.length === 0" style="margin-left: 2%; min-height: 41.5px;"></div>
           <mat-card-content>
           <p>
-            {{item.itemMarketName}}
+            <!-- <a routerLink="trade/{{item.contractAddress}}">
+              {{item.itemMarketName}}
+            </a>  -->
+            <a class="link-like" (click)="this.recentlyListed.filterNames({target: { value: item.itemMarketName}}, true); this.recentlyListed.selectedName = item.itemMarketName">
+              {{item.itemMarketName}}
+            </a> 
           </p>
           <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar>
           <p matTooltip="&sim; ${{item.indexInfo.priceInUSD.toFixed(2)}} USD">
