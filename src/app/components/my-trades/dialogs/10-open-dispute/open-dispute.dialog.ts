@@ -64,7 +64,7 @@ export class OpenDisputeDialog implements AfterViewInit {
       console.log('result', result);
       this.isDisputing = false;
       this.actionCardService.updateTradeStatus(TradeStatus.Disputed);
-      this.dialogRef.close();
+      this.dialogRef.close('success');
     }
     ).catch((error) => {
       console.log('error', error);
