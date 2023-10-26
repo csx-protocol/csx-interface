@@ -4,9 +4,9 @@ import { MyTradeItem } from "../my-trade-item.interface";
 import { BuyerCommittedService } from "./buyer-committed.service";
 import { IntervalService } from "../interval.service";
 import { NotificationService } from "../../../../shared/notification.service";
-import { MyTradesService } from "../../my-trades.service";
 import { TradeStatus } from "../../my-trades.component";
 import { SubscriptionService } from "../subscription.service";
+import { ActionCardService } from "../../../../pages/trade/utils/action-card/action-card.service";
 
 enum Role {
     Seller = "Seller",
@@ -27,6 +27,7 @@ export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
         private intervalService: IntervalService,
         private notificationService: NotificationService,
         // private myTradesService: MyTradesService,
+        private actionCardService: ActionCardService,
         private subscriptionService: SubscriptionService,
     ) {
         this.isLoading = true;
@@ -176,9 +177,11 @@ export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
                 // this.hasSuccessfullyCancelled = true;
                 this.isCancelling = false;
                 //update my trades & map-ui + item if in map.
-                const tradeStatus = isBuyer ? TradeStatus.BuyerCancelled : TradeStatus.SellerCancelled;
+                //const tradeStatus = isBuyer ? TradeStatus.BuyerCancelled : TradeStatus.SellerCancelled;
                 //v---check if this is needed
-                //this.myTradesService.updateTradeStatus(this.item!.contractAddress, tradeStatus);                
+                //this.myTradesService.updateTradeStatus(this.item!.contractAddress, tradeStatus);
+                this.item!.status = TradeStatus.BuyerCancelled as string;
+                this.actionCardService.updateTradeStatus(TradeStatus.BuyerCancelled);
             }).catch((error) => {
                 console.log(error);
                 this.notificationService.openSnackBar(error.message, 'OK');
@@ -207,11 +210,13 @@ export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
             await this.committedService.sellerTradeVeridict(this.item.contractAddress, isAccepting).then(() => {
                 if (isAccepting) {
                     this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
-                    this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true);
+                    this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true, 'Seller');
                     this.hasSuccessfullyVeridictedAccept = true;
+                    this.item!.status = TradeStatus.SellerCommitted as string;
                 } else {
                     this.notificationService.openSnackBar('Trade Successfully Rejected!', 'OK');
                     this.hasSuccessfullyVeridictedReject = true;
+                    this.item!.status = TradeStatus.SellerCancelledAfterBuyerCommitted as string;
                 }
                 this.hasRejected = false;
                 this.isVeridicting = false;

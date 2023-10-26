@@ -1,5 +1,78 @@
 <mat-card class="margins background">
-    <span style="margin-left: 20px; margin-right: 20px;">
-        <p>yo</p>
-    </span>    
+    <!-- <span style="margin-left: 20px; margin-right: 20px;">
+        <p>yo</p> {{item?.itemMarketName}}
+    </span> -->
+    <span style="margin-left: 20px; margin-right: 20px; padding-top: 0.2rem;">
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <span *ngIf="role == 0">
+            <b>Buyer Panel</b>
+            <div *ngIf="status == 2" style="margin-right: 20px;">
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="warn" style="color: rgba(244, 67, 54, 0.712) !important;">Cancel Buy Order</button>
+            </div>
+            <div *ngIf="status == 3" style="margin-right: 20px;">
+                <p>Successfully cancelled buy order.</p>
+            </div>
+            <div *ngIf="status == 4" style="margin-right: 20px;">
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="primary" style="color: rgba(54, 244, 79, 0.712) !important;">Seller Accepted</button>
+            </div>
+            <div *ngIf="status == 5" style="margin-right: 20px;">
+                <p>Seller rejected the trade.</p>
+            </div>
+            <div *ngIf="status == 6" style="margin-right: 20px;">
+                <p>Trade complete, funds sent to seller.</p>
+            </div>
+            <div *ngIf="status == 7" style="margin-right: 20px;">
+                <p>Trade currently disputed.</p>
+            </div>
+            <div *ngIf="status == 8" style="margin-right: 20px;">
+                <p>Trade resolved.</p>
+            </div>
+            <div *ngIf="status == 9" style="margin-right: 20px;">
+                <p>Trade clawbacked.</p>
+            </div>
+        </span>
+        <span *ngIf="role == 1">
+            <b>Seller Panel</b>
+            <div *ngIf="status == 0" style="margin-right: 20px;">
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="warn" style="color: rgba(244, 67, 54, 0.712) !important;">Cancel Sell Order</button>
+            </div>
+            <div *ngIf="status == 1" style="margin-right: 20px;">
+                <p>Successfully cancelled listing.</p>
+            </div>
+            <div *ngIf="status == 2" style="margin-right: 20px;">
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="primary" style="color: rgba(54, 244, 79, 0.712) !important;">Accept or Deny Trade</button>
+            </div>
+            <div *ngIf="status == 3" style="margin-right: 20px;">
+                <p>Buyer Cancelled Before You Veridicted.</p>
+            </div>
+            <div *ngIf="status == 4" style="margin-right: 20px;">
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="primary" style="color: rgba(54, 244, 79, 0.712) !important;">Send Trade Offer</button>
+            </div>
+            <div *ngIf="status == 5" style="margin-right: 20px;">
+                <p>Successfully rejected buyer.</p>
+            </div>
+            <div *ngIf="status == 6" style="margin-right: 20px;">
+                <p>Trade complete, funds sent to your wallet.</p>
+            </div>
+            <div *ngIf="status == 7" style="margin-right: 20px;">
+                <p>Trade currently disputed.</p>
+            </div>
+            <div *ngIf="status == 8" style="margin-right: 20px;">
+                <p>Trade resolved.</p>
+            </div>
+            <div *ngIf="status == 9" style="margin-right: 20px;">
+                <p>Trade clawbacked.</p>
+            </div>
+        </span>
+        <span *ngIf="role == 2"></span>
+
+        <span *ngIf="role == 'ANY'">
+            <b>User Panel</b>
+            <div *ngIf="status == 0" style="margin-right: 20px;">
+                <button (click)="openBuyDialog(item!)" mat-button color="primary" style="color: rgba(54, 244, 79, 0.712) !important;">Buy Now</button>
+            </div>
+        </span>
+       
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+    </span>
 </mat-card>
