@@ -18,7 +18,7 @@ export interface FilterType<T> {
 @Injectable({
   providedIn: 'root',
 })
-export class MyTradesService implements OnDestroy{
+export class MyTradesService implements OnDestroy {
   initialized: boolean = false;
   autoScroll: boolean = false;
   step: number = 5;
@@ -34,12 +34,12 @@ export class MyTradesService implements OnDestroy{
   selectedStatusFilter: any = 'ANY';
 
   constructor(public web3: Web3Service, private subscriptionService: SubscriptionService) {
-    console.log('MyTradesService constructor, initialized?', this.initialized);
+    //console.log('MyTradesService constructor, initialized?', this.initialized);
     //this.init();
   }
 
   ngOnDestroy(): void {
-    console.log('MyTradesService ngOnDestroy');    
+    console.log('MyTradesService ngOnDestroy');
     this.subscriptionService.unsubscribeAllWithOrigin('MyTradesService');
   }
 
@@ -48,8 +48,8 @@ export class MyTradesService implements OnDestroy{
     if (!this.initialized) {
       this.initialized = true;
       this.totalUserTrades = await this._getTradesTotal();
-      this.userUIs = await this._getTradeUIs(this.totalUserTrades);    
-      
+      this.userUIs = await this._getTradeUIs(this.totalUserTrades);
+
       // if this.userUIs is empty
       if (this.userUIs.length == 0) {
         this.isLoading = false;
@@ -65,7 +65,7 @@ export class MyTradesService implements OnDestroy{
           items: [],
         });
 
-        console.log('this.userUIs', this.userUIs);
+        //console.log('this.userUIs', this.userUIs);
 
         const seller = this.userUIs.filter((ui) => ui.role == TradeRole.SELLER);
         this.filterToData.set('SELLER', {
@@ -178,9 +178,9 @@ export class MyTradesService implements OnDestroy{
         });
 
       }
-      console.log('userUIs', this.userUIs);
+      //console.log('userUIs', this.userUIs);
       this.userItems = await this._loadFirstStep('ANY');
-      console.log('userItems', this.userItems);
+      //console.log('userItems', this.userItems);
       this.isLoading = false;
       // this.hasMoreItemsToLoad =
       //   this.hasMoreItemsToLoad && this.userItems.length < this.totalUserTrades;
@@ -188,59 +188,61 @@ export class MyTradesService implements OnDestroy{
       // Status Stream
       const allContractAddresses: string[] = this.userUIs.map((ui) => ui.contractAddress);
       this.initStatusStream(allContractAddresses);
-    }     
+    }
   }
 
   initStatusStream(contractAddresses: string[]) {
     this.subscriptionService.addSubscription(contractAddresses, (event) => {
       console.log('Updating Trade Status');
-      
       this.updateTradeStatus(event.contractAddress, event[1]);
-      
-      console.log('event: ', event);
 
-     //make another stream without addressScope and if user address is invovled, then update status
-     // if status is 'BuyerCommitted', then data is:
-     // data:"225482466+EP2Wgs2R||225482466+TESTTOKEN||0x4a2282ccf3ccfc727e961adef83299649ebefd7e||297776550000000000"
-    //  const buyerAddress = event[1] == TradeStatus.BuyerCommitted ? event[2].split('||')[2] : null;
-    //  console.log('buyerAddress: ', buyerAddress);
-     
+      //console.log('event: ', event);
+
+      //make another stream without addressScope and if user address is invovled, then update status
+      // if status is 'BuyerCommitted', then data is:
+      // data:"225482466+EP2Wgs2R||225482466+TESTTOKEN||0x4a2282ccf3ccfc727e961adef83299649ebefd7e||297776550000000000"
+      //  const buyerAddress = event[1] == TradeStatus.BuyerCommitted ? event[2].split('||')[2] : null;
+      //  console.log('buyerAddress: ', buyerAddress);
+
     }, 'MyTradesService');
   }
 
-
-
-  updateTradeStatus(contractAddress: string, status: TradeStatus): boolean {
+  // TODO: Use for Transistion.
+  async updateTradeStatus(contractAddress: string, status: TradeStatus): Promise<boolean> {
+    //console.log(`Is inits?`, this.initialized);
+    console.log(`Updating trade status for ${contractAddress} to ${status}`);
+    
+    
     const tradeUI = this.userUIs.find((ui) => ui.contractAddress == contractAddress);
     if (tradeUI) {
       tradeUI.status = status;
       // this.userItems = this.userItems.filter((item) => item.contractAddress != contractAddress);
       for (const [key, value] of this.filterToData.entries()) {
-        console.log("Key: ", key);
-        console.log("Value: ", value);
+        //console.log("Key: ", key);
+        //console.log("Value: ", value);
         // if contract address found, change status
         const uiIndex = value.UIs.findIndex((ui) => ui.contractAddress == contractAddress);
         if (uiIndex > -1) {
-          value.UIs[uiIndex].status = status;          
+          value.UIs[uiIndex].status = status;
         }
 
         const itemsIndex = value.items.findIndex((ui) => ui.contractAddress == contractAddress);
         if (itemsIndex > -1) {
-          value.items[itemsIndex].status = status;          
+          value.items[itemsIndex].status = status;
           value.items[itemsIndex].uiInfo.status = this.__getStatusString(status.toString());
         }
 
         // if status is 'ended', remove from 'on-going' group
         if (status == TradeStatus.SellerCancelled || status == TradeStatus.BuyerCancelled || status == TradeStatus.SellerCancelledAfterBuyerCommitted || status == TradeStatus.Completed || status == TradeStatus.Resolved || status == TradeStatus.Clawbacked) {
           const uiIndex = this.filterToData.get('groupOnGoing')?.UIs.findIndex((ui) => ui.contractAddress == contractAddress);
-          if (uiIndex !== undefined && uiIndex > -1) {           
+          if (uiIndex !== undefined && uiIndex > -1) {
             this.filterToData.get('groupOnGoing')?.UIs.splice(uiIndex, 1);
           }
 
           const itemsIndex = this.filterToData.get('groupOnGoing')?.items.findIndex((ui) => ui.contractAddress == contractAddress);
           if (itemsIndex !== undefined && itemsIndex > -1) {
             this.filterToData.get('groupOnGoing')?.items.splice(itemsIndex, 1);
-          }          
+          }
         }
         // if status is 'on-going', remove from 'ended' group
         if (status == TradeStatus.ForSale || status == TradeStatus.BuyerCommitted || status == TradeStatus.SellerCommitted || status == TradeStatus.Disputed) {
@@ -250,7 +252,7 @@ export class MyTradesService implements OnDestroy{
           }
 
           const itemsIndex = this.filterToData.get('groupEnded')?.items.findIndex((ui) => ui.contractAddress == contractAddress);
-          if (itemsIndex !== undefined && itemsIndex > -1) {            
+          if (itemsIndex !== undefined && itemsIndex > -1) {
             this.filterToData.get('groupEnded')?.items.splice(itemsIndex, 1);
           }
         }
@@ -260,7 +262,7 @@ export class MyTradesService implements OnDestroy{
       const index = this.userItems.findIndex((ui) => ui.contractAddress == contractAddress);
       if (index > -1) {
         this.userItems[index].status = status;
-        this.userItems[index].uiInfo.status = this.__getStatusString(status.toString());        
+        this.userItems[index].uiInfo.status = this.__getStatusString(status.toString());
       }
 
       //if selectedStatusFilter is not Any or Appropiate (and condition to ended and on-going), remove from this.userItems.
@@ -274,22 +276,99 @@ export class MyTradesService implements OnDestroy{
           this.userItems = this.userItems.filter((item) => item.contractAddress != contractAddress);
         }
       }
-      
+
       return true;
+    } 
+
+    /**
+     * else {
+      console.log('Contract Address not found');
+      // if contract address not found, create one from scratch by calling getTradeDetailsByAddress.
+      let details = await this.web3.getTradeDetailsByAddress(contractAddress);
+      const role = this.web3.webUser.address?.toLowerCase() == details.buyer?.toLowerCase() ? TradeRole.BUYER : TradeRole.SELLER;
+      const item = { contractAddress: contractAddress, index: undefined, role: role, status: details.status };
+      const [max, min, value] = this.getFloatValues(details.skinInfo);
+      details = {
+        ...details,
+        uiInfo: {
+          ...item,
+          status: this.__getStatusString(item.status),
+          role: this.__getRoleString(item.role),
+        },
+        float: { max: max, min: min, value: value }
+      };
+      
+      this.userItems.push(details);
+      this.userUIs.push(details.uiInfo);
+      this.totalUserTrades = this.userUIs.length;
+      this.filterToData.get('ANY')?.UIs.push(details.uiInfo);
+      this.filterToData.get('groupOnGoing')?.UIs.push(details.uiInfo);
+      this.filterToData.get('groupEnded')?.UIs.push(details.uiInfo);
+      this.filterToData.get('groupOnGoing')?.items.push(details);
+      this.filterToData.get('groupEnded')?.items.push(details);
+      this.filterToData.get('ANY')?.items.push(details);
+      if (role == TradeRole.BUYER) {
+        this.filterToData.get('BUYER')?.UIs.push(details.uiInfo);
+        this.filterToData.get('BUYER')?.items.push(details);
+      } else {
+        this.filterToData.get('SELLER')?.UIs.push(details.uiInfo);
+        this.filterToData.get('SELLER')?.items.push(details);
+      }
+      if (details.status == TradeStatus.ForSale) {
+        this.filterToData.get('FOR_SALE')?.UIs.push(details.uiInfo);
+        this.filterToData.get('FOR_SALE')?.items.push(details);
+      }
+      if (details.status == TradeStatus.SellerCancelled) {
+        this.filterToData.get('SELLER_CANCELLED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('SELLER_CANCELLED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.BuyerCommitted) {
+        this.filterToData.get('BUYER_COMMITTED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('BUYER_COMMITTED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.BuyerCancelled) {
+        this.filterToData.get('BUYER_CANCELLED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('BUYER_CANCELLED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.SellerCommitted) {
+        this.filterToData.get('SELLER_COMMITTED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('SELLER_COMMITTED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.SellerCancelledAfterBuyerCommitted) {
+        this.filterToData.get('SELLER_CANCELLED_AFTER_BUYER_COMMITTED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('SELLER_CANCELLED_AFTER_BUYER_COMMITTED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.Completed) {
+        this.filterToData.get('COMPLETED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('COMPLETED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.Disputed) {
+        this.filterToData.get('DISPUTED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('DISPUTED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.Resolved) {
+        this.filterToData.get('RESOLVED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('RESOLVED')?.items.push(details);
+      }
+      if (details.status == TradeStatus.Clawbacked) {
+        this.filterToData.get('CLAWBACKED')?.UIs.push(details.uiInfo);
+        this.filterToData.get('CLAWBACKED')?.items.push(details);
+      }
     }
+     */
     return false;
   }
 
   async onRoleFilterChange(event: any) {
     this.isLoading = true;
-    console.log('MY-TRADES: onRoleFilterChange', event);
+    //console.log('MY-TRADES: onRoleFilterChange', event);
     const _selectedRoleFilter = event.value;
     this.selectedRoleFilter = _selectedRoleFilter;
     let _filteredItems = [];
-    console.log('MY-TRADES: _selectedRoleFilter', _selectedRoleFilter);
+    //console.log('MY-TRADES: _selectedRoleFilter', _selectedRoleFilter);
     if (_selectedRoleFilter !== undefined) {
       _filteredItems = await this._loadFirstStep(_selectedRoleFilter);
-      console.log('MY-TRADES: _filteredItems', _filteredItems);
+      //console.log('MY-TRADES: _filteredItems', _filteredItems);
     } else {
       this.selectedRoleFilter = TradeRole.ANY;
       _filteredItems = await this._loadFirstStep(TradeRole.ANY);
@@ -324,13 +403,13 @@ export class MyTradesService implements OnDestroy{
     let _filteredItems = [];
     let _filteredLength: number = 0;
     if (selectedFilter !== undefined) {
-      console.log(
-        'selectedRoleFilter',
-        this.selectedRoleFilter,
-        'selectedStatusFilter',
-        selectedFilter,
-        this.filterToData.get(this.selectedStatusFilter)?.UIs
-      );
+      // console.log(
+      //   'selectedRoleFilter',
+      //   this.selectedRoleFilter,
+      //   'selectedStatusFilter',
+      //   selectedFilter,
+      //   this.filterToData.get(this.selectedStatusFilter)?.UIs
+      // );
     }
     if (selectedFilter !== undefined) {
       _filteredItems = await this._loadFirstStep(selectedFilter);
@@ -349,13 +428,13 @@ export class MyTradesService implements OnDestroy{
 
   async onStatusFilterChange2(event: any) {
     this.isLoading = true;
-    console.log('MY-TRADES: onStatusFilterChange', event);
+    //console.log('MY-TRADES: onStatusFilterChange', event);
     const _selectedStatusFilter = event.value;
     let _filteredItems = [];
-    console.log('MY-TRADES: _selecteSdtatusFilter', _selectedStatusFilter);
+    //console.log('MY-TRADES: _selecteSdtatusFilter', _selectedStatusFilter);
     if (_selectedStatusFilter !== undefined) {
       _filteredItems = await this._loadFirstStep(_selectedStatusFilter);
-      console.log('MY-TRADES: _filteredItems', _filteredItems);
+      //console.log('MY-TRADES: _filteredItems', _filteredItems);
     } else {
       _filteredItems = await this._loadFirstStep(TradeRole.ANY);
     }
@@ -371,7 +450,7 @@ export class MyTradesService implements OnDestroy{
     let _filteredItems = [];
     //Check if selectedFilter is typeof string or TradeRole or TradeStatus
     if (typeof selectedFilter === 'string') {
-      console.log('MY-TRADES: selectedFilter is string');
+      //console.log('MY-TRADES: selectedFilter is string');
 
       //
       // Check if selected filter is a key in the map and filter is string
@@ -416,7 +495,7 @@ export class MyTradesService implements OnDestroy{
 
               _filteredItems.push(details);
             }
-            console.log('MY-TRADES: selectedFilter', selectedFilter);
+            //console.log('MY-TRADES: selectedFilter', selectedFilter);
 
             this.filterToData.set(selectedFilter as string, {
               items: _filteredItems,
@@ -430,6 +509,16 @@ export class MyTradesService implements OnDestroy{
         console.log('MY-TRADES: selectedFilter is not a key in the map');
       }
     }
+
+    // Sort by on-going first then ended.
+    _filteredItems.sort((a, b) => {
+      if (a.uiInfo.status == TradeStatus.ForSale || a.uiInfo.status == TradeStatus.BuyerCommitted || a.uiInfo.status == TradeStatus.SellerCommitted || a.uiInfo.status == TradeStatus.Disputed) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    
     this.isLoading = false;
     return _filteredItems;
   }
@@ -494,7 +583,7 @@ export class MyTradesService implements OnDestroy{
 
         _filteredItems.push(details);
       }
-      console.log('SETTING: selectedFilter', selectedFilter);
+      //console.log('SETTING: selectedFilter', selectedFilter);
 
       this.filterToData.set(selectedFilter as string, {
         items: [...filteredItems, ..._filteredItems],
@@ -531,12 +620,12 @@ export class MyTradesService implements OnDestroy{
   //   this.isLoading = false;
   // }
 
-  async _loadNextStep(selectedFilter: TradeRole | TradeStatus | string) {
-    this.isLoading = true;
+  // async _loadNextStep(selectedFilter: TradeRole | TradeStatus | string) {
+  //   this.isLoading = true;
 
-    this.isLoading = false;
-    return [];
-  }
+  //   this.isLoading = false;
+  //   return [];
+  // }
 
   private async _getTradesTotal() {
     return this.web3.callContractMethod('Users', 'getUserTotalTradeUIs', [this.web3.webUser.address], 'call');
@@ -548,8 +637,8 @@ export class MyTradesService implements OnDestroy{
     for (let i = 0; i < _total; i++) {
       trades.push(
         {
-          ...await this.web3.callContractMethod('Users', 'getUserTradeUIByIndex', [this.web3.webUser.address, i], 'call'), 
-          index : i
+          ...await this.web3.callContractMethod('Users', 'getUserTradeUIByIndex', [this.web3.webUser.address, i], 'call'),
+          index: i
         });
     }
 
@@ -579,7 +668,7 @@ export class MyTradesService implements OnDestroy{
       case '9' || TradeStatus.Clawbacked:
         return 'Clawbacked';
       default:
-        console.log('ERROR', status);        
+        console.log('ERROR', status);
         return 'ERROR';
     }
   }

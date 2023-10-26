@@ -96,8 +96,8 @@ export class LevelUpDialog {
         this.isLevelingUp = true;
         const csxBalance = this.web3.webUser.balances!['CSX'].balanceWei;
         const totalCostInWei =  this.web3.csxInstance.web3.utils.toWei(this.totalCost.toString(), 'ether');
-        console.log('csxBalance', csxBalance);
-        console.log('totalCostInWei', totalCostInWei);
+        // console.log('csxBalance', csxBalance);
+        // console.log('totalCostInWei', totalCostInWei);
         
         const csxBalanceBN = new this.web3.csxInstance.web3.utils.BN(csxBalance);
         const totalCostInWeiBN = new this.web3.csxInstance.web3.utils.BN(totalCostInWei);
@@ -110,13 +110,13 @@ export class LevelUpDialog {
 
         const newLevels = this.selectedLevels - this.currentLevel;
         this.web3.getCostForNextLevels(this.web3.webUser.address!, newLevels.toString()).then((cost) => {
-            console.log('cost', cost);
+            // console.log('cost', cost);
             this.csxCost = cost;
         });
         this.web3.callContractMethod('CSXToken', 'allowance', [this.web3.webUser.address!, this.web3.contracts['UserProfileLevel'].options.address], 'call').then((allowance) => {
             //this.allowanceCSX = allowance;
-            console.log('allowance', allowance);
-            console.log('totalCostInWei', totalCostInWei);
+            // console.log('allowance', allowance);
+            // console.log('totalCostInWei', totalCostInWei);
             
             const allowanceBN = new this.web3.csxInstance.web3.utils.BN(allowance);
             const totalCostInWeiBN = new this.web3.csxInstance.web3.utils.BN(totalCostInWei);

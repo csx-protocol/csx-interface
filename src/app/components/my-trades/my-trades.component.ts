@@ -87,7 +87,7 @@ export class MyTradesComponent implements OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      //console.log(`Dialog result: ${result}`);
       this.intervalService.stopAllIntervals();
     });
   }

@@ -51,7 +51,7 @@ export class LevelCircleComponent implements OnChanges {
       this.title = 'ERROR';
     } else {
       this.web3Service.getProfileLevel(this.userAddress).then((level: number) => {
-        console.log('LevelCircleComponent getLevel', level);
+        //console.log('CSX Level:', level);
         // For testing purposes only, for every second, increase one level
         // level = 5;
         // setInterval(() => {
@@ -106,7 +106,7 @@ export class LevelCircleComponent implements OnChanges {
   async onClick() {
     if(this.reactOnClick){
       const isOwner = this.userAddress == this.web3Service.webUser.address ? true : false;
-      console.log('LevelCircleComponent onClick isOwner?:', isOwner);
+      //console.log('LevelCircleComponent onClick isOwner?:', isOwner);
       // Open Dialog for Level Up
       if (isOwner) {
         this.web3Service.getUserDataFromProfileLevel(this.userAddress).then((levels: any) => {

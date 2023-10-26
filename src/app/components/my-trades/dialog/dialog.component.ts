@@ -32,7 +32,7 @@ export class DialogComponent implements OnDestroy {
     // console.log('data', data);
     this.item = this.initDialog(data);
 
-    console.log('item', this.item);
+    //console.log('item', this.item);
     
     //const status = this.item.status;
     //this.localStatus = status;
@@ -145,7 +145,7 @@ export class DialogComponent implements OnDestroy {
   }
 
   private __getRoleString(role: TradeRole | string): string {
-    console.log('GGGGGG', role);
+    //console.log('Role', role);
     
     switch (role) {
       case 0:

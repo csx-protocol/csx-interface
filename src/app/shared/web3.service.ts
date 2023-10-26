@@ -279,8 +279,7 @@ export class Web3Service implements OnDestroy {
   }
 
   private async ___notifyUserWalletConnected() {
-    console.log('NOTIFYING', this.webUser.shortAddy);
-
+    //console.log('NOTIFYING', this.webUser.shortAddy);
     this.webUser.isUserWalletConnected = true;
     // const uri = 'https://arbiscan.io/address/' + this.webUser.address;
     // this.notificationsService.notify(
@@ -760,7 +759,7 @@ export class Web3Service implements OnDestroy {
     tradeIndexes = tradeIndexes.map((element: any) => {
       // Create a new object with the original element's properties and the extra variables
 
-      console.log('weiPrajce', element.weiPrice, discountRatio);
+      //console.log('weiPrajce', element.weiPrice, discountRatio);
 
       const netValues = this.calculateNetValue(element.weiPrice, hasDiscount, this.webUser.baseFee, discountRatio);
 
@@ -1274,7 +1273,7 @@ export class Web3Service implements OnDestroy {
   pastEvents: any[] = [];
   private _collectPastEvent(event: any) {
     // get the event data
-    console.log('collectPastEvent', event);
+    //console.log('collectPastEvent', event);
 
     const contractAddress = event.contractAddress;
     const status = event[1];
@@ -1303,8 +1302,8 @@ export class Web3Service implements OnDestroy {
     this.pastEvents.forEach((event) => {
       // this.chainEvents.onEvent(event);
       // Push notification
-      console.log('hello', event);
-      console.log('event.sellerAddress', event.sellerAddress);
+      //console.log('hello', event);
+      //console.log('event.sellerAddress', event.sellerAddress);
 
 
       // figure out the role of the user
@@ -1315,43 +1314,44 @@ export class Web3Service implements OnDestroy {
         //Notify
         if (role == TradeRole.BUYER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`You're currently awaiting confirmation from seller for ${res}.`, event.contractAddress, 'Cancel Trade', true);
+            this.notificationsService.notify(`You're currently awaiting confirmation from seller for ${res}.`, event.contractAddress, 'Cancel Trade', true, 'Buyer');
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
-            this.notificationsService.notify(`You're currently awaiting confirmation from seller`, event.contractAddress, 'Cancel Trade', true);
+            this.notificationsService.notify(`You're currently awaiting confirmation from seller`, event.contractAddress, 'Cancel Trade', true, 'Buyer');
           });
         } else
           if (role == TradeRole.SELLER) {
             this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-              this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true)
+              this.notificationsService.notify(`Someone has recently bought your ${res}. It's time for you to Accept or Deny the Trade.`, event.contractAddress, 'Accept or Deny', true, 'Seller')
             }).catch((err) => {
               console.log('getTradeContractitemMarketName error', err);
-              this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true);
+              this.notificationsService.notify('Someone has purchased your item', event.contractAddress, 'Accept or Deny', true, 'Seller');
             });
           }
 
       } else if (event.status == TradeStatus.SellerCommitted) {
         if (role == TradeRole.BUYER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm Trade', true);
+            this.notificationsService.notify(`You're currently awaiting delivery of ${res}.`, event.contractAddress, 'Confirm Trade', true), 'Buyer';
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
-            this.notificationsService.notify(`You're currently awaiting delivery of item`, event.contractAddress, 'Confirm Trade', true);
+            this.notificationsService.notify(`You're currently awaiting delivery of item`, event.contractAddress, 'Confirm Trade', true, 'Buyer');
           });
         } else if (role == TradeRole.SELLER) {
           this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-            this.notificationsService.notify(`You're about to deliver ${res}. It's time for you to deliver the trade`, event.contractAddress, 'Confirm Trade', true)
+            this.notificationsService.notify(`You're about to deliver ${res}. It's time for you to deliver the trade`, event.contractAddress, 'Confirm Trade', true, 'Seller')
           }).catch((err) => {
             console.log('getTradeContractitemMarketName error', err);
-            this.notificationsService.notify(`You're about to deliver item. It's time for you to deliver the trade`, event.contractAddress, 'More Info', true)
+            this.notificationsService.notify(`You're about to deliver item. It's time for you to deliver the trade`, event.contractAddress, 'More Info', true, 'Seller')
           });
         }
       } else if (event.status == TradeStatus.Disputed) {
+        const roleString = role == TradeRole.BUYER ? 'Buyer' : 'Seller';
         this.getTradeContractitemMarketName(event.contractAddress).then((res) => {
-          this.notificationsService.notify(`${res} Trade has been disputed.`, event.contractAddress, 'More Info', true);
+          this.notificationsService.notify(`${res} Trade has been disputed.`, event.contractAddress, 'More Info', true, roleString);
         }).catch((err) => {
           console.log('getTradeContractitemMarketName error', err);
-          this.notificationsService.notify(`A Trade has been disputed`, event.contractAddress, 'More Info', true);
+          this.notificationsService.notify(`A Trade has been disputed`, event.contractAddress, 'More Info', true, roleString);
         });
       }
     });
