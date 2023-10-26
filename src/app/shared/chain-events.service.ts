@@ -9,11 +9,14 @@ export class ChainEventsService {
 
   private eventSubject = new Subject<any>();
 
-  constructor(private notice: NotificationService) { this.notice.openSnackBar('event', 'OK');}
-
-  subscribeToAllEvents(callback: (event: any) => void): Subscription {
-    return this.eventSubject.asObservable().subscribe(callback);
+  constructor(private notice: NotificationService) {
+    //this.notice.openSnackBar('event', 'OK');
+    // notice initialization
   }
+
+  // subscribeToAllEvents(callback: (event: any) => void): Subscription {
+  //   return this.eventSubject.asObservable().subscribe(callback);
+  // }
 
   subscribeToContractEvents(callback: (event: any) => void, contractAddressFilter: string[]): Subscription {
     return this.eventSubject.asObservable()
