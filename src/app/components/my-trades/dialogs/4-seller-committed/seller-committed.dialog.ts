@@ -3,6 +3,8 @@ import { MyTradeItem } from "../my-trade-item.interface";
 import { Web3Service } from "../../../../shared/web3.service";
 import { MatDialog } from "@angular/material/dialog";
 import { OpenDisputeDialog } from "../10-open-dispute/open-dispute.dialog";
+import { TradeStatus } from "../../my-trades.component";
+import { ActionCardService } from "../../../../pages/trade/utils/action-card/action-card.service";
 
 @Component({
   selector: 'trades-seller-committed-dialog',
@@ -11,10 +13,10 @@ import { OpenDisputeDialog } from "../10-open-dispute/open-dispute.dialog";
 })
 export class SellerCommittedDialog implements AfterViewInit {
   @Input() item: MyTradeItem | undefined;
-  constructor(private web3: Web3Service, private dialog: MatDialog) {
-
-
-  }
+  constructor(
+    private web3: Web3Service, 
+    private dialog: MatDialog,
+    private readonly actionCardService: ActionCardService) { }
 
   ngAfterViewInit(): void {
     console.log('dialog item', this.item, this.dialog);
@@ -29,6 +31,8 @@ export class SellerCommittedDialog implements AfterViewInit {
       console.log('result', result);
       this.isConfirming = false;
       this.hasConfirmedDelivery = true;
+      this.item!.status = TradeStatus.Completed as string;
+      this.actionCardService.updateTradeStatus(TradeStatus.Completed);
     }
     ).catch((error) => {
       console.log('error', error);
@@ -50,16 +54,18 @@ export class SellerCommittedDialog implements AfterViewInit {
   isDisputingWrongInventory: boolean = false;
 
   openDisputeWithCause(myTradeItem: MyTradeItem, cause: string): void {
-    if(cause == 'BUYER_INVALID_TRADELINK') {
+    if (cause == 'BUYER_INVALID_TRADELINK') {
       this.isDisputingTL = true;
     }
-    if(cause == 'SELLER_SENT_WRONG_INVENTORY') {
+    if (cause == 'SELLER_SENT_WRONG_INVENTORY') {
       this.isDisputingWrongInventory = true;
     }
     this.web3.callContractMethod('Trade', 'openDispute', [myTradeItem!.contractAddress, cause], 'send').then((result) => {
       console.log('result', result)
       this.isDisputingTL = false;
       this.isDisputingWrongInventory = false;
+      this.item!.status = TradeStatus.Disputed as string;
+      this.actionCardService.updateTradeStatus(TradeStatus.Disputed);
     }
     ).catch((error) => {
       console.log('error', error);
@@ -69,7 +75,7 @@ export class SellerCommittedDialog implements AfterViewInit {
   }
 
   getSteamId64(_partnerId: string): string {
-    const partnerId = _partnerId;    
+    const partnerId = _partnerId;
     if (partnerId) {
       const partnerIdInt = parseInt(partnerId);
       return `https://steamcommunity.com/profiles/7656119${partnerIdInt + 7960265728}`;

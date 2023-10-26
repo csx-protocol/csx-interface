@@ -218,6 +218,7 @@ export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
                     this.hasSuccessfullyVeridictedReject = true;
                     this.item!.status = TradeStatus.SellerCancelledAfterBuyerCommitted as string;
                 }
+                this.actionCardService.updateTradeStatus(this.item!.status as TradeStatus);
                 this.hasRejected = false;
                 this.isVeridicting = false;
             }).catch((error) => {

@@ -2,8 +2,10 @@ import { AfterViewInit, Component, Inject, Input } from "@angular/core";
 import { MyTradeItem } from "../my-trade-item.interface";
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, Validators } from "@angular/forms";
 import { Web3Service } from "../../../../shared/web3.service";
+import { ActionCardService } from "../../../../pages/trade/utils/action-card/action-card.service";
+import { TradeStatus } from "../../my-trades.component";
 
 @Component({
   selector: 'trades-open-dispute-dialog',
@@ -31,7 +33,8 @@ export class OpenDisputeDialog implements AfterViewInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<OpenDisputeDialog>,
     private fb: FormBuilder,
-    private web3: Web3Service) {
+    private web3: Web3Service,
+    private readonly actionCardService: ActionCardService) {
     console.log(this.data);
     this.item = this.data;
 
@@ -60,6 +63,7 @@ export class OpenDisputeDialog implements AfterViewInit {
     this.web3.callContractMethod('Trade', 'openDispute', [this.item!.contractAddress ,this.firstFormGroup.value.firstCtrl], 'send').then((result) => {
       console.log('result', result);
       this.isDisputing = false;
+      this.actionCardService.updateTradeStatus(TradeStatus.Disputed);
       this.dialogRef.close();
     }
     ).catch((error) => {
