@@ -9,8 +9,18 @@
     Are you sure you want to cancel {{item.itemMarketName}} sell order?
     <br>
     <br>
-    <button mat-button color="warn" [mat-dialog-close]="true" style="color: rgb(244 67 54 / 38%) !important;">Yes, Cancel My Sell Order!</button>
-    <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button>
+    <div *ngIf="!isCancelling">
+      <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button>
+      <button mat-button color="warn" style="color: rgba(244, 67, 54, 0.726) !important;" (click)="cancelTrade()">Yes, Cancel My Sell Order!</button>
+    </div>
+    <div *ngIf="isCancelling" class="centered-loading-spinner" >
+      Confirm in wallet... <mat-progress-spinner
+      class="example-margin"
+      color="primary"
+      mode="indeterminate"
+      [diameter]="25">
+    </mat-progress-spinner> 🤔
+    </div>
   </mat-dialog-content>
 </span>
 <span *ngIf="!item">
