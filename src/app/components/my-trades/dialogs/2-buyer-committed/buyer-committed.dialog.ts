@@ -209,7 +209,10 @@ export class BuyerCommittedDialog implements OnDestroy, AfterViewInit {
 
             await this.committedService.sellerTradeVeridict(this.item.contractAddress, isAccepting).then(() => {
                 if (isAccepting) {
-                    this.notificationService.openSnackBar('Trade Successfully Accepted!', 'OK');
+                    const acceptText = isAccepting ? 'Accepted' : 'Rejected';
+                    console.log(`Trade successfully ${acceptText}`);                   
+                    
+                    this.notificationService.openSnackBar(`Trade Successfully ${acceptText}!`, 'OK');
                     this.notificationService.notify(`You're about to deliver ${this.item?.itemMarketName}. It's time for you to deliver the trade`, this.item?.contractAddress, 'Confirm Trade', true, 'Seller');
                     this.hasSuccessfullyVeridictedAccept = true;
                     this.item!.status = TradeStatus.SellerCommitted as string;
