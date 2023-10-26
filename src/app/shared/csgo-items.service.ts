@@ -33,14 +33,14 @@ export class CsgoItemsService {
     return item;
   }
 
-  addNextfiveInPage(){
-    if (this.step < this.itemsArray.length) {
-      this.itemsPage = [...this.itemsPage, ...this.itemsArray.slice(this.step, this.step + 5)];
-      this.step += 5;
-    } else {
-      console.log("You have reached the end of the list");
-    }
-  }
+  // addNextfiveInPage(){
+  //   if (this.step < this.itemsArray.length) {
+  //     this.itemsPage = [...this.itemsPage, ...this.itemsArray.slice(this.step, this.step + 5)];
+  //     this.step += 5;
+  //   } else {
+  //     console.log("You have reached the end of the list");
+  //   }
+  // }
 
   getItemInfo(inspectLink: string): any{
     return this.http.get<any>(environment.floatApi + inspectLink)
