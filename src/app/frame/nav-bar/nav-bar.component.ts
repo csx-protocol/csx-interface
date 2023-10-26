@@ -39,7 +39,7 @@ export class NavBarComponent implements OnDestroy {
   connectWallet(): void{
     this.loadingWallet = true;
     this._web3.initWallet().then(async () => {
-      await new Promise(resolve => setTimeout(resolve, 2800));
+      await new Promise(resolve => setTimeout(resolve, 800));
       this.loadingWallet = false;
     }).catch((err) => {
       this.notificationsService.openSnackBar(err, 'OK');
@@ -54,7 +54,7 @@ export class NavBarComponent implements OnDestroy {
   isProcessing: boolean = false;
   firstTime: boolean = true;
   async runAfterWallet(){
-    console.log("shorawda", this._web3.webUser.address);
+    console.log("Welcome", this._web3.webUser.address);
     this.trimmedAddress = this.getTrimmedAccount();
 
     if(this.account){

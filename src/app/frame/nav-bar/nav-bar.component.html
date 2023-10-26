@@ -57,7 +57,7 @@
         <mat-list-item style="height: auto;" (click)="openDaDialog(notice.link)">
           <p style="font-size: .8rem; white-space: initial;" class="toolbarTextColor">{{notice.message}}</p>
           <span *ngIf="notice.link">
-           <a><p style="font-size: 14px;">({{notice.linkText}})</p></a>
+           <a><p style="font-size: 14px;">({{notice.linkText}}) <span *ngIf="notice.role">as {{notice.role}}</span></p></a>
           </span>
       </mat-list-item>
       </span>
