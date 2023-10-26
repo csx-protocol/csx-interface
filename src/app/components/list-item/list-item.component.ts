@@ -151,7 +151,7 @@ export class ListItemComponent implements OnDestroy {
   }
 
   onStepChange(event: any): void {
-    console.log('EVENT', event);
+    // console.log('EVENT', event);
 
     if (event.selectedIndex === 2) {
       this.confirmDetails();
@@ -201,7 +201,7 @@ export class ListItemComponent implements OnDestroy {
       //const itemNameValueGiven = this.selectItem.get('itemNameControl').value;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
       this.itemInspectLink = itemInspectLink;
-      console.log('itemInspectLink', itemInspectLink);
+      //console.log('itemInspectLink', itemInspectLink);
 
       const SteamIDInspectUrl = this._itemInspectUrlToSteamID64(this.itemInspectLink);
       //https://steamcommunity.com/profiles/76561198185748194/tradeoffers/privacy#trade_offer_access_url
@@ -209,7 +209,7 @@ export class ListItemComponent implements OnDestroy {
 
       this.csgoItems.getItemInfo(itemInspectLink).subscribe(
         (data: any) => {
-          console.log("DATAZ", data);
+          //console.log("DATAZ", data);
 
           if (data.iteminfo) {
             this.itemData = data.iteminfo;
@@ -224,6 +224,8 @@ export class ListItemComponent implements OnDestroy {
                 this.exactImage = res.link;
                 break;
               case 'Graffiti':
+                this.stepper!.selectedIndex = 0;
+                this.selectItem.get('inspectLinkControl').setValue('');
                 this.notiServ.openSnackBar(data.iteminfo.weapon_type + ' is not marketable yet.', 'gg, okay🤦');
                 break;
               default:
@@ -241,7 +243,7 @@ export class ListItemComponent implements OnDestroy {
                     }
                     this.itemData = { ...this.itemData, stickers: stickers }
                   }
-                  console.log("whats hood", this.itemData);
+                  //console.log("whats hood", this.itemData);
 
                   this.isStickerAsItem = false;
                 } else {
@@ -256,7 +258,7 @@ export class ListItemComponent implements OnDestroy {
             this.float_val = data.iteminfo.floatvalue;
             this.tempAssetId = data.iteminfo.a;
 
-            console.log(data.iteminfo.full_item_name);
+            //console.log(data.iteminfo.full_item_name);
 
             this.selectStepTwo
               .get('itemNameControl')
@@ -279,8 +281,9 @@ export class ListItemComponent implements OnDestroy {
 
   loadingMetaMask: boolean = false;
   successMetaMask: boolean = false;
+  listedContractAddress: string = '';
   confirmApprove(): void {
-    console.log(this.selectStepTwo.valid, this.selectStepTwo);
+    //console.log(this.selectStepTwo.valid, this.selectStepTwo);
 
     if (this.selectStepTwo.valid) {
       this.loadingMetaMask = true;
@@ -290,8 +293,8 @@ export class ListItemComponent implements OnDestroy {
       const weaponType = this.itemData.weapon_type;
       const itemInspectLink = this.selectItem.get('inspectLinkControl').value;
       const priceType = this.selectedPriceType == 'ETH' ? '0' : this.selectedPriceType == 'USDC' ? '1' : '2';
-      console.log("priceType", priceType);
-      console.log('selectedPriceType', this.selectedPriceType);
+      //console.log("priceType", priceType);
+      //console.log('selectedPriceType', this.selectedPriceType);
       
       
 
@@ -315,10 +318,12 @@ export class ListItemComponent implements OnDestroy {
         weaponType, 
         priceType
         ).then((res: any) => {
-        console.log("res", res);
+        //console.log("res", res);
         //this.notiServ.openSnackBar('Item listed successfully!', 'gg, okay🤦');
         this.loadingMetaMask = false;
-        this.successMetaMask = true;        
+        this.successMetaMask = true;
+        const contractAddress = res.events.TradeContractStatusChange.returnValues.contractAddress;
+        this.listedContractAddress = contractAddress;  
       }).catch((err: any) => {
         console.log("err", err);
         this.notiServ.openSnackBar(err, 'gg, okay🤦');

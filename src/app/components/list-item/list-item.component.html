@@ -299,6 +299,13 @@
               style="padding: 9px 23px; font-size: 18px; color: #a4a6ca !important; background-color: #17193d !important;">
               List more items for sale
             </button>
+            <b>OR</b>
+            <button 
+              mat-button routerLink="trade/{{listedContractAddress}}"
+              (click)="stepper.reset(); this.successMetaMask = false" 
+              style="padding: 9px 23px; font-size: 18px; color: #a4a6ca !important; background-color: #17193d !important;">
+              Go to your listing
+            </button>
           </div>
         </div>
       </div>
