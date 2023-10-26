@@ -183,7 +183,8 @@ mat-dialog-container {
 }
 
 .mat-mdc-button:not(:disabled) {
-  color: #333ccb !important;
+  color: rgb(127, 136, 252) !important;
+  background-color: #0e0f1b1f !important;
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-floating-label {
@@ -217,14 +218,14 @@ mat-dialog-container {
 }
 
 .mat-button-toggle {
-  color: rgb(44 54 112 / 77%) !important;
+  color: rgba(102 103 113) !important;
   background-color: #17182c !important;
 }
 
 .mat-button-toggle-checked {
   //background-color: #12131f !important;
   background-color: #17182c !important;
-  color: rgb(51 60 203) !important;
+  color: rgb(127, 136, 252) !important;
 }
 
 .mat-expansion-panel-body {
@@ -288,4 +289,10 @@ mat-stepper[hide-header] .mat-horizontal-stepper-header-container {
 // BuyDialog
 .mat-mdc-radio-button .mdc-form-field {
   color: #afbbd6 !important;
+}
+
+.link-like {
+  cursor: pointer;
+  text-decoration: underline;
+  color: rgb(104, 109, 209);
 }
