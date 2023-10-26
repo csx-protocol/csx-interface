@@ -46,38 +46,50 @@ export class TimelineComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.events[0].description = `${this.weaponType} is for sale.`;
-
+  
     this.web3.callContractMethod('Trade', 'getStatusCount', [this.contractAddress], 'call').then((count: number) => {
       const eventsLength: number = count;
-
-      //create a new array with the length of eventsLength + 1
+  
+      // Create a new array with the length of eventsLength + 1
       this.statusSkeleton = Array.from({ length: (eventsLength) }, (_, i) => i);
       this.statusSkeleton.push(0);
-
+  
       const statusHistory: TimelineEvent[] = [];
       statusHistory.push(this.events[0]);
-
+  
+      const statusPromises: Promise<any>[] = [];
+  
       for (let i = 0; i < eventsLength; i++) {
-        this.web3.callContractMethod('Trade', 'statusHistory', [this.contractAddress, i], 'call').then((status: any) => {
-          //console.log(`status`, status);
+        const promise = this.web3.callContractMethod('Trade', 'statusHistory', [this.contractAddress, i], 'call').then((status: any) => {
           const event: TimelineEvent = this.events[status];
           statusHistory.push(event);
         });
+        statusPromises.push(promise);
       }
-
-      this.statusHistory = statusHistory;
-      this.isLoading = false;
+  
+      // Wait for all promises to resolve
+      Promise.all(statusPromises).then(() => {
+        // Sort statusHistory by status, lowest number first (ForSale = 0, SellerCancelled = 1, etc.)
+        statusHistory.sort((a, b) => Number(a.status) - Number(b.status));
+  
+        this.statusHistory = statusHistory;
+        this.isLoading = false;
+      });
     });
-
+  
     this.timelineService.status$.subscribe((status) => {
       if (status !== null) {
         this.addStatusHistory(status);
       }
     });
   }
+  
 
   addStatusHistory(status: TradeStatus) {
     const event: TimelineEvent = this.events[status as number];
+    if (this.statusHistory.find((e) => e.status == status)) {
+      return;
+    }    
     this.statusHistory.push(event);
   }
 
