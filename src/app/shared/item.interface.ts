@@ -1,4 +1,5 @@
 export interface Item {
+    assetId: string;
     contractAddress: string;
     seller: string;
     sellerTradeUrl: [partner: string, token: string];
