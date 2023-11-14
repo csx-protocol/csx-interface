@@ -6,8 +6,8 @@ config();
 module.exports = {
   plugins: [
     new EnvironmentPlugin([
-      'NG_APP_ITEMS_API',
-      'NG_APP_FLOAT_API'
+      'NG_APP_FLOAT_API',
+      'NG_APP_STEAM_API',
     ])
   ]
 }

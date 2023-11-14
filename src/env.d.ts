@@ -26,7 +26,6 @@ declare namespace NodeJS {
   interface ProcessEnv {
     //NG_APP_ENV: string;
     NG_APP_FLOAT_API: string;
-    NG_APP_ITEMS_API: string;
     NG_APP_STEAM_API: string;
     [key: string]: any;
   }
