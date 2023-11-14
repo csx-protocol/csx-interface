@@ -71,11 +71,6 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background: #f1f1f12f;
 }
 
-.blue-snackbar {
-  background: #0c0c0c34;
-  transform: translateY(-50px) !important;;
-}
-
 ::ng-deep .backgroundColor {
   background-color: #17182c;
 }
@@ -92,7 +87,7 @@ a {
 .mat-mdc-snack-bar-container {
   --mat-mdc-snack-bar-button-color: #afbbd6;
   --mdc-snackbar-container-color: #1b1c36f0;
-  --mdc-snackbar-supporting-text-color: #f44336;
+  --mdc-snackbar-supporting-text-color: #afbbd6;
 }
 
 
