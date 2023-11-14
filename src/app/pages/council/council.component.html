@@ -125,4 +125,42 @@
             </mat-list>
         </div>
     </mat-card>
+    
+    <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
+        <mat-list class="light-text">
+            <div mat-subheader><b>Staked Rewards</b></div>
+            <mat-list-item>
+                <!-- <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon> -->
+                <mat-icon *ngIf="!isSubmittingDistributeRewards" matListItemIcon class="light-icon link-like" (click)="submitDistributeRewards()">vertical_distribute</mat-icon>
+                <span matListItemIcon class="centered-loading-spinner" *ngIf="isSubmittingDistributeRewards">
+                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                        [diameter]="25">
+                    </mat-progress-spinner>
+                </span>
+                <div matListItemTitle class="light-icon">Distribute Rewards</div>
+            </mat-list-item>
+            <mat-list class="light-text">
+                <div mat-subheader><b>Distribute Ready Rewards</b></div>
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon link-like"><img src="assets/utils/wrapped-eth.png" style="height: 1.5rem;"></mat-icon>
+                    <span matListItemIcon class="centered-loading-spinner" *ngIf="isRemovingKeeper">
+                        <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                            [diameter]="25">
+                        </mat-progress-spinner>
+                    </span>
+                    <div matListItemTitle class="light-icon">{{nonDistributedRewardsWETH}} WETH</div>
+                </mat-list-item>
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/centre-usdc.png" style="height: 1.5rem;"></mat-icon>
+                    <div matListItemTitle class="light-icon">{{nonDistributedRewardsUSDC}} USDC</div>
+                </mat-list-item>
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/tether-usdt.png" style="height: 1.5rem;"></mat-icon>
+                    <div matListItemTitle class="light-icon">{{nonDistributedRewardsUSDT}} USDT</div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+
+            </mat-list>
+        </mat-list>
+    </mat-card>  
 </div>

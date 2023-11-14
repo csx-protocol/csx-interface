@@ -44,8 +44,7 @@
       <mat-dialog-content style="margin-top: -2rem;">
         <h4 style="color: #f14d42;">1&rpar; It's time to send the trade-offer to the buyer.</h4>
         <h4 style="color: #5057dd;">2&rpar; Make sure the {{item.itemMarketName}} is arriving to the <a
-            [href]="getSteamId64(this.item!.buyerTradeUrl[0])+'/inventory'" target="_blank">correct inventory</a> or the funds won't be released to you, here
-          is the <a [href]="getSteamId64(this.item!.buyerTradeUrl[0])" target="_blank">buyer's steam profile</a>.</h4>
+            [href]="getSteamId64(this.item!.buyerTradeUrl[0])+'/inventory'" target="_blank">correct inventory</a> or the funds won't be released to you.</h4>
         <h4>Paint Index: {{item.skinInfo.paintIndex}} Paint Seed: {{item.skinInfo.paintSeed}}</h4>
         <app-float-bar [min]="item.float.min" [max]="item.float.max" [value]="item.float.value"></app-float-bar><br>
         <a [href]="getTradeOfferLink()" target="_blank"><button cdkFocusInitial mat-button color="primary" style="color: #5ccf54 !important; margin-bottom: 1rem; width: 100%; background-color: #141525 !important;">Send Trade Offer</button></a>
@@ -106,14 +105,26 @@
         <p><i>The delivery timer has been started, and are awaiting to measure until the item has arrived to the
             buyer.</i></p>
 
-        <p
+        <!-- <p
           style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
           Once the item has arrived at buyer's inventory, the funds will be automatically released to you by the
           Keeper-Oracle.
           <span><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
             </mat-progress-spinner></span>
-        </p>
+        </p> -->
 
+        <p
+          style="display: flex; /* or display: inline-block; */ align-items: center; /* centers items vertically in the row */">
+          Funds release automatically after item delivery to buyer's inventory.
+          <span><mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
+            </mat-progress-spinner></span>
+        </p>
+        <p style="font-size: small;">Checking Status in {{timeLeft}} seconds.</p>
+        <mat-progress-bar mode="determinate" [value]="progressValue"></mat-progress-bar>
+        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+
+        <!-- <p class="link-like">Check Now</p> -->
+        <button mat-button color="primary" (click)="refreshStatus(true)">Check Now</button>
         <button mat-button color="warn" (click)="openDispute(item)" style="color: rgb(229 62 51) !important;">Open
           Dispute</button>
         <button mat-button color="primary" [mat-dialog-close]="true">Close</button>

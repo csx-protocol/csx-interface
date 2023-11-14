@@ -151,7 +151,6 @@ export class SignStepComponent implements AfterViewInit {
   // isSecondStepComplete = false;
   private async validateAllowance(): Promise<boolean> {
     const spender = this.txInfo.name == 'VestedStaking' ? this.txInfo.params[0] : this._web3.contracts[this.txInfo.name].options.address;
-    console.log('spender', spender);
     
     return await this._web3.callContractMethod(
       this.getApprovalToken(this.txInfo),

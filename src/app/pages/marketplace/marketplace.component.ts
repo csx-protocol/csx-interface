@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { CsgoItemsService } from 'src/app/shared/csgo-items.service';
-import { Web3Service } from 'src/app/shared/web3.service';
+import { Web3Service } from '../../../app/shared/web3.service';
 import { MarketplaceService } from './marketplace.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
@@ -30,7 +29,6 @@ export class MarketplaceComponent {
 
   constructor(
     public web3: Web3Service,
-    public csgoItems: CsgoItemsService,
     public marketplaceService: MarketplaceService
   ) {}
 
@@ -39,7 +37,6 @@ export class MarketplaceComponent {
     if (!this.dealingsInit) {
       this.dealingsInit = true;
       this.hasInitTradesClick = true;
-      this.csgoItems.fetchItems();
     }
   }
 

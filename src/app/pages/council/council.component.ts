@@ -53,6 +53,7 @@ export class CouncilComponent {
     this.council = await this.getCouncil();
     this.keeperOracle = await this.getKeeperOracle();
     await this.getKeepers();
+    await this.getNonDistributedRewards();
   }
 
   async getKeepers(): Promise<any> {
@@ -162,4 +163,38 @@ export class CouncilComponent {
     this.changeCouncil(councilAddress);
   }
 
+  isSubmittingDistributeRewards: boolean = false;
+  submitDistributeRewards() {
+    this.isSubmittingDistributeRewards = true;
+    this.web3.callContractMethod('StakedCSX', 'distribute', [true, true, true], 'send').then((result) => {
+      this.isSubmittingDistributeRewards = false;
+      console.log('result', result);
+    }).catch((error) => {
+      this.isSubmittingDistributeRewards = false;
+      console.log(error);
+    });
+  }
+
+  nonDistributedRewardsWETHWEI: string = '0';
+  nonDistributedRewardsUSDCWEI: string = '0';
+  nonDistributedRewardsUSDTWEI: string = '0';
+  nonDistributedRewardsWETH: string = '0';
+  nonDistributedRewardsUSDC: string = '0';
+  nonDistributedRewardsUSDT: string = '0';
+  async getNonDistributedRewards() {
+    try {
+      const nonDistributedRewardsWETH = await this.web3.callContractMethod('StakedCSX', 'nonDistributedRewardsPerToken', [this.web3.contracts['WETH'].options.address], 'call');
+      const nonDistributedRewardsUSDC = await this.web3.callContractMethod('StakedCSX', 'nonDistributedRewardsPerToken', [this.web3.contracts['USDC'].options.address], 'call');
+      const nonDistributedRewardsUSDT = await this.web3.callContractMethod('StakedCSX', 'nonDistributedRewardsPerToken', [this.web3.contracts['USDT'].options.address], 'call');
+      this.nonDistributedRewardsWETHWEI = nonDistributedRewardsWETH;
+      this.nonDistributedRewardsUSDCWEI = nonDistributedRewardsUSDC;
+      this.nonDistributedRewardsUSDTWEI = nonDistributedRewardsUSDT;
+
+      this.nonDistributedRewardsWETH = this.web3.csxInstance.web3.utils.fromWei(nonDistributedRewardsWETH, 'ether');
+      this.nonDistributedRewardsUSDC = this.web3.csxInstance.web3.utils.fromWei(nonDistributedRewardsUSDC, 'mwei');
+      this.nonDistributedRewardsUSDT = this.web3.csxInstance.web3.utils.fromWei(nonDistributedRewardsUSDT, 'mwei');
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

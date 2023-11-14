@@ -94,6 +94,9 @@ export class StakeDialog {
             const tokenValueInWeiString = this.web3.toWei(tokenValue.toString(), 'ether');
             const coinType = this.type == StakeToken.CSX ? 'CSX' : 'eCSX';
 
+            console.log('DATA', this.data);
+            
+
             this.txInfo = {
                 name: coinType == 'CSX' ? 'StakedCSX' : 'VestedCSX',
                 method: coinType == 'CSX' ? 'stake' : 'vest',
@@ -101,6 +104,9 @@ export class StakeDialog {
                 txType: 'send',
                 fromAddress: this.web3.webUser.address!,
             };
+
+            console.log('TXINFO', this.txInfo);
+            
 
             this.isApproving = true;
 
@@ -129,25 +135,25 @@ export class StakeDialog {
     //     });
     // }
 
-    _vestEscrowedCSX(_value: string) {
-        this.isStaking = true;
-        //this.web3.vest(_value).then(() => {
-        this.web3.callContractMethod('VestedCSX', 'vest', [_value], 'send').then(() => {
-            console.log('vest success');
-            const _valueInEther = this.web3.fromWei(_value, 'ether');
-            this.web3.decreaseBalance('eCSX', _valueInEther);
-            this.web3.increaseBalance('vCSX', _valueInEther);
-            this.maxValue = parseInt(this.web3.webUser.balances!['eCSX'].balanceEth);
-            this.tokenAmountForm.controls['tokenAmount'].updateValueAndValidity();
-            this.isStaking = false;
-            this.notify.openSnackBar('Vest success 🫡', 'OK');
-            this.dialogRef.close(['eCSX_VESTED', true]);
-        }).catch((error) => {
-            console.log('vest failed');
-            this.notify.openSnackBar(error.message, 'OK');
-            this.isStaking = false;
-        });
-    }
+    // _vestEscrowedCSX(_value: string) {
+    //     this.isStaking = true;
+    //     //this.web3.vest(_value).then(() => {
+    //     this.web3.callContractMethod('VestedCSX', 'vest', [_value], 'send').then(() => {
+    //         console.log('vest success');
+    //         const _valueInEther = this.web3.fromWei(_value, 'ether');
+    //         this.web3.decreaseBalance('eCSX', _valueInEther);
+    //         this.web3.increaseBalance('vCSX', _valueInEther);
+    //         this.maxValue = parseInt(this.web3.webUser.balances!['eCSX'].balanceEth);
+    //         this.tokenAmountForm.controls['tokenAmount'].updateValueAndValidity();
+    //         this.isStaking = false;
+    //         this.notify.openSnackBar('Vest success 🫡', 'OK');
+    //         this.dialogRef.close(['eCSX_VESTED', true]);
+    //     }).catch((error) => {
+    //         console.log('vest failed');
+    //         this.notify.openSnackBar(error.message, 'OK');
+    //         this.isStaking = false;
+    //     });
+    // }
 
     isUnstaking: boolean = false;
     submitUnstake() {

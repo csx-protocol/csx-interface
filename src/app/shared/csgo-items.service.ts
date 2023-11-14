@@ -16,31 +16,21 @@ export class CsgoItemsService {
   step = 5;
   loadLoop = false;
   fetchItems() {
-    const api = environment.steamItemsApi.trim();
-    
-    this.http.get<any>(api).subscribe((data:any) => {
-    this.itemsObject = data;
-    const array = Object.entries(data).map(([name, link]) => ({ name, link }));
-    this.itemsArray = array;
     this.isDataComplete = true;
-    console.log("isDataComplete",this.isDataComplete);
-    this.itemsPage = this.itemsArray.slice(0,this.step);
-  });
   }
 
-  getRegularItemImage(itemName: string): any {
-    const item = this.itemsArray.find((i: { name: string; }) => i.name === itemName);
-    return item;
-  }
+  async getRegularItemImage(itemName: string, source: string): Promise<any> {
+    console.log("getRegularItemImage",itemName, source);
+    const endCallResponse = await fetch(`${environment.steamApi}/item-cdn/${itemName}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });  
+    
+    return await endCallResponse.json();
+}
 
-  // addNextfiveInPage(){
-  //   if (this.step < this.itemsArray.length) {
-  //     this.itemsPage = [...this.itemsPage, ...this.itemsArray.slice(this.step, this.step + 5)];
-  //     this.step += 5;
-  //   } else {
-  //     console.log("You have reached the end of the list");
-  //   }
-  // }
 
   getItemInfo(inspectLink: string): any{
     return this.http.get<any>(environment.floatApi + inspectLink)

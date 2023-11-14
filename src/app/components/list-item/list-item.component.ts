@@ -4,8 +4,9 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { Web3Service } from '../../shared/web3.service';
 import { CsgoItemsService } from '../../shared/csgo-items.service';
 import { NotificationService } from '../../shared/notification.service';
-import { debounceTime, map, Observable, startWith, tap } from 'rxjs';
+import { debounceTime, map, Observable, startWith, Subscription } from 'rxjs';
 import { MatStepper } from '@angular/material/stepper';
+import { SteamApiService } from '../../../app/shared/steamApi.service';
 @Component({
   selector: 'app-list-item',
   templateUrl: './list-item.component.html',
@@ -18,10 +19,10 @@ import { MatStepper } from '@angular/material/stepper';
   ],
 })
 export class ListItemComponent implements OnDestroy {
+  web3AccSub?: Subscription;
+  
   selectedPriceType = 'USDC';
   @ViewChild('stepper') stepper: MatStepper | undefined;
-
-  regExPattern: RegExp;
 
   selectItem: FormBuilder | any;
 
@@ -33,9 +34,14 @@ export class ListItemComponent implements OnDestroy {
     private _formBuilder: FormBuilder,
     public web3: Web3Service,
     public csgoItems: CsgoItemsService,
-    private notiServ: NotificationService
+    private notiServ: NotificationService,
+    private steamApi: SteamApiService
   ) {
-    this.regExPattern = this._getRegExPatternFromItems();
+    this.web3AccSub = web3.webUser.afterAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
+    if (this.web3.webUser.address) {
+      this.runAfterWeb3Init();
+    }
+    //this.regExPattern = this._getRegExPatternFromItems();
     this.selectItem = this._formBuilder.group({
       // itemNameControl: ['', [Validators.required, Validators.pattern(this.regExPattern)]],
       // priceControl: ['', [Validators.required, this._positiveNumberValidator, this._validNumberValidator]], /^steam:\/\/rungame\/730\/\d+\/[+ ]csgo_econ_action_preview [SM]\d+A\d+D\d+$/g
@@ -51,10 +57,12 @@ export class ListItemComponent implements OnDestroy {
       ],
     });
 
+    
+
     this.selectStepTwo = this._formBuilder.group({
       itemNameControl: [
         '',
-        [Validators.required, Validators.pattern(this.regExPattern)],
+        [Validators.required],
       ],
       priceControl: [
         '',
@@ -73,6 +81,10 @@ export class ListItemComponent implements OnDestroy {
           ),
         ],
       ],
+      apiNonControl: [
+        '',
+        [],
+      ],
 
     }, { validator: this.matchingFieldsValidator() });
 
@@ -85,8 +97,12 @@ export class ListItemComponent implements OnDestroy {
       );
   }
 
-  ngOnDestroy() {
+  runAfterWeb3Init() {
+    this.apiStatus();
+  }
 
+  ngOnDestroy() {
+    this.web3AccSub?.unsubscribe();
   }
 
   matchingFieldsValidator(): ValidatorFn {
@@ -208,7 +224,7 @@ export class ListItemComponent implements OnDestroy {
       this.tradeLinkDestinationLink = `https://steamcommunity.com/profiles/${SteamIDInspectUrl}/tradeoffers/privacy#trade_offer_access_url`;
 
       this.csgoItems.getItemInfo(itemInspectLink).subscribe(
-        (data: any) => {
+        async (data: any) => {
           //console.log("DATAZ", data);
 
           if (data.iteminfo) {
@@ -220,8 +236,8 @@ export class ListItemComponent implements OnDestroy {
               case 'Sticker':
                 this.isStickerAsItem = true;
                 //console.log("sticker it is!", data.iteminfo.full_item_name);
-                const res = this.csgoItems.getRegularItemImage(data.iteminfo.full_item_name);
-                this.exactImage = res.link;
+                const res = await this.csgoItems.getRegularItemImage(data.iteminfo.full_item_name, 'Sticker');
+                this.exactImage = res.url;
                 break;
               case 'Graffiti':
                 this.stepper!.selectedIndex = 0;
@@ -232,14 +248,16 @@ export class ListItemComponent implements OnDestroy {
                 if (data.iteminfo.floatvalue > data.iteminfo.min) {
                   if (data.iteminfo.imageurl) {
                     this.exactImage = data.iteminfo.imageurl;
+                    //const resII = await this.csgoItems.getRegularItemImage(data.iteminfo.full_item_name, 'Weapon');
+                    //this.exactImage = resII.url;
                   }
 
                   if (data.iteminfo.stickers && data.iteminfo.stickers.length > 0) {
                     let stickers: any = [];
                     for (const _sticker of data.iteminfo.stickers) {
                       const full_market_name = "Sticker | " + _sticker.name;
-                      const imageRes = this.csgoItems.getRegularItemImage(full_market_name);
-                      stickers.push({ name: _sticker.name, material: _sticker.material, slot: _sticker.slot, imageLink: imageRes.link });
+                      const imageRes = await this.csgoItems.getRegularItemImage(full_market_name, 'Stickers');
+                      stickers.push({ name: _sticker.name, material: _sticker.material, slot: _sticker.slot, imageLink: imageRes.url });
                     }
                     this.itemData = { ...this.itemData, stickers: stickers }
                   }
@@ -283,7 +301,13 @@ export class ListItemComponent implements OnDestroy {
   successMetaMask: boolean = false;
   listedContractAddress: string = '';
   confirmApprove(): void {
-    //console.log(this.selectStepTwo.valid, this.selectStepTwo);
+    const key = this.selectStepTwo.get('apiNonControl').value;
+
+    if(key != undefined && key != '') {
+      const prefixActionRef = this.hasApiKey ? 'Change' : 'Add';
+      this.notiServ.openSnackBar(`Seems like you have inserted your api-key but did not add it, please click on the ${prefixActionRef} API-KEY? chip and press 'Add' or empty the field to skip.`, 'gg, okay🤦');
+      return;
+    }
 
     if (this.selectStepTwo.valid) {
       this.loadingMetaMask = true;
@@ -333,22 +357,22 @@ export class ListItemComponent implements OnDestroy {
 
     } else {
       const itemNameInspectionValue = this.selectStepTwo.get('itemNameControl').value;
-      if (this.regExPattern.test(itemNameInspectionValue) == false) {
-        this.notiServ.openSnackBar(`${itemNameInspectionValue} is not an recognized item.`, 'gg, okay🤦');
-      }
+      // if (this.regExPattern.test(itemNameInspectionValue) == false) {
+      //   this.notiServ.openSnackBar(`${itemNameInspectionValue} is not an recognized item.`, 'gg, okay🤦');
+      // }
     }
   }
 
-  private _getRegExPatternFromItems(): RegExp {
-    const allowedItems = Object.keys(this.csgoItems.itemsObject);
+  // private _getRegExPatternFromItems(): RegExp {
+  //   const allowedItems = Object.keys(this.csgoItems.itemsObject);
 
-    const pattern = new RegExp(
-      `^(${allowedItems
-        .map((item) => item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-        .join('|')})$`
-    );
-    return pattern;
-  }
+  //   const pattern = new RegExp(
+  //     `^(${allowedItems
+  //       .map((item) => item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+  //       .join('|')})$`
+  //   );
+  //   return pattern;
+  // }
 
   private _positiveNumberValidator(
     control: FormControl
@@ -365,6 +389,74 @@ export class ListItemComponent implements OnDestroy {
     }
     return null;
   }
+
+  selectedChips: any[] = [];
+  apiKeyIsSelected: boolean = false;
+  onChipsChange() {
+    console.log('Selected chips:', this.selectedChips);
+    if(this.selectedChips == undefined || this.selectedChips.length == 0) {
+      this.apiKeyIsSelected = false;
+    } else {
+      this.apiKeyIsSelected = true;
+    }
+  }
+
+  hasApiKey: boolean = false;
+  private apiStatus() {
+    this.steamApi.isAddressRegistered(this.web3.webUser.address!).then((res: any) => {
+      if(res.error) {
+        this.hasApiKey = false;
+      }
+
+      if(res.is){
+        this.hasApiKey = true;
+      }
+      //console.log("res", res);
+    }).catch((err: any) => {
+      console.log("err", err);
+    });
+  }
+
+  isEnteringApiKey: boolean = false;
+  enterApiKey() {
+    this.isEnteringApiKey = true;
+    const key = this.selectStepTwo.get('apiNonControl').value;
+    
+    if(key == undefined || key == '') {
+      this.notiServ.openSnackBar('INVALID_API_KEY', 'gg, okay🤦');
+      this.isEnteringApiKey = false;
+      return;
+    }
+    
+    this.steamApi.AddOrChangeApiKey(key).then((res: any) => {
+      //console.log("res", res);
+      if(res.code == 4001) {
+        this.notiServ.openSnackBar('WALLET_SIGNATURE_REJECTION.', 'gg, okay🤦');
+        this.selectStepTwo.get('apiNonControl').setValue('');
+        this.isEnteringApiKey = false;
+      }
+      if(res.error) {
+        this.notiServ.openSnackBar(res.error, 'gg, okay🤦');
+        this.isEnteringApiKey = false;
+      }
+  
+      if(res.saved) {
+        this.notiServ.openSnackBar('API Key added successfully!', 'Cool!');
+        this.selectStepTwo.get('apiNonControl').setValue('');
+        this.hasApiKey = true;
+        this.selectedChips = [];
+        this.apiKeyIsSelected = false;
+        this.isEnteringApiKey = false;        
+      }
+    }).catch((err: any) => {
+      console.log("err", err);
+      this.notiServ.openSnackBar(err, 'gg, okay🤦');
+      this.selectStepTwo.get('apiNonControl').setValue('');
+      this.isEnteringApiKey = false;
+    });
+  }
+  
+
 
 }
 

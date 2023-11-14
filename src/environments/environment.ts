@@ -4,14 +4,14 @@ export const environment = {
   /**
    * Api's s
    */
-  steamItemsApi: (process.env["NG_APP_ITEMS_API"]! as string),
   floatApi: (process.env["NG_APP_FLOAT_API"]! as string),
+  steamApi: (process.env["NG_APP_STEAM_API"]! as string),
   /**
    * Contracts
    */
   CONTRACTS: {
     CSXToken: {
-      address: "0x41c8a477c960A608bA9a1b7e3DeAB25814929d84",
+      address: "0xBa8a527F9C9A3C6b49c3BDb1120445FBc63e699c",
       abi: [
         {
           "inputs": [],
@@ -67,6 +67,19 @@ export const environment = {
           ],
           "name": "Transfer",
           "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "MAX_SUPPLY",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [
@@ -229,19 +242,6 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "maxSupply",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "name",
           "outputs": [
             {
@@ -335,7 +335,7 @@ export const environment = {
       ]
     },
     StakedCSX: {
-      address: "0xd263D6dbC431Ec3aA0c0d313604d7556b88bbF6c",
+      address: "0x834917770136C2DcC9A1e0ec5FA3c08bebD17286",
       abi: [
         {
           "inputs": [
@@ -584,6 +584,71 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "KEEPERS_INTERFACE",
+          "outputs": [
+            {
+              "internalType": "contract IKeepers",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "TOKEN_CSX",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "TOKEN_USDC",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "TOKEN_USDT",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "TOKEN_WETH",
+          "outputs": [
+            {
+              "internalType": "contract IWETH",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -787,19 +852,6 @@ export const environment = {
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "keepers",
-          "outputs": [
-            {
-              "internalType": "contract IKeepers",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -950,58 +1002,6 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "tokenCSX",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "tokenUSDC",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "tokenUSDT",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "tokenWETH",
-          "outputs": [
-            {
-              "internalType": "contract IWETH",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "totalSupply",
           "outputs": [
             {
@@ -1087,9 +1087,9 @@ export const environment = {
     },
     Currencies: {
       addresses: {
-        USDC: "0x87f5877B34AaF0602D9bAa7364eB26b73201f639",
-        USDT: "0x1f5d00Ea152B1EDCFfcB445Dcd51E0336623ff5a",
-        WETH: "0xf5242dd9AA2DBdC5eCA92609Ba2C1de77e9294dc",
+        USDC: "0x3Bd834fF8DDb854a70577a2ac96d5d9EA4d86ceb",
+        USDT: "0x036c7881e601641E9FBC0a2996Fb504AB29b756b",
+        WETH: "0x3E10D8060FcbECb1fDACE50A7188Ed876E4BAc76",
       },
       abi: [
         {
@@ -1676,7 +1676,7 @@ export const environment = {
       ]
     },
     EscrowedCSX: {
-      address: "0xD59787d1b7774065587B588972b00f6739031171",
+      address: "0xE01cf4bBED762EF0c5BeCFcD9F19865C09665970",
       abi: [
         {
           "inputs": [
@@ -1793,6 +1793,19 @@ export const environment = {
           "type": "event"
         },
         {
+          "inputs": [],
+          "name": "CSX_TOKEN",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -1888,19 +1901,6 @@ export const environment = {
           "name": "burnFrom",
           "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "csxToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -2111,7 +2111,7 @@ export const environment = {
       ],
     },
     VestedCSX: {
-      address: "0x845a9520132C7Ff714a89f27703C7F98be56b26E",
+      address: "0x69696858dDAFe9Cb4AE67824b1789401EF52ADE8",
       abi: [
         {
           "inputs": [
@@ -2143,6 +2143,11 @@ export const environment = {
             {
               "internalType": "address",
               "name": "_usdtAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_keepersAddress",
               "type": "address"
             }
           ],
@@ -2229,10 +2234,23 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "EscrowedCSX",
+          "name": "ESCROWED_CSX",
           "outputs": [
             {
               "internalType": "contract IERC20Burnable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "KEEPERS",
+          "outputs": [
+            {
+              "internalType": "address",
               "name": "",
               "type": "address"
             }
@@ -2255,7 +2273,7 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "StakedCSX",
+          "name": "STAKED_CSX",
           "outputs": [
             {
               "internalType": "contract IStakedCSX",
@@ -2610,7 +2628,7 @@ export const environment = {
       ]
     },
     Keepers: {
-      address: '0x7bFbf3A6C656F693Ca74CF2453Ab54a42D8Dc156',
+      address: '0x30286B41de89d6931f6d33D34c906eC08103Eb69',
       abi: [
         {
           "inputs": [
@@ -2903,7 +2921,7 @@ export const environment = {
       ],
     },
     Users: {
-      address: '0xA01C9C561e1FD4111b65f02Ab63B016D2b2516aB',
+      address: '0xc6202407a97B80350F3e2f1e6526b94bABCf8058',
       abi: [
         {
           "inputs": [
@@ -3609,7 +3627,7 @@ export const environment = {
       ],
     },
     UserProfileLevel: {
-      address: "0xd70cb07Dad7D8b37498f2AF98968cbD6A1Fb8863",
+      address: "0xC73b366658495Ea389C80637CBf0833a7C71BE91",
       abi: [
         {
           "inputs": [
@@ -3639,32 +3657,7 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "NewAddressNotEmpty",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "NoLevelsToTransfer",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "NoPendingTransfer",
-          "type": "error"
-        },
-        {
-          "inputs": [],
           "name": "NotCouncil",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "TransferToSelf",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "UserBanned",
           "type": "error"
         },
         {
@@ -3696,26 +3689,6 @@ export const environment = {
           ],
           "name": "ProfileLeveledUp",
           "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_originalOwner",
-              "type": "address"
-            }
-          ],
-          "name": "acceptTransfer",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "cancelTransfer",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
         },
         {
           "inputs": [
@@ -3839,19 +3812,6 @@ export const environment = {
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newAddress",
-              "type": "address"
-            }
-          ],
-          "name": "initiateTransfer",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "_tokenAmount",
               "type": "uint256"
@@ -3865,25 +3825,6 @@ export const environment = {
           "name": "levelUp",
           "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "pendingTransfers",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -3908,7 +3849,7 @@ export const environment = {
       ],
     },
     ReferralRegistry: {
-      address: "0x7024976Fc503A001A70Ae52B4d1c0138653efF26",
+      address: "0x8F2B6dC58df3b3799fcdDE8984C0eE79bF3ceb6d",
       abi: [
         {
           "inputs": [
@@ -4401,7 +4342,7 @@ export const environment = {
       ],
     },
     TradeFactory: {
-      address: "0x3B7a0Fc387cBe819f0034619F49A3D93654abA70",
+      address: "0x96dEDeb08ec6b3A03f7025fe7a5adA1195a7afF4",
       abi: [
         {
           "inputs": [
@@ -5318,7 +5259,7 @@ export const environment = {
       ],
     },
     BuyAssistoor: {
-      address: "0x345d6fd3EB44E03bE60bed1adb901B0Ce05E6AB8",
+      address: "0x94012424687955F7Ae7894B2f066204963E0Bba0",
       abi: [
         {
           "inputs": [
@@ -5388,7 +5329,7 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "weth",
+          "name": "IWETH_CONTRACT",
           "outputs": [
             {
               "internalType": "contract IWETH",
@@ -5565,6 +5506,58 @@ export const environment = {
         },
         {
           "inputs": [],
+          "name": "IKEEPERS_CONTRACT",
+          "outputs": [
+            {
+              "internalType": "contract IKeepers",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "ITRADEFACTORY_CONTRACT",
+          "outputs": [
+            {
+              "internalType": "contract ITradeFactory",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IUSERS_CONTRACT",
+          "outputs": [
+            {
+              "internalType": "contract IUsers",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "SELLER_ADDRESS",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "buyer",
           "outputs": [
             {
@@ -5619,6 +5612,19 @@ export const environment = {
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_newPrice",
+              "type": "uint256"
+            }
+          ],
+          "name": "changePrice",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -5688,19 +5694,6 @@ export const environment = {
           "outputs": [
             {
               "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "factoryContract",
-          "outputs": [
-            {
-              "internalType": "contract ITradeFactory",
               "name": "",
               "type": "address"
             }
@@ -5912,19 +5905,6 @@ export const environment = {
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "keepersContract",
-          "outputs": [
-            {
-              "internalType": "contract IKeepers",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "string",
@@ -6023,19 +6003,6 @@ export const environment = {
           "outputs": [
             {
               "internalType": "contract IStakedCSX",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "seller",
-          "outputs": [
-            {
-              "internalType": "address",
               "name": "",
               "type": "address"
             }
@@ -6205,19 +6172,6 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "usersContract",
-          "outputs": [
-            {
-              "internalType": "contract IUsers",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "weaponType",
           "outputs": [
             {
@@ -6282,6 +6236,11 @@ export const environment = {
               "internalType": "address",
               "name": "_wethTokenAddress",
               "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_keepersAddress",
+              "type": "address"
             }
           ],
           "stateMutability": "nonpayable",
@@ -6316,6 +6275,228 @@ export const environment = {
           "inputs": [],
           "name": "TransferFailed",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "claimer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "usdcAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "usdtAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "wethAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "convertedToEth",
+              "type": "bool"
+            }
+          ],
+          "name": "Claim",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "council",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newVestingAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Cliff",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newVestingAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposit",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "withdrawer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newVestingAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Withdraw",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ICSX_TOKEN",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IERC20_WETH_TOKEN",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IKEEPERS_CONTRACT",
+          "outputs": [
+            {
+              "internalType": "contract IKeepers",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "ISTAKED_CSX",
+          "outputs": [
+            {
+              "internalType": "contract IStakedCSX",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IUSDC_TOKEN",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IUSDT_TOKEN",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "IVESTED_CSX",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Burnable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "VESTER_ADDRESS",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         },
         {
           "inputs": [],
@@ -6359,13 +6540,26 @@ export const environment = {
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "cliff",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
-          "name": "csxToken",
+          "name": "cliffedAmount",
           "outputs": [
             {
-              "internalType": "contract IERC20",
+              "internalType": "uint256",
               "name": "",
-              "type": "address"
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -6414,71 +6608,6 @@ export const environment = {
         },
         {
           "inputs": [],
-          "name": "sCsxToken",
-          "outputs": [
-            {
-              "internalType": "contract IStakedCSX",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "usdcToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "usdtToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "vCsxToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20Burnable",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "vesterAddress",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "vesting",
           "outputs": [
             {
@@ -6490,19 +6619,6 @@ export const environment = {
               "internalType": "uint256",
               "name": "startTime",
               "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "wethToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",

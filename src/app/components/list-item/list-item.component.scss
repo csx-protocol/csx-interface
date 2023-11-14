@@ -50,13 +50,20 @@ mat-form-field{
     font-size: x-small;
   }
 
-  // ::ng-deep .mat-step-header .mat-step-label.mat-step-label-active {
+  .mdc-text-field--no-label:not(.mdc-text-field--outlined):not(.mdc-text-field--textarea) .mat-mdc-form-field-infix {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    font-size: x-small;
+  }
+
+  // .mat-mdc-option .mdc-list-item__primary-text {
   //   font-size: x-small;
   // }
 
-  // .trade-url-input mat-label {
-  //   font-size: 10px;
+  // .mat-mdc-select-value-text {
+  //   font-size: x-small;
   // }
+
 }
 
 .form-row {
@@ -88,3 +95,18 @@ mat-form-field{
 .thumbnail:hover {
   transform: scale(3);
   }
+
+  @media screen and (max-width: 480px) {
+  .smaller-device-size {
+    flex: 1 1 100%; /* Take full width on small screens */
+    margin: 5px; /* Smaller margins */
+  }
+
+  .responsive-text {
+    font-size: 3vw; /* Smaller font size */
+    padding: 5px; /* Adjust padding */
+    overflow: auto; /* Adds scroll if text overflows */
+    margin-right: 4rem;
+  }
+}
+

@@ -77,16 +77,18 @@
           <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('required')">
             Inspect link is <strong>required</strong>
           </mat-error>
-          
+
           <mat-error *ngIf="selectItem.get('inspectLinkControl').hasError('pattern')">
-            Inspect link must start with <strong>"steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20..."</strong>
+            Inspect link must start with
+            <strong>"steam://rungame/730/76561202255233023/+csgo_econ_action_preview%20..."</strong>
           </mat-error>
           <!--- Show hint always -->
-        
+
 
         </mat-form-field>
         <div style="padding-left: 15px;">
-          <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003114401" target="_blank">How to get inspect link?</a>
+          <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003114401" target="_blank">How to get inspect
+            link?</a>
           <br><br>
         </div>
         <!-- <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px;">
@@ -131,11 +133,11 @@
          </mat-form-field> -->
 
 
-        </div>
-        <div>
-          <button mat-button (click)="confirmDetails()" matStepperNext>Next</button>
-        </div>
-      </form>
+      </div>
+      <div>
+        <button mat-button (click)="confirmDetails()" matStepperNext>Next</button>
+      </div>
+    </form>
 
   </mat-step>
 
@@ -171,19 +173,22 @@
 
 
         <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
-          <mat-card class="item-card background" style="align-items: center; text-align: center;" >
+          <mat-card class="item-card background" style="align-items: center; text-align: center;">
             <mat-card-header>
               <div mat-card-avatar class="item-header-image">
                 <svg [data-jdenticon-value]="this.web3.webUser.shortAddy"></svg>
               </div>
-              <mat-card-title><p>{{this.web3.webUser.shortAddy}}</p></mat-card-title>
+              <mat-card-title>
+                <p>{{this.web3.webUser.shortAddy}}</p>
+              </mat-card-title>
             </mat-card-header>
             <img style="margin: 10%;" width="250px" mat-card-image [src]="exactImage" alt="">
             <mat-card-content>
 
               <span *ngIf="itemData?.stickers && !isStickerAsItem">
                 <span *ngFor="let sticker of itemData?.stickers">
-                  <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{sticker.name}}">
+                  <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" class="thumbnail" mat-card-image
+                    [src]="sticker.imageLink" width="50px" alt="{{sticker.name}}">
                 </span>
               </span>
 
@@ -194,7 +199,8 @@
               <div>
                 <app-float-bar [min]="minFloat" [max]="maxFloat" [value]="float_val"></app-float-bar>
               </div>
-              <p style="font-size: 66%; color: #6a71ed;">Float Min: {{minFloat}}, Max: {{maxFloat}}, Value: {{float_val}}</p>
+              <p style="font-size: 66%; color: #6a71ed;">Float Min: {{minFloat}}, Max: {{maxFloat}}, Value:
+                {{float_val}}</p>
 
             </mat-card-content>
             <!-- <mat-card-actions>
@@ -238,7 +244,7 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field  style="width: -webkit-fill-available;" appearance="fill">
+            <mat-form-field style="width: -webkit-fill-available;" appearance="fill">
               <!-- <mat-label>Currency</mat-label> -->
               <mat-select [(value)]="selectedPriceType">
                 <mat-option value="ETH">Ether (ETH)</mat-option>
@@ -249,21 +255,72 @@
           </div>
 
           <mat-form-field>
-            <mat-label><a [href]="tradeLinkDestinationLink" target="_blank" rel="noopener noreferrer">Trade Link?</a>:</mat-label>
-            <input type="text" formControlName="tradeLinkControl"  matInput>
+            <mat-label><a [href]="tradeLinkDestinationLink" target="_blank" rel="noopener noreferrer">Trade
+                Link?</a>:</mat-label>
+            <input type="text" formControlName="tradeLinkControl" matInput>
             <mat-error *ngIf="selectStepTwo.get('tradeLinkControl').hasError('required')">
               Trade link is <strong>required</strong>
             </mat-error>
             <mat-error *ngIf="selectStepTwo.get('tradeLinkControl').hasError('pattern')">
               <strong>"https://steamcommunity.com/tradeoffer/new/?partner=XXXX&token=XXXX"</strong>
             </mat-error>
+            
             <!-- <mat-error *ngIf="selectStepTwo.hasError('matchingFields')">Trade link and Item Inspect link must belong to the same Steam account.</mat-error> -->
             <!-- <mat-error *ngIf="selectStepTwo.hasError('matchingFields')">Trade link does not match inspect link</mat-error>  -->
           </mat-form-field>
-            <mat-error *ngIf="selectStepTwo.errors?.matchingFields && !selectStepTwo.tradeLinkControl?.errors?.pattern && selectStepTwo.get('tradeLinkControl').value">
-              You may only list items that belongs to you.
-            </mat-error><br>
-           <button mat-button (click)="confirmApprove()" matStepperNext>Next</button>
+          <mat-error style="margin-top: -2rem; margin-bottom: 1rem;"
+            *ngIf="selectStepTwo.errors?.matchingFields && !selectStepTwo.tradeLinkControl?.errors?.pattern && selectStepTwo.get('tradeLinkControl').value">
+            You may only list items that belongs to you.
+          </mat-error>
+
+          <span *ngIf="!hasApiKey">
+            <mat-chip-listbox [(ngModel)]="selectedChips" [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="onChipsChange()">
+              <mat-chip-option value="api-key">🔑 Add API-KEY for smoother sales?</mat-chip-option>
+              <span *ngIf="!apiKeyIsSelected"><br><br><br></span>
+            </mat-chip-listbox>
+            <p *ngIf="apiKeyIsSelected" class="responsive-text">Add Steam Web API-KEY for smoother selling experience,
+              it's not required however it is <span style="color: rgb(14, 187, 14);">recommended</span>. Get your API-KEY by clicking on 'API-KEY?' text in the input
+              below or <a href="https://steamcommunity.com/dev/apikey" target="_blank">here</a>.</p>
+            <!-- <a href="https://steamcommunity.com/dev/apikey" target="_blank" *ngIf="apiKeyIsSelected">Get Your API-KEY here:</a> -->
+            <mat-form-field class="example-full-width" *ngIf="apiKeyIsSelected">
+              <mat-label><a href="https://steamcommunity.com/dev/apikey" target="_blank">API-KEY?:</a></mat-label>
+              <input matInput formControlName="apiNonControl" type="text">
+              <button *ngIf="!isEnteringApiKey" matPrefix mat-button (click)="enterApiKey()">Add</button>
+              <button *ngIf="isEnteringApiKey" mat-button matPrefix>
+                <span class="centered-loading-spinner">
+                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                        [diameter]="25">
+                    </mat-progress-spinner>
+                </span>
+            </button>
+            </mat-form-field>
+          </span>
+
+          <span *ngIf="hasApiKey">
+            <mat-chip-listbox [(ngModel)]="selectedChips" [ngModelOptions]="{standalone: true}"
+              (ngModelChange)="onChipsChange()">
+              <mat-chip-option value="api-key">🔑 Change API-KEY?</mat-chip-option>
+              <span *ngIf="!apiKeyIsSelected"><br><br><br></span>
+            </mat-chip-listbox>
+            <p *ngIf="apiKeyIsSelected" class="responsive-text">If you need to update your existing Steam Web API-KEY, you can replace it here.</p>
+            <!-- <a href="https://steamcommunity.com/dev/apikey" target="_blank" *ngIf="apiKeyIsSelected">Get Your API-KEY here:</a> -->
+            <mat-form-field class="example-full-width" *ngIf="apiKeyIsSelected">
+              <mat-label><a href="https://steamcommunity.com/dev/apikey" target="_blank">API-KEY?:</a></mat-label>
+              <input matInput formControlName="apiNonControl" type="text">
+              <button *ngIf="!isEnteringApiKey" matPrefix mat-button (click)="enterApiKey()">Add</button>
+              <button *ngIf="isEnteringApiKey" mat-button matPrefix>
+                <span class="centered-loading-spinner">
+                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                        [diameter]="25">
+                    </mat-progress-spinner>
+                </span>
+            </button>
+            </mat-form-field>
+          </span>
+          
+          <button mat-button [disabled]="apiKeyIsSelected" (click)="confirmApprove()" matStepperNext>Next</button>
+
         </div>
 
       </div>
@@ -279,30 +336,23 @@
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button (click)="stepper.reset()">Reset</button>
       </div> -->
-  
+
       <div style="display: flex; flex-wrap: wrap; justify-content: center;">
         <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
-          <div *ngIf="loadingMetaMask" class="centered-loading-spinner" >
+          <div *ngIf="loadingMetaMask" class="centered-loading-spinner">
             Confirm listing action in Wallet  
-            <mat-progress-spinner
-              class="example-margin"
-              color="primary"
-              mode="indeterminate"
-              [diameter]="25">
+            <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate" [diameter]="25">
             </mat-progress-spinner>
           </div>
           <div *ngIf="successMetaMask" style="text-align: center;">
             <h2 style="color: #c0c2ea;">Item successfully listed!</h2>
-            <button 
-              mat-button 
-              (click)="stepper.reset(); this.successMetaMask = false" 
+            <button mat-button (click)="stepper.reset(); this.successMetaMask = false"
               style="padding: 9px 23px; font-size: 18px; color: #a4a6ca !important; background-color: #17193d !important;">
               List more items for sale
             </button>
             <b>OR</b>
-            <button 
-              mat-button routerLink="trade/{{listedContractAddress}}"
-              (click)="stepper.reset(); this.successMetaMask = false" 
+            <button mat-button routerLink="trade/{{listedContractAddress}}"
+              (click)="stepper.reset(); this.successMetaMask = false"
               style="padding: 9px 23px; font-size: 18px; color: #a4a6ca !important; background-color: #17193d !important;">
               Go to your listing
             </button>
@@ -311,6 +361,6 @@
       </div>
     </div>
   </mat-step>
-  
+
 
 </mat-stepper>

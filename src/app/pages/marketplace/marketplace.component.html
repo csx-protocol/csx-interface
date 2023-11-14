@@ -18,28 +18,19 @@
             <h3>Dealings</h3>
           </mat-panel-title>
           <mat-panel-description>
-            My Trades & List for Sale.
+            List for Sale & My Trades.
           </mat-panel-description>
         </mat-expansion-panel-header>
 
         <mat-tab-group  (selectedTabChange)="onTabChange($event)">
+          <mat-tab label="List Item for Sale">
+            <app-list-item></app-list-item>
+          </mat-tab>
           <mat-tab label="My Trades">
             <div style="padding: 0 24px 16px;">
               <app-my-trades *ngIf="hasInitTradesClick"></app-my-trades>
             </div>
           </mat-tab>
-          <mat-tab label="List Item for Sale">
-            <app-list-item *ngIf="this.csgoItems.isDataComplete"></app-list-item>
-            <br *ngIf="!this.csgoItems.isDataComplete">
-            <div *ngIf="!this.csgoItems.isDataComplete" class="centered-loading-spinner">
-              <mat-progress-spinner
-              class="example-margin"
-              color="primary"
-              mode="indeterminate">
-            </mat-progress-spinner>
-            </div>
-          </mat-tab>
-
         </mat-tab-group>
       </mat-expansion-panel>
 

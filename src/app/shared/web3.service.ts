@@ -1451,6 +1451,8 @@ export class Web3Service implements OnDestroy {
   ): Promise<any> {
     try {
       let contractInstance = this.contracts[contractName];
+      //console.log('contractInstance', contractInstance);
+      //console.log('contractName', contractName);      
 
       if (contractName === 'Trade' || contractName === 'VestedStaking') {
         if (!methodParams || methodParams.length === 0) {
@@ -1510,6 +1512,15 @@ export class Web3Service implements OnDestroy {
       this.notificationsService.openSnackBar(error.message, 'OK');
       throw error;  // re-throw the error so it can be caught and handled by the caller if needed
     }
+  }
+
+  async signMessage(message: string): Promise<string> {
+    return await this.csxInstance.web3.eth.personal.sign(message, this.webUser.address);
+  }
+
+  shaMessage(message: string): string {
+    console.log('message', message);    
+    return this.csxInstance.web3.utils.sha3(message);
   }
 
   ngOnDestroy(): void { }

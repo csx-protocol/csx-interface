@@ -95,7 +95,7 @@ export class EscrowDialog {
             this.maxValue = parseInt(this.web3.webUser.balances!['CSX'].balanceEth);
             this.tokenAmountForm.controls['tokenAmount'].updateValueAndValidity();
             this.isEscrowing = false;
-            this.notify.notify('Escrowed successfully 🫡', 'OK');
+            this.notify.notify('Escrowed successfully 🫡');
             this.dialogRef.close();
         }
         ).catch((error) => {
