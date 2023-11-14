@@ -17,18 +17,20 @@ import { MyTradesService } from '../../components/my-trades/my-trades.service';
 })
 export class NavBarComponent implements OnDestroy {
   // isWalletConnected = false;
+  autoLogin = new AutoLogin();
   web3AccSub?: Subscription;
   notificationCountSub: Subscription;
   unreadNotifications: number = 0;
   account: any;
   trimmedAddress: any;
   constructor(
-    public _web3: Web3Service, 
+    public _web3: Web3Service,
     public notificationsService: NotificationService,
     private dialog: MatDialog,
     private intervalService: IntervalService,
     private myTradesService: MyTradesService
-    ){
+  ) {
+    this.autoLogin.isAutoLoginEnabled() ? this.connectWallet() : null;
     this.web3AccSub = _web3.webUser.myAccount$?.subscribe(async (_account: any) => { this.account = _account; await this.runAfterWallet(); });
     this.notificationCountSub = notificationsService.newNotification$.subscribe((_noticeCount: any) => {
       this.unreadNotifications += _noticeCount;
@@ -36,7 +38,8 @@ export class NavBarComponent implements OnDestroy {
   }
 
   loadingWallet: boolean = false;
-  connectWallet(): void{
+  connectWallet(): void {
+    this.autoLogin.enableAutoLogin();
     this.loadingWallet = true;
     this._web3.initWallet().then(async () => {
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -47,17 +50,22 @@ export class NavBarComponent implements OnDestroy {
     });
   }
 
+  disconnectWallet(): void {
+    this.autoLogin.disableAutoLogin();
+    this._web3.webUser.isUserWalletConnected = false;
+  }
+
   refresh(): void {
     window.location.reload();
   }
 
   isProcessing: boolean = false;
   firstTime: boolean = true;
-  async runAfterWallet(){
+  async runAfterWallet() {
     console.log("Welcome", this._web3.webUser.address);
     this.trimmedAddress = this.getTrimmedAccount();
 
-    if(this.account){
+    if (this.account) {
       await this._web3.updateUser();
       this.myTradesService.initialized = false;
       this.myTradesService.init();
@@ -66,13 +74,13 @@ export class NavBarComponent implements OnDestroy {
     }
   }
 
-  onNotiBellClick(){
+  onNotiBellClick() {
     console.log("click");
     this.unreadNotifications = 0;
     console.log(this.unreadNotifications);
   }
 
-  onIncorrectNetworkClick(){
+  onIncorrectNetworkClick() {
     this._web3.requestUserSwitchToCorrectNetwork();
   }
 
@@ -100,16 +108,16 @@ export class NavBarComponent implements OnDestroy {
     uiInfo: { contractAddress: '', role: '', status: '' },
     skinInfo: undefined,
     priceType: ''
-  };  
+  };
 
-  async openDaDialog(_contractAddress:string): Promise<void> {
-    
+  async openDaDialog(_contractAddress: string): Promise<void> {
+
     let details = await this._web3.getTradeDetailsByAddress(
       _contractAddress
     );
-    
+
     const role = this._web3.webUser.address?.toLowerCase() == details.buyer?.toLowerCase() ? TradeRole.BUYER : TradeRole.SELLER;
-    const item = {contractAddress: _contractAddress, index: undefined, role: role, status: details.status};
+    const item = { contractAddress: _contractAddress, index: undefined, role: role, status: details.status };
     const [max, min, value] = this.getFloatValues(details.skinInfo);
     details = {
       ...details,
@@ -155,14 +163,14 @@ export class NavBarComponent implements OnDestroy {
       case '9' || TradeStatus.Clawbacked:
         return 'Clawbacked';
       default:
-        console.log('ERROR', status);        
+        console.log('ERROR', status);
         return 'ERROR';
     }
   }
 
   private __getRoleString(role: TradeRole | string): string {
     console.log('GGGGGG', role);
-    
+
     switch (role) {
       case 0:
         return 'Buyer';
@@ -195,7 +203,7 @@ export class NavBarComponent implements OnDestroy {
     return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
   }
 
-  openSwapDialog(_data: any): void {   
+  openSwapDialog(_data: any): void {
     const dialogRef = this.dialog.open(wethConvertDialog, {
       data: _data,
     });
@@ -204,6 +212,39 @@ export class NavBarComponent implements OnDestroy {
       console.log(`Dialog result: ${result}`);
     });
   }
-  
 
+
+}
+
+export class AutoLogin {
+  private readonly autoLoginKey = 'autoLoginEnabled';
+
+  constructor() { }
+
+  // Check if auto-login is enabled
+  isAutoLoginEnabled(): boolean {
+    const autoLoginState = localStorage.getItem(this.autoLoginKey);
+    // If the key doesn't exist in localStorage, return false (or a default value of your choice)
+    if (autoLoginState === null) {
+      return false;
+    }
+    // If the key exists, compare its value to the string 'true'
+    return autoLoginState === 'true';
+  }
+
+  // Enable auto-login
+  enableAutoLogin(): void {
+    localStorage.setItem(this.autoLoginKey, 'true');
+  }
+
+  // Disable auto-login
+  disableAutoLogin(): void {
+    localStorage.setItem(this.autoLoginKey, 'false');
+  }
+
+  // Toggle auto-login state
+  toggleAutoLogin(): void {
+    const currentState = this.isAutoLoginEnabled();
+    localStorage.setItem(this.autoLoginKey, (!currentState).toString());
+  }
 }
