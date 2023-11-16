@@ -32,6 +32,7 @@ export class MyCodeComponent implements OnDestroy {
     }
   }
 
+  baseFee: number = 2.6;
   runAfterWeb3Init() {
     this.web3.callContractMethod('ReferralRegistry', 'getReferralCode', [this.web3.webUser.address!], 'call')
       .then((res) => {
