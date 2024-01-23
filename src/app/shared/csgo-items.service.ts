@@ -19,8 +19,7 @@ export class CsgoItemsService {
     this.isDataComplete = true;
   }
 
-  async getRegularItemImage(itemName: string, source: string): Promise<any> {
-    console.log("getRegularItemImage",itemName, source);
+  async getRegularItemImage(itemName: string): Promise<any> {
     const endCallResponse = await fetch(`${environment.steamApi}/item-cdn/${itemName}`, {
         method: 'GET',
         headers: {
