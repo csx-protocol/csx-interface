@@ -47,7 +47,7 @@ export class StakeDialog {
         this.mode = data[0];
         this.type = data[1];
         if (this.mode == StakeMode.STAKE) {
-            this.maxValue = this.type == StakeToken.CSX ? parseInt(this.web3.webUser.balances!['CSX'].balanceEth) : parseInt(this.web3.webUser.balances!['eCSX'].balanceEth);
+            this.maxValue = this.type == StakeToken.CSX ? parseFloat(this.web3.webUser.balances!['CSX'].balanceEth) : parseFloat(this.web3.webUser.balances!['eCSX'].balanceEth);
             this.tokenAmountForm = new FormGroup({
                 tokenAmount: new FormControl(null, [
                     Validators.required,
@@ -57,7 +57,7 @@ export class StakeDialog {
             });
             this.tokenAmountForm.get('tokenAmount')?.setValue(0);
         } else if (this.mode == StakeMode.UNSTAKE) {
-            this.maxValue = this.type == StakeToken.CSX ? parseInt(this.web3.webUser.balances!['sCSX'].balanceEth) : parseInt(this.web3.webUser.balances!['vCSX'].balanceEth);
+            this.maxValue = this.type == StakeToken.CSX ? parseFloat(this.web3.webUser.balances!['sCSX'].balanceEth) : parseFloat(this.web3.webUser.balances!['vCSX'].balanceEth);
             this.tokenAmountForm = new FormGroup({
                 tokenAmount: new FormControl(null, [
                     Validators.required,
