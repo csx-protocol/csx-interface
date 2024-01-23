@@ -1137,11 +1137,11 @@ export class Web3Service implements OnDestroy {
    */
 
   public toWei(ethVal: string, unit: any | undefined): string {
-    return Web3.utils.toWei(ethVal, unit);
+    return Web3.utils.toWei(ethVal.toString(), unit);
   }
 
   public fromWei(weiVal: string, unit: any | undefined): string {
-    return Web3.utils.fromWei(weiVal, unit);
+    return Web3.utils.fromWei(weiVal.toString(), unit);
   }
 
   public toBN(value: string | number): any {
