@@ -52,7 +52,7 @@
           <span *ngIf="userInteraction.priceType == '1'">USDC</span>
           <span *ngIf="userInteraction.priceType == '2'">USDT</span></td>
         <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'For Sale'">
-          <button (click)="openDialog(userInteraction)" mat-button color="warn" style="color: rgb(255 49 67) !important;">Cancel Sell</button>
+          <button (click)="openDialog(userInteraction)" mat-button color="primary" style="color: rgb(199, 196, 32) !important;">Edit</button>
         </td>
 
         <td class="tdColor" style="text-align: center;" *ngIf="userInteraction.uiInfo.role === 'Seller' && userInteraction.uiInfo.status === 'Seller Cancelled'">
