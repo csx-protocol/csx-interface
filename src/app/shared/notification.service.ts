@@ -54,13 +54,14 @@ export class NotificationService implements OnDestroy {
     this.notificationSubject.next(1);
   }
 
+  private readonly _DURATION = 15000; // 15 seconds
+
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 100000,
-      // here specify the position
+      duration: this._DURATION,
       verticalPosition: 'bottom',
       horizontalPosition: 'center',
-      panelClass: ['blue-snackbar'],
+      panelClass: ['blue-snackbar']
     });
   }
 
