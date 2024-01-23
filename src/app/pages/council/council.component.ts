@@ -25,6 +25,7 @@ export class CouncilComponent {
   keepers: string[] = [];
   council = '';
   keeperOracle = '';
+  totalSupply = '';
 
   addressForm: FormGroup;
 
@@ -40,6 +41,12 @@ export class CouncilComponent {
       keeperOracleAddress: new FormControl(null, [
         Validators.required,
       ]),
+      mintAddress: new FormControl(null, [
+        Validators.required,
+      ]),
+      mintValue: new FormControl(null, [
+        Validators.required,
+      ]),
     });
     if (this.web3.webUser.address) {
       this.runAfterWeb3Init();
@@ -52,22 +59,75 @@ export class CouncilComponent {
     this.isCouncil = await this.getIsCouncil();
     this.council = await this.getCouncil();
     this.keeperOracle = await this.getKeeperOracle();
+    this.totalSupply = await this.getCSXTotalSupply();
     await this.getKeepers();
     await this.getNonDistributedRewards();
+    this.sCSXInfo.push(await this.getStakedCSXInfo('WETH'));
+    this.sCSXInfo.push(await this.getStakedCSXInfo('USDC'));
+    this.sCSXInfo.push(await this.getStakedCSXInfo('USDT'));
+  }
+
+  sCSXInfo: any[] = [
+    // {
+    //   token: 'WETH',
+    //   duration: '',
+    //   finishAt: '',
+    //   updatedAt: '',
+    //   rewardRate: '',
+    //   rewardPerTokenStored: '',
+    //   nonDistributedRewardsPerToken: '',
+    // },
+    // {
+    //   token: 'USDC',
+    //   duration: '',
+    //   finishAt: '',
+    //   updatedAt: '',
+    //   rewardRate: '',
+    //   rewardPerTokenStored: '',
+    //   nonDistributedRewardsPerToken: '',
+    // },
+    // {
+    //   token: 'USDT',
+    //   duration: '',
+    //   finishAt: '',
+    //   updatedAt: '',
+    //   rewardRate: '',
+    //   rewardPerTokenStored: '',
+    //   nonDistributedRewardsPerToken: '',
+    // }
+  ];
+  async getStakedCSXInfo(_token: string): Promise<any> {
+    const duration = await this.web3.callContractMethod('StakedCSX', 'duration', [this.web3.contracts[_token].options.address], 'call');
+    const finishAt = await this.web3.callContractMethod('StakedCSX', 'finishAt', [this.web3.contracts[_token].options.address], 'call');
+    const updatedAt = await this.web3.callContractMethod('StakedCSX', 'updatedAt', [this.web3.contracts[_token].options.address], 'call');
+    const rewardRate = await this.web3.callContractMethod('StakedCSX', 'rewardRate', [this.web3.contracts[_token].options.address], 'call');
+    const rewardPerTokenStored = await this.web3.callContractMethod('StakedCSX', 'rewardPerTokenStored', [this.web3.contracts[_token].options.address], 'call');
+    const nonDistributedRewardsPerToken = await this.web3.callContractMethod('StakedCSX', 'nonDistributedRewardsPerToken', [this.web3.contracts[_token].options.address], 'call');
+    const lastTimeRewardApplicable = await this.web3.callContractMethod('StakedCSX', 'lastTimeRewardApplicable', [this.web3.contracts[_token].options.address], 'call');
+
+    return {
+      duration,
+      finishAt,
+      updatedAt,
+      rewardRate,
+      rewardPerTokenStored,
+      nonDistributedRewardsPerToken,
+      lastTimeRewardApplicable,
+    };
   }
 
   async getKeepers(): Promise<any> {
-    const keepersLength: number = await this.web3.callContractMethod('Keepers', 'getKeepersCount', [], 'call');
-    const indices = Array.from({ length: keepersLength - 1 }, (_, i) => i + 1);
+    const keepersLength: number = await this.web3.callContractMethod('Keepers', 'totalKeepers', [], 'call');
+    console.log('keepersLength', keepersLength);
 
-    const keepers = [];
-
-    for (const index of indices) {
-      const keeper = await this.web3.callContractMethod('Keepers', 'keepers', [index], 'call');
-      keepers.push(keeper);
+    for (let i = 0; i < keepersLength; i++) {
+      const keeper = await this.web3.callContractMethod('Keepers', 'indexToKeeper', [i], 'call');
+      this.keepers.push(keeper);
     }
+  }
 
-    this.keepers = keepers;
+  async getCSXTotalSupply(): Promise<string> {
+    return await this.web3.callContractMethod('CSXToken', 'totalSupply', [], 'call');
   }
 
   async getIsCouncil(): Promise<boolean> {
@@ -120,6 +180,12 @@ export class CouncilComponent {
     this.isCommittedToChangeKeeperOracle = true;
   }
 
+  isCommittedToMintCSXTokens: boolean = false;
+  committToMintCSXTokens() {
+    const current = this.isCommittedToMintCSXTokens;
+    this.isCommittedToMintCSXTokens = !current;
+  }
+
   isChangingKeeperOracle: boolean = false;
   async changeKeeperOracle(_address: string): Promise<void> {
     this.isChangingKeeperOracle = true;
@@ -133,10 +199,40 @@ export class CouncilComponent {
     });
   }
 
+  isChangingMintCSXTokens: boolean = false;
+  async mintCSXTokens(_address: string, _weiAmount: string): Promise<void> {
+    this.isChangingMintCSXTokens = true;
+    await this.web3.callContractMethod('CSXToken', 'mint', [_address, _weiAmount], 'send').then((result) => {
+      console.log('result', result);
+      this.isChangingMintCSXTokens = false;
+      // convert amount to full ether
+      const amountInEther = this.web3.csxInstance.web3.utils.fromWei(_weiAmount, 'ether');
+      this.web3.increaseBalance('CSX', amountInEther)
+    }).catch((error) => {
+      console.log(error);
+      this.isChangingMintCSXTokens = false;
+    });
+  }
+
   submitChangeKeeperOracle() {
     const keeperOracleAddress = this.addressForm.get('keeperOracleAddress')?.value;
     console.log('keeperOracleAddress', keeperOracleAddress);
     this.changeKeeperOracle(keeperOracleAddress);
+  }
+
+  submitMintCSXTokens() {
+    const mintAddress = this.addressForm.get('mintAddress')?.value;
+    const mintValue = this.addressForm.get('mintValue')?.value;
+    console.log('mintAddress', mintAddress);
+    console.log('mintValue', mintValue);
+
+    // check address is valid
+    const isValidAddress = this.web3.csxInstance.web3.utils.isAddress(mintAddress);
+
+    if (!isValidAddress) { console.log('Invalid Address'); return; }
+    if (!mintValue) { console.log('Invalid Amount'); return; }
+
+    this.mintCSXTokens(mintAddress, mintValue);
   }
 
   isCommittedToChangeCouncil: boolean = false;

@@ -7,7 +7,7 @@
     </mat-card-content>
 </mat-card>
 
-<mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+<mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
 
 <div *ngIf="!this.web3.webUser.isUserWalletConnected">
     <mat-card class="margins background">
@@ -50,7 +50,6 @@
                     </button>
                 </mat-form-field>
             </div>
-            <mat-divider></mat-divider>
             <div mat-subheader><b>Keeper Oracle</b></div>
             <mat-list-item>
                 <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeKeeperOracle()">bubble_chart</mat-icon>
@@ -80,6 +79,7 @@
             </div>
         </mat-list>
     </mat-card>
+
     <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
         <!-- <b>Keepers</b>
       <br> -->
@@ -120,7 +120,6 @@
                     <mat-icon matListItemIcon class="light-icon">person</mat-icon>
                     <div matListItemTitle class="light-icon">N/A</div>
                 </mat-list-item>
-                <mat-divider></mat-divider>
 
             </mat-list>
         </div>
@@ -138,6 +137,16 @@
                     </mat-progress-spinner>
                 </span>
                 <div matListItemTitle class="light-icon">Distribute Rewards</div>
+            </mat-list-item>
+            <mat-list-item>
+                <!-- <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon> -->
+                <mat-icon *ngIf="!isSubmittingDistributeRewards" matListItemIcon class="light-icon link-like" (click)="submitDistributeRewards()">timer</mat-icon>
+                <span matListItemIcon class="centered-loading-spinner" *ngIf="isSubmittingDistributeRewards">
+                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                        [diameter]="25">
+                    </mat-progress-spinner>
+                </span>
+                <div matListItemTitle class="light-icon">Set Rewards Duration</div>
             </mat-list-item>
             <mat-list class="light-text">
                 <div mat-subheader><b>Distribute Ready Rewards</b></div>
@@ -158,9 +167,89 @@
                     <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/tether-usdt.png" style="height: 1.5rem;"></mat-icon>
                     <div matListItemTitle class="light-icon">{{nonDistributedRewardsUSDT}} USDT</div>
                 </mat-list-item>
-                <mat-divider></mat-divider>
-
             </mat-list>
+            <mat-list class="light-text">
+                <div mat-subheader><b>Info</b></div>
+                <!-- sCSXInfo -->
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/wrapped-eth.png" style="height: 1rem;"></mat-icon>
+                    <div matListItemLine class="light-icon">Duration: {{sCSXInfo[0]?.duration}}</div>
+                    <div matListItemLine class="light-icon">finishAt: {{sCSXInfo[0]?.finishAt}}</div>
+                    <div matListItemLine class="light-icon">updatedAt: {{sCSXInfo[0]?.updatedAt}}</div>
+                    <div matListItemLine class="light-icon">rewardRate: {{sCSXInfo[0]?.rewardRate}}</div>
+                    <div matListItemLine class="light-icon">rewardPerTokenStored: {{sCSXInfo[0]?.rewardPerTokenStored}}</div>
+                    <div matListItemLine class="light-icon">lastTimeRewardApplicable: {{sCSXInfo[0]?.lastTimeRewardApplicable}}</div>
+                </mat-list-item>
+                <br>
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/centre-usdc.png" style="height: 1rem;"></mat-icon>
+                    <div matListItemLine class="light-icon">Duration: {{sCSXInfo[1]?.duration}}</div>
+                    <div matListItemLine class="light-icon">finishAt: {{sCSXInfo[1]?.finishAt}}</div>
+                    <div matListItemLine class="light-icon">updatedAt: {{sCSXInfo[1]?.updatedAt}}</div>
+                    <div matListItemLine class="light-icon">rewardRate: {{sCSXInfo[1]?.rewardRate}}</div>
+                    <div matListItemLine class="light-icon">rewardPerTokenStored: {{sCSXInfo[1]?.rewardPerTokenStored}}</div>
+                    <div matListItemLine class="light-icon">lastTimeRewardApplicable: {{sCSXInfo[1]?.lastTimeRewardApplicable}}</div>
+                </mat-list-item>
+                <br>
+                <mat-list-item class="light-text-item">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/tether-usdt.png" style="height: 1rem;"></mat-icon>
+                    <div matListItemLine class="light-icon">Duration: {{sCSXInfo[2]?.duration}}</div>
+                    <div matListItemLine class="light-icon">finishAt: {{sCSXInfo[2]?.finishAt}}</div>
+                    <div matListItemLine class="light-icon">updatedAt: {{sCSXInfo[2]?.updatedAt}}</div>
+                    <div matListItemLine class="light-icon">rewardRate: {{sCSXInfo[2]?.rewardRate}}</div>
+                    <div matListItemLine class="light-icon">rewardPerTokenStored: {{sCSXInfo[2]?.rewardPerTokenStored}}</div>
+                    <div matListItemLine class="light-icon">lastTimeRewardApplicable: {{sCSXInfo[2]?.lastTimeRewardApplicable}}</div>
+                </mat-list-item>
+            </mat-list>
+        </mat-list>
+    </mat-card>  
+
+    <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
+        <mat-list class="light-text">
+            <div mat-subheader><b>CSX Token</b></div>
+            <mat-list-item class="light-text-item">
+                <mat-icon matListItemIcon class="light-icon"><img src="assets/csx-logo.png" style="height: 1.2rem;" (click)="committToMintCSXTokens()"></mat-icon>
+                <div matListItemTitle class="light-icon">{{totalSupply}} tokens</div>
+            </mat-list-item>
+            <div [formGroup]="addressForm" *ngIf="isCommittedToMintCSXTokens">
+                <mat-form-field style="display: flex; align-items: center;">
+                    <mat-label>Address</mat-label>
+                    <input matInput formControlName="mintAddress">
+                    <mat-error *ngIf="addressForm.get('mintAddress')?.hasError('required')">
+                        This field is required.
+                    </mat-error>
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="addressForm.get('mintAddress')?.setValue('')">
+                        X
+                    </button>
+                    <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
+                        <span class="centered-loading-spinner">
+                            <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                [diameter]="25">
+                            </mat-progress-spinner>
+                        </span>
+                    </button>
+                </mat-form-field>
+                <mat-form-field style="display: flex; align-items: center;">
+                    <mat-label>Wei Amount (18)</mat-label>
+                    <input matInput formControlName="mintValue">
+                    <mat-error *ngIf="addressForm.get('mintValue')?.hasError('required')">
+                        This field is required.
+                    </mat-error>                        
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="addressForm.get('mintValue')?.setValue('')">
+                        X
+                    </button>
+                    <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
+                        <span class="centered-loading-spinner">
+                            <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                [diameter]="25">
+                            </mat-progress-spinner>
+                        </span>
+                    </button>
+                </mat-form-field>                    
+                <button *ngIf="!isChangingMintCSXTokens" mat-button matSuffix (click)="submitMintCSXTokens()">
+                    Mint
+                </button>
+            </div>
         </mat-list>
     </mat-card>  
 </div>
