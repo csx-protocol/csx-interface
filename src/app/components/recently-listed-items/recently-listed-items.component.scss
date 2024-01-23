@@ -53,3 +53,40 @@
   .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: #141525 !important;
   }
+
+  .custom-price-range {
+    display: flex;
+    align-items: center;
+    gap: 10px; // Adjust the spacing between elements
+  
+    .min-max-input {
+      flex: 1; // Maintain the flex grow for inputs
+  
+      .mat-form-field-wrapper {
+        padding-bottom: 0; // Reduce padding inside the form field
+      }
+  
+      .mat-form-field-infix {
+        padding: 0.5em; // Reduce padding inside the input field
+      }
+  
+      input {
+        height: 30px; // Reduce the height of the input
+      }
+    }
+  
+    .slider {
+      flex: 2; // Maintain the flex grow for slider
+      width: auto; // Maintain the slider width
+  
+      .mat-slider-thumb {
+        height: 20px; // Reduce thumb height
+        width: 20px; // Reduce thumb width
+      }
+  
+      .mat-slider-track-wrapper {
+        height: 2px; // Reduce the track height
+      }
+    }
+  }
+  

@@ -30,7 +30,7 @@ export class RecentlyListedItemsService {
   constructor(
     private web3: Web3Service,
     private referralService: ReferralService,
-    private router: Router
+    private router: Router,
   ) { }
 
   sortBy: 'index' | 'weiPrice' = 'index' as 'index' | 'weiPrice';
@@ -260,7 +260,6 @@ export class RecentlyListedItemsService {
       );
 
       this.totalContracts = totalContracts;
-      //console.log('PendingsInit', pendings);
       console.log('totalContracts', totalContracts);
 
       //Sorting highest first, lowest last.
@@ -268,13 +267,17 @@ export class RecentlyListedItemsService {
         (a: { index: number }, b: { index: number }) => b.index - a.index
       );
 
-      //this.filterNames({ target: { value: '' } });
-
       if (this.totalContracts > 0) {
         this.filterToData.set('ANY', {
           indexes: pendings,
           items: [],
         });
+
+      // Add for a custom price range filter
+      this.filterToData.set('CUSTOM_PRICE', {
+        indexes: [],
+        items: [],
+      });
 
         const LessThanTenfilteredIndexes = pendings.filter((item: any) => {
           const price = item.priceInUSD;
@@ -292,6 +295,7 @@ export class RecentlyListedItemsService {
           '50_TO_100',
           '100_TO_250',
           '250_TO_1000',
+          'CUSTOM_PRICE',
         ];
         const minPrices = [10, 25, 50, 100, 250];
         const maxPrices = [25, 50, 100, 250, 1000];
@@ -318,14 +322,14 @@ export class RecentlyListedItemsService {
       }
     }
 
-    //this.filteredItems = await this._loadFirstStep('ANY');
-
     await this.onTypeFilterChange({ value: undefined });
 
     this.isLoading = false;
   }
 
   async _loadFirstStep(selectedFilter: string): Promise<any[]> {
+    console.log("Loading First Step selectedFilter", selectedFilter);
+    
     const hasKey = this.filterToData.has(selectedFilter);
     let _filteredItems = [];
     if (hasKey) {
@@ -361,6 +365,7 @@ export class RecentlyListedItemsService {
         this.hasMoreItemsToLoad =
           _filteredItems.length < filteredObject.indexes.length;
     }
+    console.log("Loading First Step _filteredItems", _filteredItems);
     return _filteredItems;
   }
 
@@ -441,6 +446,10 @@ export class RecentlyListedItemsService {
     let _filteredItems = [];
 
     // console.log('mgmawklsmfA,', selectedPriceFilter);
+    // if (this.selectedPriceFilter === 'CUSTOM_PRICE') {
+    //   this.applyCustomPriceRange();
+    //   return;
+    // }
 
     if (selectedPriceFilter !== undefined) {
       _filteredItems = await this._loadFirstStep(selectedPriceFilter);
@@ -473,6 +482,8 @@ export class RecentlyListedItemsService {
 
     this.isLoading = false;
     this.isLoadingChip = false;
+    console.log("Loading complete");
+    
   }
 
   isGunsSelected: boolean = false;
@@ -512,7 +523,11 @@ export class RecentlyListedItemsService {
       const hasKey = this.filterToData.has(
         this.selectedPriceFilter + selectedFilter
       );
+      console.log("this.selectedPriceFilter + selectedFilter", this.selectedPriceFilter + selectedFilter);
+      
       if (!hasKey) {
+        console.log("this.filterToData.get(this.selectedPriceFilter)?.indexes",this.filterToData.get(this.selectedPriceFilter)?.indexes);
+        
         const _filteredIndexItems = this._filterItemsByWeaponType(
           this.filterToData.get(this.selectedPriceFilter)?.indexes ?? [],
           selectedFilter
@@ -863,6 +878,50 @@ export class RecentlyListedItemsService {
     const floatValuesArray = JSON.parse(floatValues);
     return floatValuesArray;
   }
+
+  sliderMin: number = 0;
+  sliderMax: number = 2000;
+  customMinPrice: number = 100;
+  customMaxPrice: number = 1000;
+  priceStep: number = 10;
+  customPriceValue: string = `CUSTOM_PRICE_${this.customMinPrice}_${this.customMaxPrice}`;
+
+  async applyCustomPriceRange(minPrice?: number, maxPrice?: number, event?: any) {
+
+    if(event){
+      if (event.selected == false){
+        console.warn('Custom price range is not selected');
+        console.log("WARNING: Custom price range is not selected");        
+        return;
+      }
+    }
+
+    if(minPrice == undefined) {
+      minPrice = this.customMinPrice;
+    }
+
+    if(maxPrice == undefined) {
+      maxPrice = this.customMaxPrice;
+    }
+
+    const customFilteredIndexes = this.pendings.filter((item: any) => {
+      // Ensure the price is a number
+      const price = Number(item.priceInUSD);
+      return price >= minPrice! && price <= maxPrice!;
+    });
+  
+    const customPriceValue = `CUSTOM_PRICE_${minPrice}_${maxPrice}`;
+
+    this.customPriceValue = customPriceValue;
+
+    this.filterToData.set(customPriceValue, {
+      indexes: customFilteredIndexes,
+      items: [],
+    });
+
+    await this.onPriceFilterChange({ value: customPriceValue });
+  }
+
 }
 const filteredItemsAndIndex = {
   items: [] as any[],

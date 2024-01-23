@@ -11,8 +11,28 @@
       <mat-chip-option value="100_TO_250">&dollar;100 to &dollar;250</mat-chip-option>
       <mat-chip-option value="250_TO_1000">&dollar;250 to &dollar;1000</mat-chip-option>
       <mat-chip-option value="MORE_THAN_1000">&gt; &dollar;1000</mat-chip-option>
+      <mat-chip-option (selectionChange)="this.recentlyListed.applyCustomPriceRange(undefined, undefined, $event)" [value]="this.recentlyListed.customPriceValue">Custom</mat-chip-option>
     </mat-chip-listbox>
-<br>
+<br>    
+    <div *ngIf="this.recentlyListed.selectedPriceFilter === this.recentlyListed.customPriceValue" class="custom-price-range">
+      <mat-form-field appearance="fill" class="min-max-input">
+        <mat-label>Min</mat-label>
+        <input matInput type="number" [(ngModel)]="this.recentlyListed.sliderMin" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching">
+      </mat-form-field>
+    
+      <mat-slider [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" class="slider" [min]="this.recentlyListed.sliderMin" [max]="this.recentlyListed.sliderMax" discrete [displayWith]="formatLabel">
+        <input [(ngModel)]="this.recentlyListed.customMinPrice" (dragEnd)="onCustomRangeDragEnd()" matSliderStartThumb>
+        <input [(ngModel)]="this.recentlyListed.customMaxPrice" (dragEnd)="onCustomRangeDragEnd()" matSliderEndThumb>
+      </mat-slider>
+    
+      <mat-form-field appearance="fill" class="min-max-input">
+        <mat-label>Max</mat-label>
+        <input matInput type="number" [(ngModel)]="this.recentlyListed.sliderMax" [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching">
+      </mat-form-field>
+    </div>
+    
+    
+
     <mat-chip-listbox [disabled]="this.recentlyListed.isLoading || this.recentlyListed.isSearching" aria-label="Type selection" (change)="this.recentlyListed.onTypeFilterChange($event);"> <!--onTypeFilterChange-->
       <mat-chip-option value="GUNS" color="accent">Guns</mat-chip-option>
       <mat-chip-option value="KNIVES" color="accent">Knives</mat-chip-option>
@@ -81,7 +101,7 @@
     <mat-grid-list *ngIf="this.recentlyListed.filteredItems && this.recentlyListed.filteredItems.length > 0 && !this.recentlyListed.isLoadingChip" [cols]="breakpoint" rowHeight="30rem" (window:resize)="onResize($event)">
     <mat-grid-tile style="overflow: visible;" *ngFor="let item of this.recentlyListed.filteredItems">
       <!-- [@cardAnimation]="state" -->
-      <mat-card  class="item-card background"  @fadeInOut>
+      <mat-card class="item-card background" @fadeInOut style="background: radial-gradient(circle, rgb(42 44 82 / 20%) 10%, #00000000 100%); background-position-y: -92px;">
         <mat-card-header>
           <div mat-card-avatar class="item-header-image" matTooltip="Go to listing">
             <a routerLink="trade/{{item.contractAddress}}">
@@ -230,7 +250,7 @@
       </mat-progress-spinner>
       </div>
 
-      <button *ngIf="!this.recentlyListed.isLoading && this.recentlyListed.hasMoreItemsToLoad && this.recentlyListed.selectedPriceFilter" (click)="this.recentlyListed.loadNextStep(); this.recentlyListed.autoScroll = true;" mat-button>Load more</button>
+      <button *ngIf="!this.recentlyListed.isLoading && this.recentlyListed.hasMoreItemsToLoad && this.recentlyListed.selectedPriceFilter" (click)="onLoadNextStep()" mat-button>Load more</button>
 
       <mat-card-content *ngIf="this.recentlyListed.totalContracts==0 && !this.recentlyListed.isLoading">
         <div>

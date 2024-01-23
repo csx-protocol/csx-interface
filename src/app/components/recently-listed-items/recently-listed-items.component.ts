@@ -5,7 +5,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { fromEvent, map } from 'rxjs';
 import { Web3Service } from '../../shared/web3.service';
 import { CsgoItemsService } from '../../shared/csgo-items.service';
@@ -31,20 +31,20 @@ enum ListedItemsPixelBreakPoints {
       state('in', style({ opacity: 1, transform: 'scale(1)' })),
       transition('void => *', [
         style({ opacity: 0, transform: 'scale(0.5)' }),
-        animate(150),
+        animate(200),
       ]),
       transition('* => void', [
-        animate(150, style({ opacity: 0, transform: 'scale(0.5)' })),
+        animate(200, style({ opacity: 0, transform: 'scale(0.5)' })),
       ]),
     ]),
     trigger('fadeInOut', [
       state('in', style({ opacity: 1 })),
       transition(':enter', [
         style({ opacity: 0 }),
-        animate(600)
+        animate(200)
       ]),
       transition(':leave',
-        animate(600, style({ opacity: 0 }))
+        animate(200, style({ opacity: 0 }))
       )
     ])
   ],
@@ -57,7 +57,8 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
     public web3: Web3Service,
     public recentlyListed: RecentlyListedItemsService,
     public sanitizer: DomSanitizer, //Used in .html
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdRef: ChangeDetectorRef
   ) {
     this.initBreakpoint();
   }
@@ -86,7 +87,6 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-    
     await this.recentlyListed.initialize();
     if(this.recentlyListed.selectedName != '') {
       this.recentlyListed.filterNames({target: { value: this.recentlyListed.selectedName}}, true);
@@ -101,20 +101,20 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
   onResize(event: EventTarget | null | any) {
     if (event)
       this.breakpoint = this._getBreakpoint(event.target.innerWidth);
-      this.recentlyListed.step = this._getBreakpoint(event.target.innerWidth);
+    this.recentlyListed.step = this._getBreakpoint(event.target.innerWidth);
   }
 
   private _getBreakpoint(innerWidth: number): number {
-    const breakpoint =    
-        innerWidth <= ListedItemsPixelBreakPoints.one
-          ? 1
-          : innerWidth <= ListedItemsPixelBreakPoints.two
+    const breakpoint =
+      innerWidth <= ListedItemsPixelBreakPoints.one
+        ? 1
+        : innerWidth <= ListedItemsPixelBreakPoints.two
           ? 2
           : innerWidth <= ListedItemsPixelBreakPoints.three
-          ? 3
-          : innerWidth <= ListedItemsPixelBreakPoints.four
-          ? 4
-          : 5;
+            ? 3
+            : innerWidth <= ListedItemsPixelBreakPoints.four
+              ? 4
+              : 5;
     return breakpoint;
   }
 
@@ -122,7 +122,7 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
     return Array.from({ length: n }, (_, i) => i);
   }
 
-  openDialog(_item: Item): void {   
+  openDialog(_item: Item): void {
     const dialogRef = this.dialog.open(BuyDialog, {
       data: _item,
     });
@@ -132,11 +132,26 @@ export class RecentlyListedItemsComponent implements OnInit, OnDestroy {
     });
   }
 
+  async onCustomRangeDragEnd(){
+    await this.recentlyListed.applyCustomPriceRange();
+    this.cdRef.detectChanges();
+  }
+
+  async onLoadNextStep(){
+    await this.recentlyListed.loadNextStep(); 
+    this.recentlyListed.autoScroll = true;
+    this.cdRef.detectChanges();
+  }
+
   ngOnDestroy() {
     this.scrollSubscription.unsubscribe();
   }
-  
+
   partnerIdToSteamId64(partnerId: string): string {
     return (BigInt(partnerId) + BigInt(76561197960265728n)).toString();
+  }
+
+  formatLabel(value: number) {
+    return `$${value}`;
   }
 }
