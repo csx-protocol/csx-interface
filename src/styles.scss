@@ -165,11 +165,19 @@ mat-dialog-container {
 }
 
 .mdc-text-field--disabled.mdc-text-field--filled {
-  background-color: #2a2c52 !important;
+  background-color: #0e0f18 !important;
 }
 
 .mdc-text-field--filled:not(.mdc-text-field--disabled) {
   background-color: #12131f;
+}
+
+.blue-snackbar {
+  white-space: pre-wrap;
+}
+
+.mat-mdc-select-panel-above .mdc-menu-surface.mat-mdc-select-panel {
+  background-color: #121320 !important;
 }
 
 
@@ -178,7 +186,7 @@ mat-dialog-container {
 }
 
 .mat-mdc-button:not(:disabled) {
-  color: rgb(127, 136, 252) !important;
+  color: #3582f3 !important;
   background-color: #0e0f1b1f !important;
 }
 
@@ -218,9 +226,8 @@ mat-dialog-container {
 }
 
 .mat-button-toggle-checked {
-  //background-color: #12131f !important;
   background-color: #17182c !important;
-  color: rgb(127, 136, 252) !important;
+  color: #3582f3 !important;
 }
 
 .mat-expansion-panel-body {
@@ -289,5 +296,19 @@ mat-stepper[hide-header] .mat-horizontal-stepper-header-container {
 .link-like {
   cursor: pointer;
   text-decoration: underline;
-  color: rgb(104, 109, 209);
+  color: #3582f3;
+}
+
+.mat-mdc-select-arrow {
+  color: rgb(161 163 187) !important;
+}
+
+.mat-mdc-form-field:not(.mat-form-field-no-animations) .mdc-text-field__input {
+  transition: opacity 150ms 0ms cubic-bezier(0.4, 0, 0.2, 1);
+  color: #3582f3 !important
+}
+.mat-mdc-form-field .mat-mdc-floating-label.mdc-floating-label {
+  line-height: normal;
+  pointer-events: all;
+  color: #9e9ece !important;
 }
