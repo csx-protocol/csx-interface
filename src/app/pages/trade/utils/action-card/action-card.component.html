@@ -3,7 +3,7 @@
         <p>yo</p> {{item?.itemMarketName}}
     </span> -->
     <span style="margin-left: 20px; margin-right: 20px; padding-top: 0.2rem;">
-        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
         <span *ngIf="role == 0">
             <b>Buyer Panel</b>
             <div *ngIf="status == 2" style="margin-right: 20px;">
@@ -34,7 +34,7 @@
         <span *ngIf="role == 1">
             <b>Seller Panel</b>
             <div *ngIf="status == 0" style="margin-right: 20px;">
-                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="warn" style="color: rgba(244, 67, 54, 0.712) !important;">Cancel Sell Order</button>
+                <button (click)="openDialog(convertTradeItemToMyTradeItem(item!))" mat-button color="primary" style="color: rgb(199, 196, 32) !important;">Edit Trade</button>
             </div>
             <div *ngIf="status == 1" style="margin-right: 20px;">
                 <p>Successfully cancelled listing.</p>
@@ -73,6 +73,6 @@
             </div>
         </span>
        
-        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
     </span>
 </mat-card>

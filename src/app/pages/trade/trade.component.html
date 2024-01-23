@@ -7,7 +7,7 @@
                 <div class="left-column"><h1>{{item.itemMarketName}}</h1></div>
                 <div class="right-column">
                     <img class="responsive-img" style="max-width: min-content;" mat-card-image [src]="item.itemImageUrl" alt="{{item.itemMarketName}}"> <br>
-                    <span *ngIf="item.stickers">
+                    <span *ngIf="item.stickers" style="display: flex;">
                         <span *ngFor="let sticker of item.stickers">
                           <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="1000" class="thumbnail" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{item.itemMarketName}}">
                         </span>
@@ -16,7 +16,7 @@
                 
             </mat-card-content>
         </mat-card>
-        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
         <mat-card class="margins background">
             <mat-card-content>
 
@@ -102,7 +102,7 @@
                   
             </mat-card-content>
         </mat-card>
-        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
         <mat-card class="margins background">
             <mat-card-content>
                 <app-timeline *ngIf="item.contractAddress" [contractAddress]="item.contractAddress" [weaponType]="item.weaponType"></app-timeline>
@@ -135,6 +135,9 @@
                     <p>Float: <span style="color:#687dff;">{{item.skinInfo.floatValues[2]}}</span></p>
                     <p style="margin-top: -11px;">Paint Seed: <span style="color:#687dff;">{{item.skinInfo.paintSeed}}</span></p>
                     <p style="margin-top: -11px;">Paint Index: <span style="color:#687dff;">{{item.skinInfo.paintIndex}}</span></p>
+                    <br>
+                    <p style="margin-top: -11px;">Locate Item: <a href="https://steamcommunity.com/profiles/{{sellerPartnerIdToSteamId64()}}/inventory/#730_2_{{item.assetId}}" target="_blank"><span style="color:#687dff;">Inventory</span></a></p>
+                    <p style="margin-top: -11px;">Inspect Link: <a [href]="item.inspectLink"><span style="color:#687dff;">In-Game</span></a></p>
                 </div>
                 
                 <!---->
@@ -148,7 +151,7 @@
             </span>
 
         </mat-card>
-        <mat-divider style="margin: 0.5%; visibility: hidden;"></mat-divider>
+        <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
         <app-action-card [item]="item" [role]="role" [status]="status"></app-action-card>
         
     </div>
