@@ -81,11 +81,14 @@
   <mat-step [stepControl]="firstFormGroup">
     <form [formGroup]="firstFormGroup">
       <ng-template matStepLabel>Fill out your name</ng-template>
-      <p style="color: red" matTooltip="Ensure Steam Inventory is Public during trades to avoid unexpected results."><b>Warning: Set Steam Inventory to Public for trade success.</b></p>
+      <p style="color: red" matTooltip="Ensure Steam Inventory is Public during trades to avoid unexpected results."><b>Warning: Set Steam Inventory to Public for trade success. <br><br> Your trade at risk if your inventory is private.</b></p>
       <mat-form-field style="width: 100%;" appearance="fill" matTooltipPosition="above" matTooltip="Make sure your Steam Inventory has visibility set to Public at all times during the trade or the trade outcome might not end as expected.">
-        <mat-label><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2979613345" target="_blank" rel="noopener noreferrer">Trade Link Url?</a>:</mat-label>
+        <mat-label><a href="http://steamcommunity.com/my/tradeoffers/privacy#trade_offer_access_url" target="_blank" rel="noopener noreferrer">Trade Link Url?</a>:</mat-label>
         <!-- Give heads up warning that they need to have inventory set to public -->
         <input matInput formControlName="firstCtrl" required>
+        <button mat-button matPrefix (click)="firstFormGroup.get('firstCtrl').setValue('')">
+          <mat-icon>close</mat-icon>
+        </button>
         <mat-error *ngIf="firstFormGroup.get('firstCtrl').hasError('required')">
           Trade link is <strong>required</strong>
         </mat-error>
@@ -93,6 +96,10 @@
           Trade link must be <strong>valid</strong>
         </mat-error>
       </mat-form-field>
+      <a *ngIf="!hasLocalStorageUrl" class="link-like" href="http://steamcommunity.com/my/tradeoffers/privacy#trade_offer_access_url" target="_blank">🛫 Take me to my Trade URL</a>
+      <div *ngIf="hasLocalStorageUrl" style="margin-top: -1rem;">
+        <p style="color: #ff6000f7;">Found Trade URL in your browser, make sure it's the right <a href="http://steamcommunity.com/my/tradeoffers/privacy#trade_offer_access_url" target="_blank" rel="noopener noreferrer">token</a>!</p>
+      </div>
       <div>
         <br>
         <span *ngIf="this.item.priceType == '0' && this.web3.webUser.balances!['WETH'].balanceEth != '0.0000'">Pay In

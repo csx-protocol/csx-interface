@@ -43,6 +43,8 @@ export class BuyDialog {
     secondCtrl: ['', /*Validators.required*/],
   });
   isLinear = true;
+
+  hasLocalStorageUrl: boolean = false;
   constructor(
     public dialogRef: MatDialogRef<BuyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -65,6 +67,7 @@ export class BuyDialog {
     const tradeLinkLS: string = this.tradeLinkService.getTradeLinkUrl();
 
     if (tradeLinkLS !== '') {
+      this.hasLocalStorageUrl = true;
       this.firstFormGroup.controls['firstCtrl'].setValue(tradeLinkLS);
     }
   }
@@ -90,7 +93,7 @@ export class BuyDialog {
     const netValues = this.web3.calculateNetValue(this.item.weiPrice, referralInfo.hasReferral, this.web3.webUser.baseFee, referralInfo.discountRatio);
     const tradeLink = this.firstFormGroup.value.firstCtrl;
 
-    this.tradeLinkService.setTradeLinkUrl(tradeLink);
+    localStorage.setItem('tradeLinkUrl', tradeLink);
 
     if (this.item.priceType === '0' && this.selectedEther === 'ETH') {
       this.web3.BuyItemWithEthToWeth(this.item.contractAddress, tradeLink, referralInfo.bytes32, netValues.buyerNetPrice).then((success: boolean) => {
