@@ -1,27 +1,96 @@
+
+
 <span *ngIf="item">
-  <div>
-    <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Seller's Remorse</h1>
-  </div>
-  <mat-dialog-content>
-    <i style="color: #7f94be !important;">You can cancel the order before anyone buys your item without affecting your sales stats.</i>
-    <br>
-    <br>
-    Are you sure you want to cancel {{item.itemMarketName}} sell order?
-    <br>
-    <br>
-    <div *ngIf="!isCancelling">
-      <button mat-button cdkFocusInitial [mat-dialog-close]="false">No, Keep My Sell Order!</button>
-      <button mat-button color="warn" style="color: rgba(244, 67, 54, 0.726) !important;" (click)="cancelTrade()">Yes, Cancel My Sell Order!</button>
+  <span *ngIf="choice == 'no_choice'">
+    <div>
+      <h1 mat-dialog-title style="color: rgb(199, 196, 32) !important;">Edit Trade</h1>
     </div>
-    <div *ngIf="isCancelling" class="centered-loading-spinner" >
-      Confirm in wallet... <mat-progress-spinner
-      class="example-margin"
-      color="primary"
-      mode="indeterminate"
-      [diameter]="25">
-    </mat-progress-spinner> 🤔
+    <mat-dialog-content>
+      <i style="color: #7f94be !important;">You can either change the price or cancel the listing before anyone buys your item without affecting your sales stats.</i>
+      <br>
+      <br>
+      <div>
+        <button mat-button cdkFocusInitial style="color: rgba(54, 244, 63, 0.726) !important;" (click)="changeChoice('change_price')">Change Price</button>
+        <button mat-button color="warn" style="color: rgba(244, 67, 54, 0.726) !important;" (click)="changeChoice('cancel')">Cancel Trade</button>
+      </div>
+    </mat-dialog-content>
+  </span>
+  <span *ngIf="choice == 'cancel'">
+    <div>
+      <h1 mat-dialog-title style="color: rgb(255 49 67) !important;">Seller's Remorse</h1>
     </div>
-  </mat-dialog-content>
+    <mat-dialog-content>
+      <i style="color: #7f94be !important;">You can cancel the order before anyone buys your item without affecting your sales stats.</i>
+      <br>
+      <br>
+      Are you sure you want to cancel {{item.itemMarketName}} sell order?
+      <br>
+      <br>
+      <div *ngIf="!isCancelling">
+        <button mat-button color="primary" style="color: rgba(190, 190, 190, 0.726) !important;" (click)="choice = 'no_choice'">Go back</button>
+        <br>        
+        <button mat-button color="warn" style="color: rgba(244, 67, 54, 0.726) !important;" (click)="cancelTrade()">Yes, Cancel My Sell Order!</button>
+        <button mat-button cdkFocusInitial color="primary" [mat-dialog-close]="false">No, Keep My Sell Order!</button>        
+      </div>
+      <div *ngIf="isCancelling" class="centered-loading-spinner" >
+        Confirm in wallet... <mat-progress-spinner
+        class="example-margin"
+        color="primary"
+        mode="indeterminate"
+        [diameter]="25">
+      </mat-progress-spinner> 🤔
+      </div>
+    </mat-dialog-content>
+  </span>
+  <span *ngIf="choice == 'change_price'">
+    <div>
+      <h1 mat-dialog-title style="color: rgba(54, 244, 63, 0.726) !important;">Change Price</h1>
+    </div>
+    <mat-dialog-content>
+      <i style="color: #7f94be !important;">You can change the price before anyone buys your item.</i>
+      <br>
+      <br>
+      <div>
+        <form [formGroup]="changePriceBuilder">
+          <div class="smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+
+            <div *ngIf="!isChangingPrice">
+              <div class="form-row">
+                <mat-form-field style="width: -webkit-fill-available;">
+                  <mat-label>Price in {{selectedPriceType}}</mat-label>
+                  <input matInput formControlName="priceControl" type="number" [step]="step">
+                  <mat-error *ngIf="changePriceBuilder.get('priceControl').hasError('required')">
+                    Price is <strong>required</strong>
+                  </mat-error>
+                  <mat-error *ngIf="changePriceBuilder.get('priceControl').hasError('positiveNumber')">
+                    Price must be a <strong>positive number</strong>
+                  </mat-error>
+                  <mat-error *ngIf="changePriceBuilder.get('priceControl').hasError('validNumber')">
+                    Please enter a <strong>valid number</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <br>
+              <button mat-button color="primary" style="color: rgba(190, 190, 190, 0.726) !important;" (click)="choice = 'no_choice'">Go back</button>
+              <button [disabled]="this.changePriceBuilder.value.priceControl == itemF.indexInfo.etherPrice" mat-button (click)="attemptChangePrice()">Change Price</button>
+            </div>            
+            
+            <div *ngIf="isChangingPrice" class="centered-loading-spinner" >
+              Confirm {{changePriceBuilder.value.priceControl}} {{selectedPriceType}} in wallet... <mat-progress-spinner
+              class="example-margin"
+              color="primary"
+              mode="indeterminate"
+              [diameter]="25">
+            </mat-progress-spinner> 🤓🖋️📄
+            </div>
+
+          </div>
+        </form>
+        
+      </div>
+    </mat-dialog-content>
+  </span>
+  
 </span>
 <span *ngIf="!item">
   <mat-dialog-content>
