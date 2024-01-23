@@ -505,6 +505,12 @@ export class TradeComponent implements OnInit, OnDestroy {
   parseInt(_int: string): number {
     return parseInt(_int);
   }
+
+  sellerPartnerIdToSteamId64(): string {
+    const item = this.item as any;
+    if(item.sellerTradeUrl.partner == undefined) return '';
+    return (BigInt(item.sellerTradeUrl.partner) + BigInt(76561197960265728n)).toString();
+  }
 }
 
 export interface TradeItem {
