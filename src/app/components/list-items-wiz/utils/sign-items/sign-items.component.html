@@ -1,0 +1,43 @@
+<div class="card-container" style="width: 100%; align-items: center;">
+    <mat-card  class="item-card background" [@throwOut]="{ value: '', params: { direction: item.isConfirmed == true ? '100' : '-100', rotation: item.isConfirmed == true ? '20' : '-20'}}" *ngFor="let item of itemDetails; let i = index" [ngStyle]="{'left': getCardLeftPosition(i) + 'px', 'z-index': removingCardId === item.assetId ? 1000 : i*-1}" style="box-shadow: rgb(0 0 0 / 25%) 10px 10px 20px 0px; background: radial-gradient(circle, rgb(24 25 46 / 80%) 10%, rgb(22 23 40) 100%) -92px; background-position-y: -92px;">
+        
+    <mat-progress-bar *ngIf="!item.isDone" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar 
+          *ngIf="item.isDone" mode="determinate" value="100" 
+          [class.success-progress-bar]="item.isConfirmed" 
+          [class.failed-progress-bar]="!item.isConfirmed"
+    ></mat-progress-bar>
+
+    <mat-card-header>
+      <p style="text-align: center;">{{item.itemName}}</p>
+    </mat-card-header>
+
+    
+    <P style="text-align: center;">item.weiPrice: {{item.weiPrice}}</P>
+    <p style="text-align: center;">item.priceType: {{item.priceType}}</p>
+    <p style="text-align: center;">item.priceTypeIndex: {{item.priceTypeIndex}}</p>
+
+
+        <img style="margin: 10%; max-width: 180px;" mat-card-image [src]="item.imageUrl" alt="{{item.itemName}}">
+          <span *ngIf="item.stickers" style="min-width: 100%; padding-left: 1rem;">
+            <span *ngFor="let sticker of item.stickers">
+              <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" [matTooltipShowDelay]="1000" class="thumbnail" width="40px" mat-card-image [src]="sticker.imageLink" width="50px" alt="{{item.itemName}}">
+            </span>
+          </span>
+          <div *ngIf="item.stickers.length === 0" style="margin-left: 2%; min-height: 41.5px;"></div>
+        
+        <mat-card-content>        
+        </mat-card-content>
+       
+        <div style="min-height: 1rem;"></div>
+        <mat-progress-bar *ngIf="!item.isDone" mode="query"></mat-progress-bar>
+        <mat-progress-bar 
+          *ngIf="item.isDone" mode="determinate" value="100" 
+          [class.success-progress-bar]="item.isConfirmed" 
+          [class.failed-progress-bar]="!item.isConfirmed"
+        ></mat-progress-bar>
+    </mat-card>
+</div>
+
+<button mat-button (click)="removeCard(true)" style="transform: scale(1.3); margin-top: 1rem;">Confirm Item</button><br>
+<button mat-button (click)="removeCard(false)" style="transform: scale(1.3); margin-top: 1rem;">Reject Item</button>

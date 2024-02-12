@@ -2,7 +2,7 @@
 
   <span *ngIf="!hasConfirmedDelivery && !hasOpenDispute">
     <span *ngIf="item.uiInfo.role === 'Buyer'">
-      <h1 mat-dialog-title>You have purchased {{item.itemMarketName}} for {{item.etherPrice}} ETH!</h1>
+      <h1 mat-dialog-title>You have purchased {{item.itemMarketName}} for {{item.etherPrice}} {{item.priceType == '0' ? 'ETH' : item.priceType == '1' ? 'USDC' : 'USDT'}}!</h1>
       <mat-dialog-content>
         <h4>It's time to accept the trade offer on Steam from the seller.</h4>
 

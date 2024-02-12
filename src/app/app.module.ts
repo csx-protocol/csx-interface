@@ -96,6 +96,11 @@ import { TradeComponent } from './pages/trade/trade.component';
 import { TimelineComponent } from './pages/trade/utils/timeline/timeline.component';
 import { ActionCardComponent } from './pages/trade/utils/action-card/action-card.component';
 import { CouncilComponent } from './pages/council/council.component';
+import { ListItemsComponent } from './components/list-items/list-items.component';
+import { ListItemsWizComponent } from './components/list-items-wiz/list-items-wiz.component';
+import { InspectHelpDialogComponent } from './components/list-items/dialogs/inspect-help-dialog/inspect-help-dialog.component';
+import { SignItemsComponent } from './components/list-items-wiz/utils/sign-items/sign-items.component';
+import { WalletStateInfoComponent } from './components/wallet-state-info/wallet-state-info.component';
 
 
 @NgModule({
@@ -128,6 +133,7 @@ import { CouncilComponent } from './pages/council/council.component';
     wethConvertDialog, // NavBarComponent
     OpenDisputeDialog, // SellerCommittedDialog
     SignStepComponent, TradeComponent, TimelineComponent, ActionCardComponent, CouncilComponent, // EarnComponent/StakeDialog
+    ListItemsComponent, ListItemsWizComponent, InspectHelpDialogComponent, SignItemsComponent, WalletStateInfoComponent, // ListItemsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

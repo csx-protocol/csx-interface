@@ -17,7 +17,6 @@ import { MyTradesService } from '../../components/my-trades/my-trades.service';
 })
 export class NavBarComponent implements OnDestroy {
   // isWalletConnected = false;
-  autoLogin = new AutoLogin();
   web3AccSub?: Subscription;
   notificationCountSub: Subscription;
   unreadNotifications: number = 0;
@@ -30,7 +29,8 @@ export class NavBarComponent implements OnDestroy {
     private intervalService: IntervalService,
     private myTradesService: MyTradesService
   ) {
-    this.autoLogin.isAutoLoginEnabled() ? this.connectWallet() : null;
+    const _IS_AUTO_LOGIN_ENABLED = this._web3.csxInstance.autoLogin.isAutoLoginEnabled();
+    _IS_AUTO_LOGIN_ENABLED ? this.connectWallet() : null;
     this.web3AccSub = _web3.webUser.myAccount$?.subscribe(async (_account: any) => { this.account = _account; await this.runAfterWallet(); });
     this.notificationCountSub = notificationsService.newNotification$.subscribe((_noticeCount: any) => {
       this.unreadNotifications += _noticeCount;
@@ -39,19 +39,16 @@ export class NavBarComponent implements OnDestroy {
 
   loadingWallet: boolean = false;
   connectWallet(): void {
-    this.autoLogin.enableAutoLogin();
+    this._web3.csxInstance.autoLogin.enableAutoLogin();
     this.loadingWallet = true;
-    this._web3.initWallet().then(async () => {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      this.loadingWallet = false;
-    }).catch((err) => {
+    this._web3.initWallet().catch((err) => {
       this.notificationsService.openSnackBar(err, 'OK');
       this.loadingWallet = false;
     });
   }
 
   disconnectWallet(): void {
-    this.autoLogin.disableAutoLogin();
+    this._web3.csxInstance.autoLogin.disableAutoLogin();
     this._web3.webUser.isUserWalletConnected = false;
   }
 
@@ -67,10 +64,9 @@ export class NavBarComponent implements OnDestroy {
 
     if (this.account) {
       await this._web3.updateUser();
+      this.loadingWallet = false;
       this.myTradesService.initialized = false;
       this.myTradesService.init();
-    } else {
-      // Couldnt connect popup.
     }
   }
 
@@ -214,37 +210,4 @@ export class NavBarComponent implements OnDestroy {
   }
 
 
-}
-
-export class AutoLogin {
-  private readonly autoLoginKey = 'autoLoginEnabled';
-
-  constructor() { }
-
-  // Check if auto-login is enabled
-  isAutoLoginEnabled(): boolean {
-    const autoLoginState = localStorage.getItem(this.autoLoginKey);
-    // If the key doesn't exist in localStorage, return false (or a default value of your choice)
-    if (autoLoginState === null) {
-      return false;
-    }
-    // If the key exists, compare its value to the string 'true'
-    return autoLoginState === 'true';
-  }
-
-  // Enable auto-login
-  enableAutoLogin(): void {
-    localStorage.setItem(this.autoLoginKey, 'true');
-  }
-
-  // Disable auto-login
-  disableAutoLogin(): void {
-    localStorage.setItem(this.autoLoginKey, 'false');
-  }
-
-  // Toggle auto-login state
-  toggleAutoLogin(): void {
-    const currentState = this.isAutoLoginEnabled();
-    localStorage.setItem(this.autoLoginKey, (!currentState).toString());
-  }
 }

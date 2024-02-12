@@ -10,13 +10,7 @@
 <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
 
 <div *ngIf="!this.web3.webUser.isUserWalletConnected">
-    <mat-card class="margins background">
-        <mat-card-content>
-            <h2>Wallet not connected.</h2>
-            <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
-            <p></p>
-        </mat-card-content>
-    </mat-card>
+    <app-wallet-state-info></app-wallet-state-info>
 </div>
 
 <div *ngIf="this.web3.webUser.isUserWalletConnected && isCouncil" class="card-container margins">
@@ -28,11 +22,11 @@
                 <mat-icon *ngIf="!isChangingCouncil" matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon>
                 <div matListItemTitle class="light-icon">{{council}}</div>
             </mat-list-item>
-            <div [formGroup]="addressForm" *ngIf="isCommittedToChangeCouncil">
+            <div [formGroup]="allForm" *ngIf="isCommittedToChangeCouncil">
                 <mat-form-field style="display: flex; align-items: center;">
                     <mat-label>Address</mat-label>
                     <input matInput formControlName="councilAddress">
-                    <mat-error *ngIf="addressForm.get('councilAddress')?.hasError('required')">
+                    <mat-error *ngIf="allForm.get('councilAddress')?.hasError('required')">
                         This field is required.
                     </mat-error>
                     <button *ngIf="!isChangingCouncil" mat-button matSuffix (click)="submitChangeCouncil()">
@@ -55,11 +49,11 @@
                 <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeKeeperOracle()">bubble_chart</mat-icon>
                 <div matListItemTitle class="light-icon">{{keeperOracle}}</div>
             </mat-list-item>
-            <div [formGroup]="addressForm" *ngIf="isCommittedToChangeKeeperOracle">
+            <div [formGroup]="allForm" *ngIf="isCommittedToChangeKeeperOracle">
                 <mat-form-field style="display: flex; align-items: center;">
                     <mat-label>Address</mat-label>
                     <input matInput formControlName="keeperOracleAddress">
-                    <mat-error *ngIf="addressForm.get('keeperOracleAddress')?.hasError('required')">
+                    <mat-error *ngIf="allForm.get('keeperOracleAddress')?.hasError('required')">
                         This field is required.
                     </mat-error>
                     <button *ngIf="!isChangingKeeperOracle" mat-button matSuffix (click)="submitChangeKeeperOracle()">
@@ -85,11 +79,11 @@
       <br> -->
         <b style="margin: calc((3rem - 1.5rem)/2) 16px;">Add Keeper</b>
         <br>
-        <div [formGroup]="addressForm">
+        <div [formGroup]="allForm">
             <mat-form-field style="display: flex; align-items: center;">
                 <mat-label>Address</mat-label>
                 <input matInput formControlName="keepersAddress">
-                <mat-error *ngIf="addressForm.get('keepersAddress')?.hasError('required')">
+                <mat-error *ngIf="allForm.get('keepersAddress')?.hasError('required')">
                     This field is required.
                 </mat-error>
                 <button *ngIf="!isAddingKeeper" mat-button matSuffix (click)="submitAddKeeper()">
@@ -131,32 +125,12 @@
             <mat-list-item>
                 <!-- <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon> -->
                 <mat-icon *ngIf="!isSubmittingDistributeRewards" matListItemIcon class="light-icon link-like" (click)="submitDistributeRewards()">vertical_distribute</mat-icon>
-                <span matListItemIcon class="centered-loading-spinner" *ngIf="isSubmittingDistributeRewards">
-                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
-                        [diameter]="25">
-                    </mat-progress-spinner>
-                </span>
                 <div matListItemTitle class="light-icon">Distribute Rewards</div>
-            </mat-list-item>
-            <mat-list-item>
-                <!-- <mat-icon matListItemIcon class="light-icon link-like" (click)="committToChangeCouncil()">person</mat-icon> -->
-                <mat-icon *ngIf="!isSubmittingDistributeRewards" matListItemIcon class="light-icon link-like" (click)="submitDistributeRewards()">timer</mat-icon>
-                <span matListItemIcon class="centered-loading-spinner" *ngIf="isSubmittingDistributeRewards">
-                    <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
-                        [diameter]="25">
-                    </mat-progress-spinner>
-                </span>
-                <div matListItemTitle class="light-icon">Set Rewards Duration</div>
             </mat-list-item>
             <mat-list class="light-text">
                 <div mat-subheader><b>Distribute Ready Rewards</b></div>
                 <mat-list-item class="light-text-item">
                     <mat-icon matListItemIcon class="light-icon link-like"><img src="assets/utils/wrapped-eth.png" style="height: 1.5rem;"></mat-icon>
-                    <span matListItemIcon class="centered-loading-spinner" *ngIf="isRemovingKeeper">
-                        <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
-                            [diameter]="25">
-                        </mat-progress-spinner>
-                    </span>
                     <div matListItemTitle class="light-icon">{{nonDistributedRewardsWETH}} WETH</div>
                 </mat-list-item>
                 <mat-list-item class="light-text-item">
@@ -211,14 +185,14 @@
                 <mat-icon matListItemIcon class="light-icon"><img src="assets/csx-logo.png" style="height: 1.2rem;" (click)="committToMintCSXTokens()"></mat-icon>
                 <div matListItemTitle class="light-icon">{{totalSupply}} tokens</div>
             </mat-list-item>
-            <div [formGroup]="addressForm" *ngIf="isCommittedToMintCSXTokens">
+            <div [formGroup]="allForm" *ngIf="isCommittedToMintCSXTokens">
                 <mat-form-field style="display: flex; align-items: center;">
                     <mat-label>Address</mat-label>
                     <input matInput formControlName="mintAddress">
-                    <mat-error *ngIf="addressForm.get('mintAddress')?.hasError('required')">
+                    <mat-error *ngIf="allForm.get('mintAddress')?.hasError('required')">
                         This field is required.
                     </mat-error>
-                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="addressForm.get('mintAddress')?.setValue('')">
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="allForm.get('mintAddress')?.setValue('')">
                         X
                     </button>
                     <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
@@ -232,10 +206,10 @@
                 <mat-form-field style="display: flex; align-items: center;">
                     <mat-label>Wei Amount (18)</mat-label>
                     <input matInput formControlName="mintValue">
-                    <mat-error *ngIf="addressForm.get('mintValue')?.hasError('required')">
+                    <mat-error *ngIf="allForm.get('mintValue')?.hasError('required')">
                         This field is required.
                     </mat-error>                        
-                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="addressForm.get('mintValue')?.setValue('')">
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="allForm.get('mintValue')?.setValue('')">
                         X
                     </button>
                     <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
@@ -250,6 +224,100 @@
                     Mint
                 </button>
             </div>
+        </mat-list>
+    </mat-card>
+
+    <mat-card class="margins background card" style="padding: 1rem; max-width: 96%;">
+        <mat-list class="light-text">
+            <div mat-subheader><b>Staked CSX</b></div>
+            <mat-list-item class="light-text-item">
+                <mat-icon matListItemIcon class="light-icon"><img src="assets/csx-logo.png" style="height: 1.2rem;" (click)="committToSetRewardDurationFunc()"></mat-icon>
+                <div matListItemTitle class="light-icon">Reward Duration</div>
+            </mat-list-item>
+           
+            <div style="margin-left: 1rem;">
+                <mat-list-item class="light-text-item" *ngIf="committToSetRewardDuration">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/wrapped-eth.png" style="height: 1.2rem;" (click)="committToDist('WETH')"></mat-icon>
+                    <div matListItemTitle class="light-icon">Wrapped ETH</div>
+                </mat-list-item>
+                <div [formGroup]="allForm" *ngIf="priceTypeToBoolDist['WETH'] && committToSetRewardDuration">
+                    <mat-form-field style="display: flex; align-items: center;">
+                        <mat-label>Reward Duration (in seconds)</mat-label>
+                        <input matInput formControlName="rewardDurationWETH" type="number">
+                        <mat-error *ngIf="allForm.get('rewardDurationWETH')?.hasError('required')">
+                            This field is required.
+                        </mat-error>
+                        <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="allForm.get('rewardDurationWETH')?.setValue('')">
+                            X
+                        </button>
+                        <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
+                            <span class="centered-loading-spinner">
+                                <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                    [diameter]="25">
+                                </mat-progress-spinner>
+                            </span>
+                        </button>
+                    </mat-form-field>                
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matSuffix (click)="submitMintCSXTokens()">
+                        Set Duration
+                    </button>
+                </div>
+
+                <mat-list-item class="light-text-item" *ngIf="committToSetRewardDuration">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/centre-usdc.png" style="height: 1.2rem;" (click)="committToDist('USDC')"></mat-icon>
+                    <div matListItemTitle class="light-icon">USDC</div>
+                </mat-list-item>
+                <div [formGroup]="allForm" *ngIf="priceTypeToBoolDist['USDC'] && committToSetRewardDuration">
+                    <mat-form-field style="display: flex; align-items: center;">
+                        <mat-label>Reward Duration (in seconds)</mat-label>
+                        <input matInput formControlName="rewardDurationUSDC" type="number">
+                        <mat-error *ngIf="allForm.get('rewardDurationUSDC')?.hasError('required')">
+                            This field is required.
+                        </mat-error>
+                        <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="allForm.get('rewardDurationUSDC')?.setValue('')">
+                            X
+                        </button>
+                        <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
+                            <span class="centered-loading-spinner">
+                                <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                    [diameter]="25">
+                                </mat-progress-spinner>
+                            </span>
+                        </button>
+                    </mat-form-field>                
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matSuffix (click)="submitSetRewardDuration('USDC')">
+                        Set Duration
+                    </button>
+                </div>
+
+                <mat-list-item class="light-text-item" *ngIf="committToSetRewardDuration">
+                    <mat-icon matListItemIcon class="light-icon"><img src="assets/utils/tether-usdt.png" style="height: 1.2rem;" (click)="committToDist('USDT')"></mat-icon>
+                    <div matListItemTitle class="light-icon">USDT</div>
+                </mat-list-item>
+                <div [formGroup]="allForm" *ngIf="priceTypeToBoolDist['USDT'] && committToSetRewardDuration">
+                    <mat-form-field style="display: flex; align-items: center;">
+                        <mat-label>Reward Duration (in seconds)</mat-label>
+                        <input matInput formControlName="rewardDurationUSDT" type="number">
+                        <mat-error *ngIf="allForm.get('rewardDurationUSDT')?.hasError('required')">
+                            This field is required.
+                        </mat-error>
+                        <button *ngIf="!isChangingMintCSXTokens" mat-button matPrefix (click)="allForm.get('rewardDurationUSDT')?.setValue('')">
+                            X
+                        </button>
+                        <button *ngIf="isChangingMintCSXTokens" mat-button matSuffix>
+                            <span class="centered-loading-spinner">
+                                <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                                    [diameter]="25">
+                                </mat-progress-spinner>
+                            </span>
+                        </button>
+                    </mat-form-field>                
+                    <button *ngIf="!isChangingMintCSXTokens" mat-button matSuffix (click)="submitMintCSXTokens()">
+                        Set Duration
+                    </button>
+                </div>
+            </div>
+
         </mat-list>
     </mat-card>  
 </div>

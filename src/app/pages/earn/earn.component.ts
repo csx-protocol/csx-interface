@@ -22,6 +22,16 @@ interface amount {
   etherPlain: string;
 }
 
+type RewardInfo = {
+  wei: string;
+  ether: string;
+  etherPlain: string;
+};
+
+type Rewards = {
+  [key: string]: RewardInfo;
+};
+
 
 @Component({
   selector: 'app-earn',
@@ -79,13 +89,13 @@ export class EarnComponent implements OnDestroy {
     },
   };
 
-
   constructor(
     public web3: Web3Service,
     private notify: NotificationService,
     private dialog: MatDialog,
     private intervalService: IntervalService
   ) {
+    //this.hasAutoLogin = this.web3.csxInstance.autoLogin.isAutoLoginEnabled();
     this.web3AccSub = web3.webUser.afterAccount$?.subscribe(async (_account: any) => { this.runAfterWeb3Init(); });
     if (this.web3.webUser.address) {
       this.runAfterWeb3Init();
@@ -94,32 +104,14 @@ export class EarnComponent implements OnDestroy {
 
   canWithdrawVestedStake: boolean = false;
   hasVestingStarted: boolean = false;
+  totalSupplyStakedString: string = '';
+  totalSupplyVestedString: string = '';
+  rewardRateUSDC: bigint = 0n;
+  rewardRateUSDT: bigint = 0n;
+  rewardRateWETH: bigint = 0n;
   runAfterWeb3Init() {
-    //this.web3.getClaimableAmount().then((res) => {
-
-    this.web3.callContractMethod('StakedCSX', 'rewardOf', [this.web3.webUser.address], 'call').then((res) => {
-      this.stakeInfo.weth.wei = res.wethAmount;
-      this.stakeInfo.usdc.wei = res.usdcAmount;
-      this.stakeInfo.usdt.wei = res.usdtAmount;
-
-      this.stakeInfo.weth.etherPlain = parseFloat(this.web3.fromWei(res.wethAmount, 'ether')).toString();
-      this.stakeInfo.weth.ether = parseFloat(this.stakeInfo.weth.etherPlain).toFixed(4);
-
-      const decimals = 6;
-      const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
-
-      const usdcBalanceBN = Web3.utils.toBN(this.stakeInfo.usdc.wei);
-      const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
-      const usdcBalanceFraction = usdcBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
-      this.stakeInfo.usdc.etherPlain = parseFloat(`${usdcBalanceInteger}.${usdcBalanceFraction}`).toString();
-      this.stakeInfo.usdc.ether = parseFloat(this.stakeInfo.usdc.etherPlain).toFixed(2);
-
-      const usdtBalanceBN = Web3.utils.toBN(this.stakeInfo.usdt.wei);
-      const usdtBalanceInteger = usdtBalanceBN.div(tenPowerDecimals).toString(10);
-      const usdtBalanceFraction = usdtBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
-      this.stakeInfo.usdt.etherPlain = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toString();
-      this.stakeInfo.usdt.ether = parseFloat(this.stakeInfo.usdt.etherPlain).toFixed(2);
-    });
+    this._updateStakeInfo();
+    this._updateMyRewards();
 
     if (
       this.web3.webUser.balances!['eCSX'].balanceEth != '0.0000' ||
@@ -127,6 +119,12 @@ export class EarnComponent implements OnDestroy {
     ) {
       this._getVestedClaimableAmountAndTimeStart();
     }
+  }
+
+  async getRewardRate(_tokenName: string): Promise<bigint> {
+    const [, _REWARD_ADDRESS] = this.web3.getTokenMap(_tokenName);
+    const _REWARD_RATE: bigint = BigInt(await this.web3.callContractMethod('StakedCSX', 'rewardRate', [_REWARD_ADDRESS], 'call')) as bigint;
+    return _REWARD_RATE;
   }
 
   submitStake() {
@@ -180,6 +178,75 @@ export class EarnComponent implements OnDestroy {
     const [integerPart, decimalPart] = num.toString().split('.');
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+  }
+
+  private _updateStakeInfo() {
+    this.web3.callContractMethod('StakedCSX', 'totalSupply', [], 'call').then((_totalSupplyRes) => {
+      this.totalSupplyStakedString = this.web3.fromWei(_totalSupplyRes, 'ether');
+    });  
+
+    let _REWARD_RATE_USDC: bigint;
+    let _REWARD_RATE_USDT: bigint;
+    let _REWARD_RATE_WETH: bigint;
+
+    let _MY_REWARD_RATE_USDC: bigint;
+    let _MY_REWARD_RATE_USDT: bigint;
+    let _MY_REWARD_RATE_WETH: bigint;
+    this.getRewardRate('USDC').then((res) => {
+      _REWARD_RATE_USDC = res;
+      console.log('_REWARD_RATE_USDC', _REWARD_RATE_USDC);
+    });
+    this.getRewardRate('USDT').then((res) => {
+      _REWARD_RATE_USDT = res;
+      console.log('_REWARD_RATE_USDT', _REWARD_RATE_USDT);
+    });
+    this.getRewardRate('WETH').then((res) => {
+      _REWARD_RATE_WETH = res;
+      console.log('_REWARD_RATE_WETH', _REWARD_RATE_WETH);
+    });
+  }
+
+  private _getMyRewardRate(_rewardRate: bigint, _totalSupply: bigint, tag?: string): bigint {
+    if (_totalSupply == 0n) { console.log('supply zero', tag); return 0n; }
+    if (_rewardRate == 0n) { console.log('rr zero', tag); return 0n; }
+    const _MY_STAKED_BALANCE = BigInt(this.web3.webUser.balances!['sCSX'].balanceWei) as bigint;
+    console.log('-------------------');
+
+    console.log('_MY_STAKED_BALANCE', _MY_STAKED_BALANCE);
+    console.log('_rewardRate', _rewardRate);
+    console.log('_totalSupply', _totalSupply);
+
+    const _REWARD_RATE_PER_TOKEN = _rewardRate / _totalSupply;
+    const _MY_REWARD_RATE = _MY_STAKED_BALANCE * _REWARD_RATE_PER_TOKEN;
+    console.log('_MY_REWARD_RATE', _MY_REWARD_RATE);
+
+    return _MY_REWARD_RATE;
+  }
+
+  private _updateMyRewards() {
+    this.web3.callContractMethod('StakedCSX', 'rewardOf', [this.web3.webUser.address], 'call').then((res) => {
+      this.stakeInfo.weth.wei = res.wethAmount;
+      this.stakeInfo.usdc.wei = res.usdcAmount;
+      this.stakeInfo.usdt.wei = res.usdtAmount;
+
+      this.stakeInfo.weth.etherPlain = parseFloat(this.web3.fromWei(res.wethAmount, 'ether')).toString();
+      this.stakeInfo.weth.ether = parseFloat(this.stakeInfo.weth.etherPlain).toFixed(4);
+
+      const decimals = 6;
+      const tenPowerDecimals = Web3.utils.toBN(10).pow(Web3.utils.toBN(decimals));
+
+      const usdcBalanceBN = Web3.utils.toBN(this.stakeInfo.usdc.wei);
+      const usdcBalanceInteger = usdcBalanceBN.div(tenPowerDecimals).toString(10);
+      const usdcBalanceFraction = usdcBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+      this.stakeInfo.usdc.etherPlain = parseFloat(`${usdcBalanceInteger}.${usdcBalanceFraction}`).toString();
+      this.stakeInfo.usdc.ether = parseFloat(this.stakeInfo.usdc.etherPlain).toFixed(2);
+
+      const usdtBalanceBN = Web3.utils.toBN(this.stakeInfo.usdt.wei);
+      const usdtBalanceInteger = usdtBalanceBN.div(tenPowerDecimals).toString(10);
+      const usdtBalanceFraction = usdtBalanceBN.mod(tenPowerDecimals).toString(10).padStart(decimals, '0');
+      this.stakeInfo.usdt.etherPlain = parseFloat(`${usdtBalanceInteger}.${usdtBalanceFraction}`).toString();
+      this.stakeInfo.usdt.ether = parseFloat(this.stakeInfo.usdt.etherPlain).toFixed(2);
+    });
   }
 
   openStakeDialog(_data: any): void {
@@ -295,6 +362,7 @@ export class EarnComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.web3AccSub?.unsubscribe();
     this.intervalService.stopInterval('vestInterval');
+    clearInterval(this.timeLeftInterval);
   }
 
   /**
@@ -302,55 +370,78 @@ export class EarnComponent implements OnDestroy {
    */
   isLoading: boolean = true;
   progressBarValue: number = 0;
-  timeIntervalInMilliseconds: number = 24 * 60 * 60 * 1000;//5 * 60 * 1000; 
-
+  //  timeIntervalInMilliseconds: number = 24 * 60 * 60 * 1000;//5 * 60 * 1000; 
+  twentyFourMonthsInSeconds: number = 24 * 30 * 24 * 60 * 60;
+  oneWeekInSeconds: number = 1 * 24 * 60 * 60;
+  currentTimeInSeconds: number = Math.floor(Date.now() / 1000);
+  timeLeft: number = 0;
+  //endTime: Date = new Date();
   // Validation
   private validation() {
-    console.log('this.vestTimeStart: ', this.vestTimeStart);
-    
-    const [hasIntervalPassed, timeLeft, progress] = this.hasTimeIntervalPassedSinceVestStart();
-    
-    console.log('hasTimeIntervalPassedSinceVestStart: ', hasIntervalPassed);
-    console.log('timeLeft: ', timeLeft);
-    console.log('progress: ', progress);
+    const vestTimeStart = this.vestTimeStart;
+    const currentTime = this.currentTimeInSeconds;
+    const timeIntervalInSeconds = this.twentyFourMonthsInSeconds;
 
+    const vestTimePlusTimeInterval = vestTimeStart + timeIntervalInSeconds;
+    const hasTimeIntervalPassed = currentTime >= vestTimePlusTimeInterval;
+    const timeLeft = hasTimeIntervalPassed ? 0 : vestTimePlusTimeInterval - currentTime;
+
+    this.timeLeft = timeLeft;
+
+    const progress = (currentTime - vestTimeStart) / timeIntervalInSeconds * 100;
     this.progressBarValue = Math.min(Math.max(progress, 0), 100); // Ensure progress stays between 0 and 100
-    this.isLoading = false; // Assuming you want to set this here
+
+    this.startTimeleftClock();
+    this.isLoading = false;
   }
+
+  private timeLeftInterval: NodeJS.Timeout | undefined;
+  startTimeleftClock() {
+    this.timeLeftInterval = setInterval(() => {
+      this.timeLeft--;    
+      if (this.timeLeft <= 0) {        
+        clearInterval(this.timeLeftInterval);
+        this.timeLeft = 0;
+      }
+    }, 1000);
+  }
+
+  formatTime(seconds: number): string {
+    const years = Math.floor(seconds / (3600 * 24 * 365));
+    seconds %= (3600 * 24 * 365);
+
+    const months = Math.floor(seconds / (3600 * 24 * 30));
+    seconds %= (3600 * 24 * 30);
+
+    const days = Math.floor(seconds / (3600 * 24));
+    seconds %= (3600 * 24);
+
+    const hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+
+    const minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+
+    // Format based on the highest significant unit
+    if (years > 0) {
+        return `${years} year(s), ${months} month(s)`;
+    } else if (months > 0) {
+        return `${months} month(s), ${days} day(s)`;
+    } else if (days > 0) {
+        return `${days} day(s), ${hours} hour(s)`;
+    } else if (hours > 0) {
+        return `${hours} hour(s), ${minutes} minute(s)`;
+    } else if (minutes > 0) {
+        return `${minutes} minute(s)`;
+    } else {
+        return `${seconds} second(s)`;
+    }
+}
+
 
 
   getUIMode(_isLoading: boolean) {
     // return 'query' or 'determinate'.
     return _isLoading ? 'query' : 'determinate';
   }
-
-  hasTimeIntervalPassedSinceVestStart(): [boolean, number, number] {
-    const vestStartTime = this.vestTimeStart;
-    const currentTime = new Date().getTime();
-    const vestTimePlusTimeInterval = vestStartTime + this.timeIntervalInMilliseconds;
-    
-    const hasTimeIntervalPassed = currentTime >= vestTimePlusTimeInterval;
-
-    const timeLeft = hasTimeIntervalPassed ? 0 : vestTimePlusTimeInterval - currentTime;
-
-    // Calculate progress percentage
-    const progress = (currentTime - vestStartTime) / this.timeIntervalInMilliseconds * 100;
-
-    return [hasTimeIntervalPassed, timeLeft, progress];
-}
-
-
-  //   if (vestTimeLeft == 0) {
-  //     this.hasTimeIntervalPassed = true;
-  //     return;
-  //   }
-
-  //   const interval = setInterval(() => {
-  //     this.vestTimeLeft--;
-  //     if (this.vestTimeLeft == 0) {
-  //       this.hasTimeIntervalPassed = true;
-  //       clearInterval(interval);
-  //     }
-  //   }, 1000);
-  // }
 }

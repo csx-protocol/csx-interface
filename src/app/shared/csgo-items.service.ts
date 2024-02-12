@@ -146,7 +146,7 @@ interface Sticker {
         "floatvalue": 0.055094581097364426,
         "s": "76561198185748194",
         "m": "0",
-        "imageurl": "http://media.steampowered.com/apps/730/icons/econ/default_generated/weapon_ak47_gs_ak47_professional_light_large.d09d623d0a725c63e8a3905f66bba41ba2ed59e8.png",
+        "imageurl": "https://media.steampowered.com/apps/730/icons/econ/default_generated/weapon_ak47_gs_ak47_professional_light_large.d09d623d0a725c63e8a3905f66bba41ba2ed59e8.png",
         "min": 0,
         "max": 1,
         "weapon_type": "AK-47",

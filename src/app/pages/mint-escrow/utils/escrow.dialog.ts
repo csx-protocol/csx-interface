@@ -34,7 +34,7 @@ export class EscrowDialog {
         private web3: Web3Service,
         private notify: NotificationService,
     ) {
-        this.maxValue = parseInt(this.web3.webUser.balances!['CSX'].balanceEth);
+        this.maxValue = parseFloat(this.web3.webUser.balances!['CSX'].balanceEth);
         this.tokenAmountForm = new FormGroup({
             tokenAmount: new FormControl(null, [
                 Validators.required,
@@ -92,7 +92,7 @@ export class EscrowDialog {
             const _valueInEther = this.web3.csxInstance.web3.utils.fromWei(_value, 'ether');
             this.web3.decreaseBalance('CSX', _valueInEther);
             this.web3.increaseBalance('eCSX', _valueInEther);
-            this.maxValue = parseInt(this.web3.webUser.balances!['CSX'].balanceEth);
+            this.maxValue = parseFloat(this.web3.webUser.balances!['CSX'].balanceEth);
             this.tokenAmountForm.controls['tokenAmount'].updateValueAndValidity();
             this.isEscrowing = false;
             this.notify.notify('Escrowed successfully 🫡');

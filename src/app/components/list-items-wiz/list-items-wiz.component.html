@@ -1,0 +1,123 @@
+<mat-stepper class="background" linear="true" #stepper>
+    <mat-step [stepControl]="tradeUrlStepBuilder" (stepSelectionChange)="onStepChange($event)">    
+        <form [formGroup]="tradeUrlStepBuilder">
+          <ng-template matStepLabel class="listing-details">Steam Trade URL</ng-template>
+
+          <div style="display: flex; flex-wrap: wrap;">
+             
+            <div style="padding-left: 15px; margin-left: 1.5rem; margin-right: 1.5rem;">
+              <a class="link-like" href="https://steamcommunity.com/my/tradeoffers/privacy#trade_offer_access_url" target="_blank">🛫 Take me to my Trade URL</a>
+            </div>  
+
+            <mat-form-field class="smaller-device-size" style="flex: 1 1 calc(100% - 20px); margin: 10px; margin-left: 1.5rem; margin-right: 1.5rem;">
+              <mat-label>Insert your Trade URL</mat-label>
+              <input type="text" formControlName="tradeLinkControl" matInput>
+              <button mat-button matPrefix (click)="tradeUrlStepBuilder.get('tradeLinkControl').setValue('')">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-error *ngIf="tradeUrlStepBuilder.get('tradeLinkControl').hasError('required')">
+                Trade URL is <strong>required</strong>
+              </mat-error>
+    
+              <mat-error *ngIf="tradeUrlStepBuilder.get('tradeLinkControl').hasError('pattern')">
+                Trade URL must be <strong>valid</strong>
+              </mat-error>               
+    
+            </mat-form-field>
+          </div>
+
+          <div style="margin: 1rem; margin-left: 1.5rem; margin-right: 1.5rem; margin-top: 0rem !important;" class="smaller-device-size">
+            <div *ngIf="!hasApiKey" >
+              <mat-chip-listbox [(ngModel)]="selectedChips" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="onChipsChange()">
+                <mat-chip-option value="api-key">🔑 Add API-KEY for smoother sales?</mat-chip-option>
+                <span *ngIf="!apiKeyIsSelected"><br><br><br></span>
+              </mat-chip-listbox>
+              <p *ngIf="apiKeyIsSelected" class="responsive-text">Add Steam Web API-KEY for smoother selling experience,
+                it's not required however it is <span style="color: rgb(14, 187, 14);">recommended</span>. Get your API-KEY by clicking on 'API-KEY?' text in the input
+                below or <a href="https://steamcommunity.com/dev/apikey" target="_blank">here</a>.</p>
+              <!-- <a href="https://steamcommunity.com/dev/apikey" target="_blank" *ngIf="apiKeyIsSelected">Get Your API-KEY here:</a> -->
+              <mat-form-field class="example-full-width" *ngIf="apiKeyIsSelected">
+                <mat-label><a href="https://steamcommunity.com/dev/apikey" target="_blank">API-KEY?:</a></mat-label>
+                <input matInput formControlName="apiNonControl" type="text">
+                <button *ngIf="!isEnteringApiKey" matPrefix mat-button (click)="enterApiKey()">Add</button>
+                <button *ngIf="isEnteringApiKey" mat-button matPrefix>
+                  <span class="centered-loading-spinner">
+                      <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                          [diameter]="25">
+                      </mat-progress-spinner>
+                  </span>
+              </button>
+              
+              </mat-form-field>
+            </div>
+            <div *ngIf="hasLocalStorageUrl" style="margin-top: -1rem;">
+              <p style="color: #ff6000f7;">Found Trade URL in your browser, make sure it's the right <a class="link-like" href="https://steamcommunity.com/my/tradeoffers/privacy#trade_offer_access_url" target="_blank" rel="noopener noreferrer">token</a>!</p>
+            </div>
+            <div *ngIf="hasApiKey">
+              <mat-chip-listbox [(ngModel)]="selectedChips" [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="onChipsChange()">
+                <mat-chip-option value="api-key">🔑 Change API-KEY?</mat-chip-option>
+                <span *ngIf="!apiKeyIsSelected"><br><br><br></span>
+              </mat-chip-listbox>
+              <p *ngIf="apiKeyIsSelected" class="responsive-text">If you need to update your existing Steam Web API-KEY, you can replace it <a href="https://steamcommunity.com/dev/apikey" target="_blank">here</a>.</p>
+              <!-- <a href="https://steamcommunity.com/dev/apikey" target="_blank" *ngIf="apiKeyIsSelected">Get Your API-KEY here:</a> -->
+              <mat-form-field class="example-full-width" *ngIf="apiKeyIsSelected">
+                <mat-label><a href="https://steamcommunity.com/dev/apikey" target="_blank">API-KEY?:</a></mat-label>
+                <input matInput formControlName="apiNonControl" type="text">
+                <button *ngIf="!isEnteringApiKey" matPrefix mat-button (click)="enterApiKey()">Add</button>
+                <button *ngIf="isEnteringApiKey" mat-button matPrefix>
+                  <span class="centered-loading-spinner">
+                      <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+                          [diameter]="25">
+                      </mat-progress-spinner>
+                  </span>
+              </button>                          
+              </mat-form-field>
+            </div>
+
+            <button style="transform: scale(1.3);" [disabled]="apiKeyIsSelected === true" mat-button (click)="validateTradeUrl()" matStepperNext>Next</button>
+          </div>
+          
+
+        </form>
+    
+      </mat-step>
+
+      <mat-step [stepControl]="itemStepBuilder" (stepSelectionChange)="onStepChange($event)">    
+        <form [formGroup]="itemStepBuilder">
+          <ng-template matStepLabel class="listing-details">Item(s)</ng-template>
+
+          <div style="display: flex; flex-wrap: wrap;">
+             
+            <!-- only if we are on this stage -->
+            <div *ngIf="!hasMadeItems">
+              <app-list-items [tradeLink]="tradeUrl" [hasApiKey]="hasApiKey"></app-list-items>
+            </div>
+              
+         
+
+          </div>
+          <div style="margin: 1rem; margin-top: -3rem;">
+            <button mat-button (click)="resetItemStep()" style="transform: scale(1.3);">Reset</button>
+            <button mat-button (click)="validateItem()" matStepperNext style="transform: scale(1.3);">Next</button>
+          </div>
+        </form>
+    
+      </mat-step>
+
+      <mat-step [stepControl]="signStepBuilder" (stepSelectionChange)="onStepChange($event)">    
+        <form [formGroup]="signStepBuilder">
+          <ng-template matStepLabel class="listing-details">Sign TX</ng-template>
+          
+          <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <app-sign-items></app-sign-items>
+          </div>
+
+          <div>
+            <button mat-button (click)="validateItem()" matStepperNext>Next</button>
+          </div>
+        </form>
+    
+      </mat-step>
+</mat-stepper>

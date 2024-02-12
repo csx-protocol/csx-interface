@@ -236,7 +236,7 @@ export class ListItemComponent implements OnDestroy {
               case 'Sticker':
                 this.isStickerAsItem = true;
                 //console.log("sticker it is!", data.iteminfo.full_item_name);
-                const res = await this.csgoItems.getRegularItemImage(data.iteminfo.full_item_name, 'Sticker');
+                const res = await this.csgoItems.getRegularItemImage(data.iteminfo.full_item_name);
                 this.exactImage = res.url;
                 break;
               case 'Graffiti':
@@ -256,7 +256,7 @@ export class ListItemComponent implements OnDestroy {
                     let stickers: any = [];
                     for (const _sticker of data.iteminfo.stickers) {
                       const full_market_name = "Sticker | " + _sticker.name;
-                      const imageRes = await this.csgoItems.getRegularItemImage(full_market_name, 'Stickers');
+                      const imageRes = await this.csgoItems.getRegularItemImage(full_market_name);
                       stickers.push({ name: _sticker.name, material: _sticker.material, slot: _sticker.slot, imageLink: imageRes.url });
                     }
                     this.itemData = { ...this.itemData, stickers: stickers }

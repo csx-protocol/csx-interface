@@ -1,0 +1,8 @@
+::ng-deep .mat-horizontal-stepper-header {
+    pointer-events: none !important;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+}

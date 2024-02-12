@@ -1,0 +1,31 @@
+.card-container {
+    position: relative;
+    height: 500px;
+    width: 100%;
+    /* Adjusted to 100% */
+    margin: 0 auto;
+    /* Center the container */
+    align-items: center;
+}
+
+
+.item-card {
+    position: absolute;
+    align-items: center;
+    margin: 1rem;
+    min-width: 240px;
+}
+
+//transform: translate(18rem, 0%);
+// top: 50%; /* Center vertically */
+// left: 50%; /* Center horizontally */
+// transform: translate(-50%, -50%); /* Adjusts for the card's own dimensions */
+/* Retain other existing styles */
+
+::ng-deep .success-progress-bar .mdc-linear-progress__bar-inner {
+    border-color: #3fc121; /* Replace with your desired color */
+}
+
+::ng-deep .failed-progress-bar .mdc-linear-progress__bar-inner {
+    border-color: #c12121; /* Replace with your desired color */
+}

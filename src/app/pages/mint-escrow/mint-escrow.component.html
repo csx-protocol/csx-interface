@@ -9,13 +9,7 @@
 <mat-divider style="margin: .5rem; visibility: hidden;"></mat-divider>
 
 <div *ngIf="!this.web3.webUser.isUserWalletConnected">
-    <mat-card class="margins background" >
-        <mat-card-content>
-        <h2>Wallet not connected.</h2>
-        <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
-        <p></p>
-        </mat-card-content>
-    </mat-card>
+  <app-wallet-state-info></app-wallet-state-info>
 </div>
 
 <div *ngIf="this.web3.webUser.isUserWalletConnected">

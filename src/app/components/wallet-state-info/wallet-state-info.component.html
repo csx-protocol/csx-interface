@@ -1,0 +1,21 @@
+<mat-card class="margins background" *ngIf="!web3.csxInstance.autoLogin.lastResult" @fadeIn>
+    <mat-card-content>
+    <h2>Wallet not connected.</h2>
+    <p>Connect wallet to retrieve on-chain data, this can be done in the upper-right corner.</p>
+    <p></p>
+    </mat-card-content>
+</mat-card>
+<mat-card class="margins background" *ngIf="web3.csxInstance.autoLogin.lastResult" @fadeIn>
+  <mat-card-content>
+    <h2>🔗 Connecting wallet... </h2>
+    <div style="display: flex; align-items: center; margin-top: -1rem;">
+      <p *ngIf="!tookTooLong" style="margin-left: 1rem;">Engines Revving, Stand By!</p>
+      <p *ngIf="tookTooLong" style="margin-left: 1rem;">Taking longer than exepected, might want to check your RPC connection or refresh page!</p>
+      <span style="margin-left: 1rem;">
+        <mat-progress-spinner class="example-margin" color="primary" mode="indeterminate"
+            [diameter]="25"> 
+        </mat-progress-spinner>
+      </span>
+    </div>    
+  </mat-card-content>
+</mat-card>

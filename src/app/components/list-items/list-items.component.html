@@ -1,0 +1,128 @@
+<button (click)="testAddManyInspectUrls();">TESt</button>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()" style="align-items: center;">
+    <div formArrayName="items">
+
+        <mat-card *ngFor="let item of items.controls; let i = index" class="item-card background"
+            style="max-height: 462.5px; min-width: 225px; display: inline-flex !important; margin: .44rem;"
+            [@cardAnimation]="'in'">
+            <mat-card-header>
+
+                <mat-form-field class="smaller-device-size" [formGroupName]="i" style="z-index: 1;">
+                    <mat-label>Inspect Link</mat-label>
+                    <input type="text" formControlName="inspectLinkControl" matInput (input)="onInputGenInspLink(i)" #inspectInput>
+                    <mat-error *ngIf="item.get('inspectLinkControl')?.hasError('required')" style="font-size: small;">
+                        <span (click)="openDialogInspectLink()" class="link-like">Inspect link</span> <!-- <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003114401" target="_blank">Inspect link</a>--> is <strong>required</strong> 
+                    </mat-error>
+                    <mat-error *ngIf="item.get('inspectLinkControl')?.hasError('pattern')" style="font-size: small;">
+                        Inspect link must be <strong>valid</strong>
+
+                    </mat-error>
+                    <button (click)="removeItem(i)" mat-button matPrefix style="margin: 0.4rem; align-items: center; justify-content: center;"><span style="color: red;">X</span></button>
+                    <!-- <button  mat-button matSuffix>Generate</button> -->
+                </mat-form-field>
+            </mat-card-header>
+
+            <ngx-skeleton-loader *ngIf="!itemDetails[i].itemState.hasLoadedInspectLink" count="1" appearance="line" style="margin-top: -1rem; margin-bottom: 1rem;" [animation]="isGenInspLinkInputChanged ? 'progress-dark' : 'false'" [theme]="{
+                'background-color': 'rgb(20 21 37)',
+                height: '171px',
+                'border-radius': 0
+            }">
+            </ngx-skeleton-loader>
+
+            <img *ngIf="!itemDetails[i].itemState.hasLoadedInspectLink" style="margin: 10%;" mat-card-image alt="">
+
+            <div style="margin-left: 2%; min-height: 41.5px;"></div>
+
+            <div style="min-height: 11px;"></div>
+
+
+            <mat-card-content style="margin-top: -74px;" *ngIf="!itemDetails[i].itemState.hasLoadedInspectLink">
+                <ngx-skeleton-loader  count="3" appearance="line" [animation]="isGenInspLinkInputChanged ? 'progress-dark' : 'false'" [theme]="{
+                'background-color': 'rgb(233 216 36 / 16%)',
+                height: '40px',
+                'border-radius': 0
+            }">
+                </ngx-skeleton-loader>
+                <div style="min-height: 3px;"></div>
+            </mat-card-content>
+
+            <mat-card-content style="margin-top: -60px;" *ngIf="itemDetails[i].itemState.hasLoadedInspectLink" [@cardAnimation]="'in'">
+                <img mat-card-image  src="{{itemDetails[i].imageUrl}}" style="width: 100%; height: 100%; margin-top: 1.15rem;" alt="{{itemDetails[i].itemName}}">
+                <span *ngIf="itemDetails[i].stickers">
+                    <span *ngFor="let sticker of itemDetails[i].stickers">
+                      <img style="margin-left: 2%;" matTooltip="{{sticker.name}}" mat-card-image [src]="sticker.imageLink" width="40px" alt="{{itemDetails[i].itemName}}">
+                    </span>
+                  </span>
+                <p style="font-size: small; margin-top: 2.8rem; min-height: 2.24rem;" *ngIf="itemDetails[i].stickers.length === 0">
+                    {{itemDetails[i].itemName}}
+                </p>
+                <p style="font-size: small; min-height: 2.24rem;" *ngIf="itemDetails[i].stickers.length > 0">
+                    {{itemDetails[i].itemName}}
+                </p>
+                <div>
+                    <app-float-bar [min]="itemDetails[i].floatMin" [max]="itemDetails[i].floatMax" [value]="itemDetails[i].floatVal"></app-float-bar>
+                </div>
+                <div class="form-row smaller-device-size" style="flex: 1 1 calc(50% - 20px); margin: 10px;">
+                    <mat-form-field style="width: -webkit-fill-available;" appearance="fill" style="max-width: 40%;">
+                        <!-- <mat-label>Currency</mat-label> -->
+                        <mat-select [(value)]="itemDetails[i].priceType" hideSingleSelectionIndicator>
+                          <mat-select-trigger>
+                              <span *ngIf="itemDetails[i].priceType == 'ETH'"><img src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"></span>
+                              <span *ngIf="itemDetails[i].priceType == 'USDC'"><img src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"></span>
+                              <span *ngIf="itemDetails[i].priceType == 'USDT'"><img src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"></span>
+                          </mat-select-trigger>
+                          <mat-option (click)="onInputPrice(i)" value="ETH"><img src="assets/utils/ethereum-eth.png" style="height: 1rem; margin-bottom: -2px;"></mat-option>
+                          <mat-option (click)="onInputPrice(i)" value="USDC"><img src="assets/utils/centre-usdc.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"></mat-option>
+                          <mat-option (click)="onInputPrice(i)" value="USDT"><img src="assets/utils/tether-usdt.png" style="height: 1rem; margin-bottom: -2px; margin-right: 5px;"></mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    <mat-form-field style="width: -webkit-fill-available;" [formGroupName]="i">
+                      <mat-label>{{itemDetails[i].priceType}}</mat-label>
+                      <input matInput formControlName="priceControl" type="number" step="1" (input)="onInputPrice(i)" #inspectInput>
+                      <mat-error *ngIf="item.get('priceControl')?.hasError('required')" style="font-size: small;">
+                        Price is <strong>required</strong>
+                      </mat-error>
+                      <mat-error *ngIf="item.get('priceControl')?.hasError('positiveNumber') && !item.get('priceControl')?.hasError('required')" style="font-size: small;">
+                        🙄
+                      </mat-error>
+                      <mat-error *ngIf="item.get('priceControl')?.hasError('validNumber')" style="font-size: small;">
+                        Please enter a <strong>valid number</strong> 🧐
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+            </mat-card-content>
+
+        </mat-card>
+
+        <mat-card class="item-card background"
+            style="max-height: 462.5px; min-width: 225px; display: inline-flex !important; margin: .44rem; cursor: pointer;" (click)="addItem()">
+            <mat-card-header style="min-height: 76px;">
+                <button mat-button matPrefix style="margin: 0.4rem; align-items: center; justify-content: center;"><span style="color: rgb(0, 255, 76); font-size: large;">+</span></button>
+                <p>Add Item</p>
+            </mat-card-header>
+            
+            <ngx-skeleton-loader count="1" appearance="line" style="margin-top: -1rem; margin-bottom: 1rem;" [animation]="isGenInspLinkInputChanged ? 'progress-dark' : 'false'" [theme]="{
+                'background-color': 'rgb(20 21 37)',
+                height: '171px',
+                'border-radius': 0
+            }"></ngx-skeleton-loader>
+
+            <img style="margin: 5%;" mat-card-image alt="">
+            
+            <mat-card-content>
+                <ngx-skeleton-loader  count="3" appearance="line" [animation]="isGenInspLinkInputChanged ? 'progress-dark' : 'false'" [theme]="{
+                    'background-color': 'rgb(7 255 128 / 10%)',
+                    height: '40px',
+                    'border-radius': 0
+                }">
+                    </ngx-skeleton-loader>
+                    <div style="min-height: 3px;"></div>
+            </mat-card-content>       
+        </mat-card>
+
+    </div>
+</form>
+<br><br><br>
+<!-- <button (click)="addItem()">Add Another Item</button>
+<button type="submit" (click)="onSubmit()">Submit</button> 
+<button type="submit" (click)="testAddManyInspectUrls()">Add Many Inspect Urls</button>-->

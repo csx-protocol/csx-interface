@@ -27,11 +27,11 @@ export class CouncilComponent {
   keeperOracle = '';
   totalSupply = '';
 
-  addressForm: FormGroup;
+  allForm: FormGroup;
 
   web3AccSub?: Subscription;
   constructor(public readonly web3: Web3Service) {
-    this.addressForm = new FormGroup({
+    this.allForm = new FormGroup({
       keepersAddress: new FormControl(null, [
         Validators.required,
       ]),
@@ -45,6 +45,15 @@ export class CouncilComponent {
         Validators.required,
       ]),
       mintValue: new FormControl(null, [
+        Validators.required,
+      ]),
+      rewardDurationWETH: new FormControl(null, [
+        Validators.required,
+      ]),
+      rewardDurationUSDC: new FormControl(null, [
+        Validators.required,
+      ]),
+      rewardDurationUSDT: new FormControl(null, [
         Validators.required,
       ]),
     });
@@ -116,6 +125,12 @@ export class CouncilComponent {
     };
   }
 
+  stakingRewardPerSecond: string = '0';
+  async stakingRewardPerSecondFunc(): Promise<void> {
+    const stakingRewardPerSecond = await this.web3.callContractMethod('StakedCSX', 'rewardRate', [this.web3.contracts['WETH'].options.address], 'call');
+    this.stakingRewardPerSecond = stakingRewardPerSecond;
+  }
+
   async getKeepers(): Promise<any> {
     const keepersLength: number = await this.web3.callContractMethod('Keepers', 'totalKeepers', [], 'call');
     console.log('keepersLength', keepersLength);
@@ -148,7 +163,7 @@ export class CouncilComponent {
     await this.web3.callContractMethod('Keepers', 'addKeeper', [_address], 'send').then((result) => {
       console.log('result', result);
       this.isAddingKeeper = false;
-      this.addressForm.get('keepersAddress')?.setValue('');
+      this.allForm.get('keepersAddress')?.setValue('');
       this.keepers.push(_address);
     }).catch((error) => {
       console.log(error);
@@ -170,7 +185,7 @@ export class CouncilComponent {
   }
 
   submitAddKeeper() {
-    const keepersAddress = this.addressForm.get('keepersAddress')?.value;
+    const keepersAddress = this.allForm.get('keepersAddress')?.value;
     console.log('keepersAddress', keepersAddress);
     this.addKeeper(keepersAddress);
   }
@@ -215,14 +230,14 @@ export class CouncilComponent {
   }
 
   submitChangeKeeperOracle() {
-    const keeperOracleAddress = this.addressForm.get('keeperOracleAddress')?.value;
+    const keeperOracleAddress = this.allForm.get('keeperOracleAddress')?.value;
     console.log('keeperOracleAddress', keeperOracleAddress);
     this.changeKeeperOracle(keeperOracleAddress);
   }
 
   submitMintCSXTokens() {
-    const mintAddress = this.addressForm.get('mintAddress')?.value;
-    const mintValue = this.addressForm.get('mintValue')?.value;
+    const mintAddress = this.allForm.get('mintAddress')?.value;
+    const mintValue = this.allForm.get('mintValue')?.value;
     console.log('mintAddress', mintAddress);
     console.log('mintValue', mintValue);
 
@@ -254,7 +269,7 @@ export class CouncilComponent {
   }
 
   submitChangeCouncil() {
-    const councilAddress = this.addressForm.get('councilAddress')?.value;
+    const councilAddress = this.allForm.get('councilAddress')?.value;
     console.log('councilAddress', councilAddress);
     this.changeCouncil(councilAddress);
   }
@@ -262,11 +277,45 @@ export class CouncilComponent {
   isSubmittingDistributeRewards: boolean = false;
   submitDistributeRewards() {
     this.isSubmittingDistributeRewards = true;
-    this.web3.callContractMethod('StakedCSX', 'distribute', [true, true, true], 'send').then((result) => {
+    this.web3.callContractMethod('StakedCSX', 'distribute', [false, true, false], 'send').then((result) => {
       this.isSubmittingDistributeRewards = false;
       console.log('result', result);
     }).catch((error) => {
       this.isSubmittingDistributeRewards = false;
+      console.log(error);
+    });
+  }
+
+  committToSetRewardDuration: boolean = false;
+  committToSetRewardDurationFunc() {
+    const current = this.committToSetRewardDuration;
+    this.committToSetRewardDuration = !current;
+  }
+
+  priceTypeToBoolDist: any = {
+    'WETH': false,
+    'USDC': false,
+    'USDT': false,
+  };
+  committToDist(_tokenName:string) {
+    const current = this.priceTypeToBoolDist[_tokenName];
+    this.priceTypeToBoolDist[_tokenName] = !current;
+  }
+
+  submitSetRewardDuration(_tokenName: string) {
+    const rewardDuration = this.allForm.get('rewardDuration' + _tokenName)?.value;
+    this.changeRewardDuration(_tokenName, rewardDuration);
+  }
+
+  isChangingRewardDuration: boolean = false;
+  changeRewardDuration(_tokenName: string, _duration: string) {
+    this.isChangingRewardDuration = true;
+    const [,tokenAddress] = this.web3.getTokenMap(_tokenName);
+    this.web3.callContractMethod('StakedCSX', 'setRewardsDuration', [_duration, tokenAddress], 'send').then((result) => {
+      this.isChangingRewardDuration = false;
+      console.log('result', result);
+    }).catch((error) => {
+      this.isChangingRewardDuration = false;
       console.log(error);
     });
   }

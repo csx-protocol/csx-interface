@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Inject, Injectable, OnDestroy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Observable, Subject } from 'rxjs';
 
@@ -26,6 +26,7 @@ interface CSXInstance {
   vCSXToken: any;
   accountSubject: Subject<any>;
   afterSubject: Subject<any>;
+  autoLogin: AutoLogin;
 }
 
 interface Balance {
@@ -70,7 +71,8 @@ export class Web3Service implements OnDestroy {
     vCSXToken: undefined,
     WETHToken: undefined,
     USDCToken: undefined,
-    USDTToken: undefined
+    USDTToken: undefined,
+    autoLogin: new AutoLogin(),
   };
 
   public webUser: WebUser = {
@@ -279,14 +281,7 @@ export class Web3Service implements OnDestroy {
   }
 
   private async ___notifyUserWalletConnected() {
-    //console.log('NOTIFYING', this.webUser.shortAddy);
     this.webUser.isUserWalletConnected = true;
-    // const uri = 'https://arbiscan.io/address/' + this.webUser.address;
-    // this.notificationsService.notify(
-    //   `Wallet Connected `,
-    //   uri,
-    //   this.webUser.shortAddy
-    // );
   }
 
   private async _requestAddOrChangeNetwork() {
@@ -450,6 +445,10 @@ export class Web3Service implements OnDestroy {
       ).toFixed(fixedValue);
   }
 
+  public getAddress(_tokenName: string): string {
+    return this.contracts[_tokenName].options.address;
+  }
+
   private _getTokenDecimals(token: string): number {
     switch (token) {
       case 'USDC':
@@ -476,7 +475,7 @@ export class Web3Service implements OnDestroy {
       this.contracts[token].options.address
     ];
 
-    this._getTokenMap(token);
+    this.getTokenMap(token);
 
     const contractInstance = await new this.csxInstance.web3.eth.Contract(
       tokenAbi,
@@ -490,7 +489,7 @@ export class Web3Service implements OnDestroy {
   }
 
   async approve(token: string, spender: string, amount: string) {
-    const [tokenAbi, tokenAddress] = this._getTokenMap(token);
+    const [tokenAbi, tokenAddress] = this.getTokenMap(token);
 
     const contractInstance = await new this.csxInstance.web3.eth.Contract(
       tokenAbi,
@@ -503,7 +502,7 @@ export class Web3Service implements OnDestroy {
       .send({ from: this.webUser.address });
   }
 
-  private _getTokenMap(token: string): [AbiItem[], string] {
+  public getTokenMap(token: string): [AbiItem[], string] {
     let tokenAbi: AbiItem[];
     let tokenAddress: string;
 
@@ -642,7 +641,7 @@ export class Web3Service implements OnDestroy {
 
   private handleError(error: any) {
     switch (error.code) {
-      case -32000:
+      case '-32000':
         this.notificationsService.openSnackBar(
           'RPC error, you might need to refresh site or change RPC endpoint in wallet.',
           'OK'
@@ -936,16 +935,16 @@ export class Web3Service implements OnDestroy {
       return tradeDetails;
     } catch (error: any) {
       switch (error.code) {
-        case -32000:
+        case '-32000':
           this.notificationsService.openSnackBar(
-            'RPC error, you might need to refresh site or change RPC endpoint in wallet.',
-            'OK'
+            'RPC error, you might need to refresh page or change RPC endpoint in your wallet. [code: -32000]',
+            '🤦OK'
           );
           break;
         default:
           this.notificationsService.openSnackBar(
-            'Error, you might need to refresh site or change RPC endpoint in wallet.',
-            'OK'
+            'RPC error, you might need to refresh page or change RPC endpoint in your wallet. [code: -32000]',
+            '🤦OK'
           );
           break;
       }
@@ -1509,7 +1508,14 @@ export class Web3Service implements OnDestroy {
 
     } catch (error: any) {
       console.error('An error occurred while calling the contract method:', error);
-      this.notificationsService.openSnackBar(error.message, 'OK');
+      if(error.code == -32000) {
+        this.notificationsService.openSnackBar(
+          'RPC error, you might need to refresh page or change RPC endpoint in your wallet. [code: -32000]',
+          '🤦OK'
+        );
+      } else {
+        this.notificationsService.openSnackBar(error.message, 'OK');
+      }
       throw error;  // re-throw the error so it can be caught and handled by the caller if needed
     }
   }
@@ -1524,4 +1530,42 @@ export class Web3Service implements OnDestroy {
   }
 
   ngOnDestroy(): void { }
+}
+
+export class AutoLogin {
+  private readonly autoLoginKey = 'autoLoginEnabled';
+
+  public lastResult: boolean | null = null;
+
+  constructor() { }
+
+  // Check if auto-login is enabled
+  isAutoLoginEnabled(): boolean {
+    const autoLoginState = localStorage.getItem(this.autoLoginKey);
+    // If the key doesn't exist in localStorage, return false (or a default value of your choice)
+    if (autoLoginState === null) {
+      return false;
+    }
+    // If the key exists, compare its value to the string 'true'
+    this.lastResult = autoLoginState === 'true';
+    return autoLoginState === 'true';
+  }
+
+  // Enable auto-login
+  enableAutoLogin(): void {
+    localStorage.setItem(this.autoLoginKey, 'true');
+    this.lastResult = true;
+  }
+
+  // Disable auto-login
+  disableAutoLogin(): void {
+    localStorage.setItem(this.autoLoginKey, 'false');
+    this.lastResult = false;
+  }
+
+  // Toggle auto-login state
+  toggleAutoLogin(): void {
+    const currentState = this.isAutoLoginEnabled();
+    localStorage.setItem(this.autoLoginKey, (!currentState).toString());
+  }
 }

@@ -1,0 +1,13 @@
+<mat-dialog-content class="dialog-content">
+    <div class="dialog-option" (click)="learnToGetInspectLink()" [class.disabled]="rememberChoice">
+        <h2>Learn to Get Inspect Link</h2>
+        <p>Click here to learn how to get the inspect link for your items.</p>
+    </div>
+
+    <div class="dialog-option" (click)="goToInventory()">
+        <h2>Take Me to My Inventory</h2>
+        <p>Click here to go directly to your inventory.</p>
+    </div>
+
+    <mat-checkbox color="primary" [(ngModel)]="rememberChoice"><p style="color: #b9bce5 !important; font-size: .89rem;">Remember my choice</p></mat-checkbox>
+</mat-dialog-content>
